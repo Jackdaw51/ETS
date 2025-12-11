@@ -1,0 +1,1 @@
+Embedded together strong
