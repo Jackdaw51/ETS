@@ -36,7 +36,7 @@ void init_hcsr04()
                         TIMER_A_CCTLN_SCS |        // synchronous capture
                         TIMER_A_CCTLN_CCIE;        // enable interrupt
 
-    NVIC->ISER[0] |= 1 << ((TA1_N_IRQn) & 31);
+    NVIC_EnableIRQ(TA1_N_IRQn);
 }
 
 //synchronous trigger
