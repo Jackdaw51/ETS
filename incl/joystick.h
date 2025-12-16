@@ -2,7 +2,16 @@
 #ifndef JOYSTICK_H
 #define JOYSTICK_H
 
-void read_joystick(uint16_t *x, uint16_t *y, uint8_t *button);
+typedef enum {
+    JS_UP = 0,
+    JS_DOWN,
+    JS_LEFT,
+    JS_RIGHT,
+    JS_BUTTON,
+    JS_NONE
+} joystick_t;
+
+joystick_t read_joystick();
 void js_init(void);
 
 #endif

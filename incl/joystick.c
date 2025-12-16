@@ -6,11 +6,9 @@ volatile uint8_t conversion_complete = 0;
 volatile uint8_t buttonPressed = 0;
 static uint16_t resultsBuffer[2];
 
-
-void read_joystick(uint16_t *x, uint16_t *y, uint8_t *button)
+joystick_t read_joystick()
 {
     // Start conversion
-
 
     // Wait for conversion to complete
     ADC14_toggleConversionTrigger();
@@ -22,11 +20,39 @@ void read_joystick(uint16_t *x, uint16_t *y, uint8_t *button)
         __WFI(); // Wait for interrupt
     conversion_complete = 0;
     // Read values
-    *x = ADC14->MEM[0]; // X-axis
-    *y = ADC14->MEM[1]; // Y-axis
-    *button = buttonPressed;
-    
-    buttonPressed = 0;
+    uint16_t x = resultsBuffer[0];
+    uint16_t y = resultsBuffer[1];
+
+    if (buttonPressed)
+    {
+        buttonPressed = 0;
+        return JS_BUTTON;
+    }
+
+    // Determine direction (idle is approx 8000)
+
+    if (x < 6000)
+    {
+        if (x < y)
+            return JS_LEFT;
+        else
+            return JS_DOWN;
+    }
+    else if (x > 10000)
+    {
+        if (x > y)
+            return JS_RIGHT;
+        else
+            return JS_UP;
+    }
+    else
+    {
+        if (y < 6000)
+            return JS_DOWN;
+        else if (y > 10000)
+            return JS_UP;
+    }
+    return JS_NONE;
 }
 void gpio_init_js(void)
 {
@@ -81,7 +107,6 @@ void adc_init_js(void)
 
     /* Triggering the start of the sample */
     ADC14_enableConversion();
-
 }
 
 void ADC14_IRQHandler(void)
@@ -92,7 +117,7 @@ void ADC14_IRQHandler(void)
     ADC14_clearInterruptFlag(status);
 
     /* ADC_MEM1 conversion completed */
-    if(status & ADC_INT1)
+    if (status & ADC_INT1)
     {
         /* Store ADC14 conversion results */
         resultsBuffer[0] = ADC14_getResult(ADC_MEM0);
@@ -105,7 +130,6 @@ void ADC14_IRQHandler(void)
     }
     conversion_complete = 1;
 }
-
 
 void read_button()
 {
