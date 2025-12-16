@@ -13,7 +13,7 @@ int main(void)
 {
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD; // stop watchdog timer
     NVIC_EnableIRQ(TA0_0_IRQn);
-    NVIC_EnableIRQ(TA1_0_IRQn);
+    NVIC_EnableIRQ(TA3_0_IRQn);
     __enable_irq();
 
     init_green();
@@ -72,31 +72,29 @@ void init_green(void)
     P2->DIR |= BIT1;  // Set P2.1 as output (Green LED)
     P2->OUT &= ~BIT1; // Initialize Green LED to OFF
 }
+
+//up to around 20 ms
 void sleep_ms(uint32_t ms)
 {
     ta_done = 0;
 
-    TIMER_A1->CTL = TIMER_A_CTL_SSEL__SMCLK | // SMCLK
-                    TIMER_A_CTL_MC__STOP |   // Stop timer
-                    TIMER_A_CTL_CLR;         // Clear timer
+    TIMER_A3->CTL = TIMER_A_CTL_CLR;
+    TIMER_A3->CCTL[0] = TIMER_A_CCTLN_CCIE;   // Enable CCR0 interrupt
+    TIMER_A3->CCR[0] = ms * 3000 - 1;             // 3 MHz → 10 ms
+    TIMER_A3->CTL = TIMER_A_CTL_SSEL__SMCLK | // SMCLK
+                    TIMER_A_CTL_MC__UP;
 
-    TIMER_A1->CCR[0] = ms * 3 - 1;             // 3 MHz → 10 ms
-    TIMER_A1->CCTL[0] = TIMER_A_CCTLN_CCIE;   // Enable CCR0 interrupt
-
-  
-
-    TIMER_A1->CTL |= TIMER_A_CTL_MC__UP;      // Start timer in up mode
 
     while (!ta_done)
         __WFI();                              // Sleep
     ta_done = 0;
 
-    TIMER_A1->CTL = TIMER_A_CTL_MC__STOP;     // Stop timer
+    TIMER_A3->CTL = TIMER_A_CTL_MC__STOP;     // Stop timer
 }
 
-void TA1_0_IRQHandler(void)
+void TA3_0_IRQHandler(void)
 {
-    TIMER_A1->CCTL[0] &= ~TIMER_A_CCTLN_CCIFG; // Clear interrupt flag
+    TIMER_A3->CCTL[0] &= ~TIMER_A_CCTLN_CCIFG; // Clear interrupt flag
     ta_done = 1;
 }
 
