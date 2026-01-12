@@ -9,6 +9,7 @@ OUTDIR  := game_exes
 
 T_PLATFORM ?= game_files/display/rl_display.c
 SPRITES := game_files/sprites/sprites.c
+PALETTES := game_files/sprites/palettes.c
 
 # Include paths
 INCLUDES := -Ithird_party 
@@ -39,9 +40,9 @@ TARGET := $(OUTDIR)/$(OUT)
 # -------- Build rules --------
 all: $(TARGET)
 
-$(TARGET): $(SRC) $(T_PLATFORM) $(SPRITES)
+$(TARGET): $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES)
 	mkdir -p $(OUTDIR)
-	$(CC) $(CFLAGS) $(INCLUDES) $(SRC) $(T_PLATFORM) $(SPRITES) -o $(TARGET) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES) -o $(TARGET) $(LIBS)
 
 play: $(TARGET)
 	./$(OUTDIR)/$(OUT)

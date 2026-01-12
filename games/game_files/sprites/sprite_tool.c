@@ -1,3 +1,5 @@
+#include "palettes.h"
+#include <stdlib.h>
 #include <string.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -14,10 +16,15 @@ typedef unsigned char boolean;
 
 int main(int argc, char** argv){
 	int width,height,channels;
+	int palette_index = 0;
 
-	if(argc != 3){
-		printf("Usage: ./sprite_tool <FILEPATH> <OUTPUT_NAME>\n");
+	if(argc < 3){
+		printf("Usage: ./sprite_tool <FILEPATH> <OUTPUT_NAME> <OPTIONAL PALETTE_INDEX>\n");
 		return 1;
+	}
+
+	if(argc == 4){
+		palette_index = atoi(argv[3]);
 	}
 
 	char *file_path = argv[1];
@@ -65,7 +72,6 @@ int main(int argc, char** argv){
 		return 1;
 	}
 
-
 	unsigned char *pixels = stbi_load(
 		file_path,
 		&width,
@@ -86,8 +92,8 @@ int main(int argc, char** argv){
 
 	int x = 0, y = 0;
 
-	// 111 is a magic number which should never come up :)
-	int allowed_colors[] = {0,85,111,255};
+	unsigned char *allowed_p = PaletteArray[palette_index].colors;
+
 	int counter = 0;
 	unsigned char temp_space = 0;
 
@@ -106,25 +112,19 @@ int main(int argc, char** argv){
 			boolean allowed = FALSE;
 			unsigned char index = 0;
 
-			if(a == 0){
+			if(a==0){
 				allowed = TRUE;
-				index = 2;
-			} else {
-
-				for(unsigned char i = 0; i < 4; i++){
-					if(r == allowed_colors[i]){
-						allowed = TRUE; 
-						index = i;
-					}  
+				index = 3;
+			}
+			for(unsigned char i = 0; i < 3; i++){
+				int base = i*4;
+				if(r==allowed_p[base] && g==allowed_p[base+1] && b==allowed_p[base+2] && a==allowed_p[base+3]){
+					allowed = TRUE;
+					index = i;
 				}
 			}
 
 			if(!allowed){
-				printf("forbidden color detected at pixel: (%d,%d), please use a valid png\n",col_ptr,row_ptr);
-				return 1;
-			}
-
-			if ((r != g) && (r != b)){
 				printf("forbidden color detected at pixel: (%d,%d), please use a valid png\n",col_ptr,row_ptr);
 				return 1;
 			}

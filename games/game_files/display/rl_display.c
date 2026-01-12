@@ -18,28 +18,28 @@ static i32 window_height = 128;
 
 static u8 frame_buffer[160][128];
 
+static Palette* palette = &PaletteArray[0];
+
+void set_palette(u8 palette_index){
+	palette = &PaletteArray[palette_index];
+};
+
 Color twos_to_rl(TWOS_COLOURS color){
-	switch(color){
-	case T_BLACK:
-		return BLACK;
-	case T_DARK:
-		return (Color){85,85,85,255};
-	case T_TRANSPARENT:
+	if(color==T_TRANSPARENT){
 		return (Color){0,0,0,0};
-	case T_WHITE:
-		return WHITE;
-	};
+	} 
+	return (Color){palette->colors[color*4],palette->colors[color*4+1],palette->colors[color*4+2],palette->colors[color*4+3]};
 }
 
 u8 twos_to_u8(TWOS_COLOURS color){
 	switch(color){
-	case T_BLACK:
+	case T_ONE:
 		return 0;
-	case T_DARK:
+	case T_TWO:
 		return 85;
 	case T_TRANSPARENT:
 		return 0;
-	case T_WHITE:
+	case T_THREE:
 		return 255;
 	};
 }
