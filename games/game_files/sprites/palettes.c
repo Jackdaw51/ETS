@@ -1,22 +1,33 @@
 #include "palettes.h"
 
-const Palette BW = { 
-	.colors = {
-		0,0,0,255,
-		85,85,85,255,
-		255,255,255,255,
-	}
-};
+#define BW (Palette){\ 
+	.colors = {\
+		0,0,0,255,\
+		85,85,85,255,\
+		255,255,255,255,\
+	}\
+}\
 
-const Palette Retro_RBY = {
-	.colors = {
-		255, 77, 77,255,    // Red
-    51, 204, 204,255,   // Green 
-    255, 204, 51,255,    // Yellow
-	}
-};
+#define RETRO_RBY (Palette){\
+	.colors = {\
+		255, 77, 77,255,\  
+    51, 204, 204,255,\    
+    255, 204, 51,255,\    
+	}\
+}\
 
-const Palette PaletteArray[MAX_PALETTES] = { BW,Retro_RBY};
+#define OLIVE_GREEN (Palette){\
+	.colors = {\
+    48,98,48,255,\
+		15,56,15,255,\  
+    155,188,15,255\    
+	}\
+}\
+
+
+
+
+const Palette PaletteArray[MAX_PALETTES] = { BW,RETRO_RBY, OLIVE_GREEN };
 
 	
 

@@ -36,6 +36,7 @@ def remove_const_array_from_h(lines, var_name):
                 "extern" in line
                 and "const" in line
                 and var_name in line
+                or f"{var_name}_sprite" in line
             ):
                 skipping = True
                 if ";" in line:

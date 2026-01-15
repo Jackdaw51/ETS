@@ -12,26 +12,28 @@ SPRITES := game_files/sprites/sprites.c
 PALETTES := game_files/sprites/palettes.c
 
 # Include paths
-INCLUDES := -Ithird_party 
+INCLUDES := -I.
+
+# Dynamic library file
+
+LIB := game_files/display/libraylib_m.a
 
 # -------- OS detection --------
 UNAME_S := $(shell uname -s)
 
 ifeq ($(UNAME_S),Linux)
-    LIBS := $(shell pkg-config --cflags --libs raylib) -lm
+		LIBS = -lm -lpthread -ldl -lrt -lX11
+		LIB = game_files/display/libraylib_l.a
 endif
 
 ifeq ($(UNAME_S),Darwin)
-    LIBS := -lraylib \
+    LIBS := \
             -framework OpenGL \
             -framework Cocoa \
             -framework IOKit \
             -framework CoreVideo
-endif
-
-ifeq ($(OS),Windows_NT)
-    OUT := $(OUT).exe
-    LIBS := -lraylib -lopengl32 -lgdi32 -lwinmm
+		
+		OUT := $(OUT)_m
 endif
 
 # Full target path
@@ -42,7 +44,7 @@ all: $(TARGET)
 
 $(TARGET): $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES)
 	mkdir -p $(OUTDIR)
-	$(CC) $(CFLAGS) $(INCLUDES) $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES) -o $(TARGET) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES) -o $(TARGET) $(LIB) $(LIBS)
 
 play: $(TARGET)
 	./$(OUTDIR)/$(OUT)

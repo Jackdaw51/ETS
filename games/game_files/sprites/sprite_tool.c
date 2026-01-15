@@ -19,7 +19,7 @@ int main(int argc, char** argv){
 	int palette_index = 0;
 
 	if(argc < 3){
-		printf("Usage: ./sprite_tool <FILEPATH> <OUTPUT_NAME> <OPTIONAL PALETTE_INDEX>\n");
+		printf("Usage: ./sprite_tool <FILEPATH> <OUTPUT_NAME>\n");
 		return 1;
 	}
 
@@ -92,63 +92,83 @@ int main(int argc, char** argv){
 
 	int x = 0, y = 0;
 
-	unsigned char *allowed_p = PaletteArray[palette_index].colors;
+  sprintf(header_output[header_out_len++],"\nextern const Sprite %s_sprite;\n",output_name);
+  sprintf(header_output[header_out_len++],"extern const uint8_t %s[];\n",output_name);
+  sprintf(impl_output[impl_out_len++],"const uint8_t %s[] = {\n",output_name);
 
-	int counter = 0;
-	unsigned char temp_space = 0;
+  int unfound_counter = 0;
+  for(int pal = 0; pal < PALETTE_ARR_LEN; pal++){
+    char (*scratch_space)[MAX_SPRITE_LINE_LEN] = malloc(sizeof(char)*MAX_SPRITE_LINES*MAX_SPRITE_LINE_LEN);
+    int scratch_space_len = 0;
 
-	sprintf(header_output[header_out_len++],"\nextern const Sprite %s_sprite;\n",output_name);
-	sprintf(header_output[header_out_len++],"extern const uint8_t %s[];\n",output_name);
-	sprintf(impl_output[impl_out_len++],"const uint8_t %s[] = {\n",output_name);
+    int unfound_counter = 0;
+      
+    unsigned char *allowed_p = PaletteArray[pal].colors;
+    int counter = 0;
+    unsigned char temp_space = 0;
 
-	for(int row_ptr = 0; row_ptr < height; row_ptr++){
-		for(int col_ptr = 0; col_ptr < width; col_ptr++){
-			unsigned char *pixel = pixels + (row_ptr * width + col_ptr) * 4;
-			unsigned char r = pixel[0];
-			unsigned char g = pixel[1];
-			unsigned char b = pixel[2];
-			unsigned char a = pixel[3];
+    for(int row_ptr = 0; row_ptr < height; row_ptr++){
+      for(int col_ptr = 0; col_ptr < width; col_ptr++){
+        unsigned char *pixel = pixels + (row_ptr * width + col_ptr) * 4;
+        unsigned char r = pixel[0];
+        unsigned char g = pixel[1];
+        unsigned char b = pixel[2];
+        unsigned char a = pixel[3];
 
-			boolean allowed = FALSE;
-			unsigned char index = 0;
+        boolean allowed = FALSE;
+        unsigned char index = 0;
 
-			if(a==0){
-				allowed = TRUE;
-				index = 3;
-			}
-			for(unsigned char i = 0; i < 3; i++){
-				int base = i*4;
-				if(r==allowed_p[base] && g==allowed_p[base+1] && b==allowed_p[base+2] && a==allowed_p[base+3]){
-					allowed = TRUE;
-					index = i;
-				}
-			}
+        if(a==0){
+          allowed = TRUE;
+          index = 3;
+        }
+        for(unsigned char i = 0; i < 3; i++){
+          int base = i*4;
+          if(r==allowed_p[base] && g==allowed_p[base+1] && b==allowed_p[base+2] && a==allowed_p[base+3]){
+            allowed = TRUE;
+            index = i;
+          }
+        }
 
-			if(!allowed){
-				printf("forbidden color detected at pixel: (%d,%d), please use a valid png\n",col_ptr,row_ptr);
-				return 1;
-			}
+        if(!allowed){
+          unfound_counter++;
 
-			unsigned char shifted_index = index << ((3-counter)*2);
-			temp_space = temp_space | shifted_index;
-			
-			if(counter == 3){
-				sprintf(impl_output[impl_out_len++],"%d,",temp_space);
-				counter = 0;
-				temp_space = 0;
-			} else {
-				counter++;
-			}
-		//	fprintf(impl,"%d,",index);
-		}
+          if(unfound_counter == PALETTE_ARR_LEN){
+            printf("Could not find a valid palette to match the png");
+            return 1;
+          }
+          goto next_palette;
+        }
 
-		if(counter != 0){
-				sprintf(impl_output[impl_out_len++],"%d,",counter);
-				counter = 0;
-				temp_space = 0;
-		}
-		sprintf(impl_output[impl_out_len++],"\n");
-	}
+        unsigned char shifted_index = index << ((3-counter)*2);
+        temp_space = temp_space | shifted_index;
+        
+        if(counter == 3){
+          sprintf(scratch_space[scratch_space_len++],"%d,",temp_space);
+          counter = 0;
+          temp_space = 0;
+        } else {
+          counter++;
+        }
+      //	fprintf(impl,"%d,",index);
+      }
+
+      if(counter != 0){
+          sprintf(scratch_space[scratch_space_len++],"%d,",counter);
+          counter = 0;
+          temp_space = 0;
+      }
+      sprintf(scratch_space[scratch_space_len++],"\n");
+    }
+
+    for(int ssp = 0; ssp < scratch_space_len; ssp++){
+      sprintf(impl_output[impl_out_len++],"%s",scratch_space[ssp]);
+    }
+
+    next_palette:
+
+      ;
+  }
 
 	sprintf(impl_output[impl_out_len++],"};\n");
 	sprintf(impl_output[impl_out_len++],"const Sprite %s_sprite = {%d,%d,%s};\n\n",output_name,height,width,output_name);
