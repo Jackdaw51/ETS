@@ -87,8 +87,7 @@ make play SRC=<FILENAME>
 A template.c file is included in the game_files/ folder, note that certain functions must be called in order because of the dependency on the raylib library. So try to stick to the template.  The template also represents the typical game loop of Input -> Physics -> Drawing.
 
 
-The drawing functions accept the enum TWOS_COLORS, which include black, white, dark gray and transparent. This is so that you do not need to care about the internals of the color implementation.
-
+The drawing functions accept the enum TWOS_COLORS which represent the index of the palette.
 **THE COORDINATE SYSTEM HAS THE POINT (0,0) IN THE TOP LEFT. THIS MEANS ADDING TO X GOES RIGHT, AND ADDING TO Y GOES DOWN!**
 
 
