@@ -4,7 +4,9 @@ CFLAGS  := -std=c11 -Wall -Wextra -O2
 
 # -------- User-configurable --------
 SRC     ?= game_files/example.c
-OUT     ?= game
+
+OUT := $(basename $(notdir $(SRC)))
+
 OUTDIR  := game_exes
 
 T_PLATFORM ?= game_files/display/rl_display.c
@@ -48,8 +50,6 @@ $(TARGET): $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES)
 
 play: $(TARGET)
 	./$(OUTDIR)/$(OUT)
-
-
 
 .PHONY: all clean
 
