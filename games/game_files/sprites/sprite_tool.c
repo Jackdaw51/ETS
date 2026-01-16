@@ -105,7 +105,7 @@ int main(int argc, char** argv){
       
     unsigned char *allowed_p = PaletteArray[pal].colors;
     int counter = 0;
-    unsigned char temp_space = 0;
+    unsigned char temp_space = 255;
 
     for(int row_ptr = 0; row_ptr < height; row_ptr++){
       for(int col_ptr = 0; col_ptr < width; col_ptr++){
@@ -129,7 +129,6 @@ int main(int argc, char** argv){
             index = i;
           }
         }
-
         if(!allowed){
           unfound_counter++;
 
@@ -140,13 +139,13 @@ int main(int argc, char** argv){
           goto next_palette;
         }
 
-        unsigned char shifted_index = index << ((3-counter)*2);
-        temp_space = temp_space | shifted_index;
+        unsigned char shifted_index = (3-index) << ((3-counter)*2);
+        temp_space = temp_space & (shifted_index^255);
         
         if(counter == 3){
           sprintf(scratch_space[scratch_space_len++],"%d,",temp_space);
           counter = 0;
-          temp_space = 0;
+          temp_space = 255;
         } else {
           counter++;
         }
@@ -154,9 +153,9 @@ int main(int argc, char** argv){
       }
 
       if(counter != 0){
-          sprintf(scratch_space[scratch_space_len++],"%d,",counter);
+          sprintf(scratch_space[scratch_space_len++],"%d,",temp_space);
           counter = 0;
-          temp_space = 0;
+          temp_space = 255;
       }
       sprintf(scratch_space[scratch_space_len++],"\n");
     }

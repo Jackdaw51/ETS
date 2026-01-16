@@ -193,46 +193,45 @@ TextureHandle load_texture_from_sprite_p(u8 height, u8 width, const u8* sprite, 
   Palette *old_palette = palette;
   set_palette(p);
 
-
-	i32 pixel_count = height * width;
+  i32 pixel_count = height * width;
 	Color remapped_image[pixel_count]; 
 
-	u8 isPadded = height % 4;
+	u8 isPadded = width % 4;
 	u8 rows = height;
 	printf("Number of rows = %d,",rows);
-	u8 cols = (u8)ceil(width/4);
+	u8 cols = (u8)ceil(width/4.0f);
 	printf("Number of cols = %d\n",cols);
 
-	i32 row_counter = 1;
+	i32 col_counter = 1;
 	Color *remapped_image_ptr = remapped_image;
 
 	for(i32 i = 0; i < rows*cols; i++){
 		u8 batch = sprite[i];
 
-		if(row_counter == rows && isPadded){
-			u8 non_padding = height % 4;
+		if((col_counter == cols) && isPadded){
+			u8 non_padding = width % 4;
 
-			for(i32 j = 0; j < non_padding; j++){
-				*remapped_image_ptr++ = twos_to_rl(((3 << ((3-j)*2)) & batch) >> ((3-j)*2));
+
+			for(u8 j = 0; j < non_padding; j++){
+			  *remapped_image_ptr++ = twos_to_rl(((3 << ((3-j)*2)) & batch) >> ((3-j)*2));
 			}
-
-			row_counter = 1;
+			col_counter = 1;
 		} else {
-
 			*remapped_image_ptr++ = twos_to_rl(((3 << 6) & batch) >> 6);
 			*remapped_image_ptr++ = twos_to_rl(((3 << 4) & batch) >> 4);
 			*remapped_image_ptr++ = twos_to_rl(((3 << 2) & batch) >> 2);
 			*remapped_image_ptr++ = twos_to_rl(3 & batch);
-
-			row_counter+= 1;
+			col_counter+= 1;
 		}
 	}
 
-	Image rl_image = (Image){.format=PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, .height=height, .width=width, .mipmaps=1, .data=remapped_image};
+
+  Image rl_image = (Image){.format=PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, .height=height, .width=width, .mipmaps=1, .data=remapped_image};
 	Texture2D rl_texture = LoadTextureFromImage(rl_image);
 
 	texture_array[current_index] = rl_texture;
 	current_index++;
+
   palette = old_palette;
 	return current_index-1;
 }
@@ -241,38 +240,37 @@ TextureHandle load_texture_from_sprite(u8 height, u8 width, const u8* sprite){
 	i32 pixel_count = height * width;
 	Color remapped_image[pixel_count]; 
 
-	u8 isPadded = height % 4;
+	u8 isPadded = width % 4;
 	u8 rows = height;
 	printf("Number of rows = %d,",rows);
-	u8 cols = (u8)ceil(width/4);
+	u8 cols = (u8)ceil(width/4.0f);
 	printf("Number of cols = %d\n",cols);
 
-	i32 row_counter = 1;
+	i32 col_counter = 1;
 	Color *remapped_image_ptr = remapped_image;
 
 	for(i32 i = 0; i < rows*cols; i++){
 		u8 batch = sprite[i];
 
-		if(row_counter == rows && isPadded){
-			u8 non_padding = height % 4;
+		if((col_counter == cols) && isPadded){
+			u8 non_padding = width % 4;
 
-			for(i32 j = 0; j < non_padding; j++){
-				*remapped_image_ptr++ = twos_to_rl(((3 << ((3-j)*2)) & batch) >> ((3-j)*2));
+
+			for(u8 j = 0; j < non_padding; j++){
+			  *remapped_image_ptr++ = twos_to_rl(((3 << ((3-j)*2)) & batch) >> ((3-j)*2));
 			}
-
-			row_counter = 1;
+			col_counter = 1;
 		} else {
-
 			*remapped_image_ptr++ = twos_to_rl(((3 << 6) & batch) >> 6);
 			*remapped_image_ptr++ = twos_to_rl(((3 << 4) & batch) >> 4);
 			*remapped_image_ptr++ = twos_to_rl(((3 << 2) & batch) >> 2);
 			*remapped_image_ptr++ = twos_to_rl(3 & batch);
-
-			row_counter+= 1;
+			col_counter+= 1;
 		}
 	}
 
-	Image rl_image = (Image){.format=PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, .height=height, .width=width, .mipmaps=1, .data=remapped_image};
+
+  Image rl_image = (Image){.format=PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, .height=height, .width=width, .mipmaps=1, .data=remapped_image};
 	Texture2D rl_texture = LoadTextureFromImage(rl_image);
 
 	texture_array[current_index] = rl_texture;
