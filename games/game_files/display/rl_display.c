@@ -1,7 +1,6 @@
 #include "display.h"
-#include "types.h"
-#include <stdio.h>
 #include "raylib.h"
+#include "stdio.h"
 #include <math.h>
 
 #define RAYGUI_IMPLEMENTATION
@@ -23,8 +22,20 @@ static TWOS_COLOURS screen_color = T_ONE;
 static Palette* palette = &PaletteArray[0];
 static u8 mapping_array[3] = {0,1,2};
 
+static u8 h_space_spacing = 6; 
+static u8 v_space_spacing = 8;
+
+
 void set_palette(u8 palette_index){
 	palette = &PaletteArray[palette_index];
+};
+
+void set_h_space_len(u8 len){
+	h_space_spacing = len;
+};
+
+void set_v_space_len(u8 len){
+	v_space_spacing = len;
 };
 
 void set_mapping_array(u8* map){
@@ -82,7 +93,7 @@ void set_screen_color(TWOS_COLOURS color){
 }
 
 void clear_screen(){
-  ClearBackground(twos_to_rl(screen_color));
+  ClearBackground(twos_to_rl(screen_color)); 
 }
 
 void clear_screen_c(TWOS_COLOURS color){
@@ -156,15 +167,15 @@ f32 get_proximity(){
   VerticalSlider((Rectangle){0,0,SLIDER_WIDTH,window_height},&slider_value,1023.0f);
   return slider_value;
 };
-void draw_rectangle_outline(i32 x, i32 y, i32 width, i32 height,f32 thickness,TWOS_COLOURS color){
-	DrawRectangleLinesEx((Rectangle){x+UI_WIDTH,y,width,height},thickness,twos_to_rl(color));
+void draw_rectangle_outline(i32 x, i32 y, i32 width, i32 height,u8 thickness,TWOS_COLOURS color){
+	DrawRectangleLinesEx((Rectangle){x+UI_WIDTH,y,width,height},(f32)thickness,twos_to_rl(color));
 
 };
 
-void draw_rectangle_outline_p(i32 x, i32 y, i32 width, i32 height,f32 thickness,TWOS_COLOURS color, u8 p){
+void draw_rectangle_outline_p(i32 x, i32 y, i32 width, i32 height,u8 thickness,TWOS_COLOURS color, u8 p){
   Palette *old_palette = palette;
   set_palette(p);
-	DrawRectangleLinesEx((Rectangle){x+UI_WIDTH,y,width,height},thickness,twos_to_rl(color));
+	DrawRectangleLinesEx((Rectangle){x+UI_WIDTH,y,width,height},(f32)thickness,twos_to_rl(color));
 
   palette = old_palette;
 };
@@ -181,10 +192,6 @@ void draw_rectangle_p(i32 x, i32 y, i32 width, i32 height,TWOS_COLOURS color, u8
   palette = old_palette;
 };
 
-void draw_line(int startPosX,int startPosY,int endPosX,int endPosY,TWOS_COLOURS color){
-	DrawLine(startPosX+UI_WIDTH,startPosY,endPosX+UI_WIDTH,endPosY,twos_to_rl(color));
-}
-
 static Texture2D texture_array[MAX_TEXTURES] = {};
 static u8 current_index = 0;
 
@@ -198,9 +205,7 @@ TextureHandle load_texture_from_sprite_p(u8 height, u8 width, const u8* sprite, 
 
 	u8 isPadded = width % 4;
 	u8 rows = height;
-	printf("Number of rows = %d,",rows);
 	u8 cols = (u8)ceil(width/4.0f);
-	printf("Number of cols = %d\n",cols);
 
 	i32 col_counter = 1;
 	Color *remapped_image_ptr = remapped_image;
@@ -242,9 +247,7 @@ TextureHandle load_texture_from_sprite(u8 height, u8 width, const u8* sprite){
 
 	u8 isPadded = width % 4;
 	u8 rows = height;
-	printf("Number of rows = %d,",rows);
 	u8 cols = (u8)ceil(width/4.0f);
-	printf("Number of cols = %d\n",cols);
 
 	i32 col_counter = 1;
 	Color *remapped_image_ptr = remapped_image;
@@ -281,6 +284,108 @@ TextureHandle load_texture_from_sprite(u8 height, u8 width, const u8* sprite){
 void draw_texture(u8 x, u8 y,TextureHandle texture_index){
 	DrawTexture(texture_array[texture_index],x+UI_WIDTH,y, WHITE);	
 };
+
+void draw_text_h(i32 x, i32 y,i32 extra_spacing, TextBuilder* builder){
+	u8 x_new = x;
+	for(int i = 0; i < builder->len;i++){
+		BuilderElement el = builder->handles[i];
+		if(el.type == SPACE){
+			x_new += h_space_spacing;
+		} else if(el.type == LETTER){
+			draw_texture(x_new,y,el.handle);
+			x_new += 8+extra_spacing;
+		}
+	};
+}
+
+void draw_text_v(i32 x, i32 y,i32 extra_spacing, TextBuilder* builder){
+	// loop over handles and draw them with the spacing 
+	u8 y_new = y;
+	for(int i = 0; i < builder->len;i++){
+		BuilderElement el = builder->handles[i];
+		if(el.type == SPACE){
+			y_new += v_space_spacing;
+		} else if(el.type == LETTER){
+			draw_texture(x,y_new,el.handle);
+			y_new += 8+extra_spacing;
+		}
+	};
+}
+
+void load_text(const char *text, TextBuilder* builder){
+	const char *c = text;
+	u8 counter = 0;
+	while(*c != '\0'){
+		u8 index = (u8)*c;
+		
+		// map to 0-31
+		if(index == ' '){
+			builder->handles[counter++] = (BuilderElement){ .type = SPACE };
+			c++;
+			continue;
+		} else if(index >= 'A' && index <= 'Z'){
+			index = index - (u8)'A';
+		} else if (index >= 'a' && index <= 'z'){
+			index = index - (u8)'a' + 26; // lowercase letters come after cap
+		} else {
+			printf("Invalid text string: %s",text); 
+			return;
+		}
+
+		Sprite* s = text_lookup_table[index];
+		builder->handles[counter++] = (BuilderElement){.type = LETTER ,.handle = load_texture_from_sprite(s->height,s->width, s->data)};
+
+		c++;
+	}
+};
+
+void load_text_p(const char *text,TextBuilder* builder,u8 p){
+	const char *c = text;
+	u8 counter = 0;
+	while(*c != '\0'){
+		u8 index = (u8)*c;
+		
+		if(index == ' '){
+			builder->handles[counter++] = (BuilderElement){ .type = SPACE };
+			c++;
+			continue;
+		}
+		// map to 0-31
+		if(index >= 'A' && index <= 'Z'){
+			index = index - (u8)'A';
+		}
+
+		if(index >= 'a' && index <= 'z'){
+			index = index - (u8)'a' + 31; // lowercase letters come after cap
+		}
+
+		Sprite* s = text_lookup_table[index];
+		builder->handles[counter++] = (BuilderElement){.type = LETTER ,.handle = load_texture_from_sprite_p(s->height,s->width, s->data,p)};
+
+		c++;
+	}
+};
+
+joystick_t get_joystick(){
+	if(IsKeyPressed(KEY_ENTER)){
+		return JS_BUTTON;
+	}
+	if(IsKeyPressed(KEY_W)){
+		return JS_UP;
+	}
+	if(IsKeyPressed(KEY_A)){
+		return JS_LEFT;
+	}
+	if(IsKeyPressed(KEY_S)){
+		return JS_DOWN;
+	}
+	if(IsKeyPressed(KEY_D)){
+		return JS_RIGHT;
+	}
+
+	return JS_NONE;
+};
+
 
 
 

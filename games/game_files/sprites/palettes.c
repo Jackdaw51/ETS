@@ -24,10 +24,32 @@
 	}\
 }\
 
+#define BW_565 (Palette565){\
+    .colors = {\
+        0x0000,\
+        0x52AA,\
+        0xFFFF,\
+    }\
+}\
 
+#define RETRO_RBY_565 (Palette565){\
+	.colors = {\
+		0xFC89,\
+		0x3679,\
+		0xFE66,\
+	}\
+}\
 
+#define OLIVE_GREEN_565 (Palette565){\
+	.colors = {\
+			0x3306,\
+			0x09C1,\
+			0x9DE1,\
+	}\
+}\
 
 const Palette PaletteArray[MAX_PALETTES] = { BW,RETRO_RBY, OLIVE_GREEN };
+const Palette565 PaletteArray565[MAX_PALETTES] = { BW_565,RETRO_RBY_565, OLIVE_GREEN_565 };
 
 	
 
