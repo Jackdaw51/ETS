@@ -1,6 +1,9 @@
 #pragma once
 #include <stdint.h>
 
+#define LCD_SCREEN_WIDTH 160
+#define LCD_SCREEN_HEIGHT 128
+
 typedef uint8_t u8;
 typedef uint16_t u16;
 typedef uint32_t u32;
