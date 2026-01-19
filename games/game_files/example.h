@@ -40,6 +40,7 @@ typedef struct {
 } Block;
 
 
+void start_example(void);
 void draw_character(Character* c);
 void draw_block(Block b);
 Block new_block(u8 x, u8 y, u8 width, u8 height, TWOS_COLOURS color);

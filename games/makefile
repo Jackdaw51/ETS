@@ -12,6 +12,9 @@ OUTDIR  := game_exes
 T_PLATFORM ?= game_files/display/rl_display.c
 SPRITES := game_files/sprites/sprites.c
 PALETTES := game_files/sprites/palettes.c
+TEXTLUT := game_files/display/text_lut.c
+
+LINKS ?= 
 
 # Include paths
 INCLUDES := -I.
@@ -41,15 +44,15 @@ endif
 # Full target path
 TARGET := $(OUTDIR)/$(OUT)
 
-# -------- Build rules --------
-all: $(TARGET)
+.PHONY: FORCE
 
-$(TARGET): $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES)
+# -------- Build rules --------
+
+$(TARGET): FORCE $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES)
 	mkdir -p $(OUTDIR)
-	$(CC) $(CFLAGS) $(INCLUDES) $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES) -o $(TARGET) $(LIB) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) $(SRC) $(LINKS) $(TEXTLUT) $(EXG1) $(T_PLATFORM) $(SPRITES) $(PALETTES) -o $(TARGET) $(LIB) $(LIBS)
 
 play: $(TARGET)
 	./$(OUTDIR)/$(OUT)
 
-.PHONY: all clean
 
