@@ -24,10 +24,16 @@
 	}\
 }\
 
+#define PONG_CUSTOM_PALETTE (Palette) {\
+.colors = {\
+200, 195, 185, 255,\
+215,  90, 175, 255,\
+90, 130, 185, 255  \
+}\
+}\
 
 
-
-const Palette PaletteArray[MAX_PALETTES] = { BW,RETRO_RBY, OLIVE_GREEN };
+const Palette PaletteArray[MAX_PALETTES] = { BW,RETRO_RBY, OLIVE_GREEN, PONG_CUSTOM_PALETTE };
 
 	
 
