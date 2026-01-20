@@ -1,8 +1,10 @@
 // game_files/dino_runner.c
+// Dino Runner - usa dino_state1 (run) e dino_state2 (duck)
 
 #include <stdio.h>
 
 #include "display/display.h"
+#include "sprites/sprites.h"
 #include "sprites/palettes.h"
 #include "stddef.h"
 
@@ -11,14 +13,11 @@
 #define LCD_W 160
 #define LCD_H 128
 
-// Proximity range
-#define PROX_MAX 1023.0f
-
-// Start condition (come pong)
+// Start condition (muovi mano abbastanza rispetto al baseline)
 #define PROX_START_DELTA 8.0f
 
-// Jump gesture: variazione rapida di proximity (tuning)
-#define PROX_JUMP_DELTA  18.0f
+// Jump gesture (delta frame-to-frame) - meno sensibile
+#define PROX_JUMP_DELTA  28.0f
 
 // Duck: mano molto vicina (tuning)
 #define PROX_DUCK_TH     750.0f
@@ -26,29 +25,32 @@
 // Ground
 #define GROUND_Y      (LCD_H - 18)
 
-// Dino
+// Dino position (x fisso)
 #define DINO_X        22
-#define DINO_W        10
-#define DINO_H        14
-#define DINO_DUCK_H    9
 
-// Physics (frame-based)
-#define GRAVITY       0.35f   // px/frame^2
-#define JUMP_VY      -6.5f    // px/frame
+// Physics (frame-based) -> salto più "lungo"
+#define GRAVITY       0.30f   // prima 0.35
+#define JUMP_VY      -7.2f    // prima -6.5
 #define VY_MAX        8.0f
 
-// Speed (px/frame)
-#define SPEED_START   2.0f
-#define SPEED_MUL     1.004f
-#define SPEED_MAX     7.0f
+// Speed (px/frame) - più lento
+#define SPEED_START   1.30f
+#define SPEED_MUL     1.002f
+#define SPEED_MAX     4.50f
 
 // Obstacles
 #define MAX_OBS       6
-#define SPAWN_MIN_FR  42
-#define SPAWN_MAX_FR  85
+#define SPAWN_MIN_FR  48
+#define SPAWN_MAX_FR  95
+
+// Jump cooldown (anti-rumore)
+#define JUMP_COOLDOWN_FR 10
 
 // Gameover
 #define GAMEOVER_FRAMES 90
+
+#define DINO_DUCK_H_PIX 12
+
 
 typedef enum {
     IDLE = 0,
@@ -104,7 +106,7 @@ static u8 aabb_i32(i32 ax, i32 ay, i32 aw, i32 ah,
 }
 
 // ------------------------------------------------------------
-// Simple RNG (no stdlib)
+// Simple RNG
 
 static u32 rng_state = 123456789u;
 
@@ -126,7 +128,7 @@ static u8 rng_chance_percent(i32 pct) {
 }
 
 // ------------------------------------------------------------
-// 7-seg digits (stesso del pong)
+// 7-seg digits (come pong_wall)
 
 static void draw_seg_digit(i32 x, i32 y, i32 s, i32 thick, int d, TWOS_COLOURS col) {
     static const u8 mask[10] = {
@@ -148,13 +150,13 @@ static void draw_seg_digit(i32 x, i32 y, i32 s, i32 thick, int d, TWOS_COLOURS c
     i32 w = 3 * s;
     i32 h = 5 * s;
 
-    if (m & (1<<6)) draw_rectangle_p(x + thick, y, w - 2*thick, thick, col, BW_INDEX);                 // A
-    if (m & (1<<5)) draw_rectangle_p(x + w - thick, y + thick, thick, (h/2) - thick, col, BW_INDEX);  // B
-    if (m & (1<<4)) draw_rectangle_p(x + w - thick, y + (h/2), thick, (h/2) - thick, col, BW_INDEX);  // C
-    if (m & (1<<3)) draw_rectangle_p(x + thick, y + h - thick, w - 2*thick, thick, col, BW_INDEX);     // D
-    if (m & (1<<2)) draw_rectangle_p(x, y + (h/2), thick, (h/2) - thick, col, BW_INDEX);               // E
-    if (m & (1<<1)) draw_rectangle_p(x, y + thick, thick, (h/2) - thick, col, BW_INDEX);               // F
-    if (m & (1<<0)) draw_rectangle_p(x + thick, y + (h/2) - (thick/2), w - 2*thick, thick, col, BW_INDEX); // G
+    if (m & (1<<6)) draw_rectangle_p(x + thick, y, w - 2*thick, thick, col, BW_INDEX);
+    if (m & (1<<5)) draw_rectangle_p(x + w - thick, y + thick, thick, (h/2) - thick, col, BW_INDEX);
+    if (m & (1<<4)) draw_rectangle_p(x + w - thick, y + (h/2), thick, (h/2) - thick, col, BW_INDEX);
+    if (m & (1<<3)) draw_rectangle_p(x + thick, y + h - thick, w - 2*thick, thick, col, BW_INDEX);
+    if (m & (1<<2)) draw_rectangle_p(x, y + (h/2), thick, (h/2) - thick, col, BW_INDEX);
+    if (m & (1<<1)) draw_rectangle_p(x, y + thick, thick, (h/2) - thick, col, BW_INDEX);
+    if (m & (1<<0)) draw_rectangle_p(x + thick, y + (h/2) - (thick/2), w - 2*thick, thick, col, BW_INDEX);
 }
 
 static void draw_int_7seg(i32 x, i32 y, i32 s, i32 thick, i32 value, TWOS_COLOURS col) {
@@ -180,13 +182,6 @@ static void draw_int_7seg(i32 x, i32 y, i32 s, i32 thick, i32 value, TWOS_COLOUR
 // ------------------------------------------------------------
 // Game helpers
 
-static void reset_dino(Dino* d) {
-    d->duck = 0;
-    d->on_ground = 1;
-    d->vy = 0.0f;
-    d->y = (f32)(GROUND_Y - DINO_H);
-}
-
 static void clear_obstacles(Obstacle obs[MAX_OBS]) {
     for (int i = 0; i < MAX_OBS; i++) obs[i].active = 0;
 }
@@ -202,22 +197,39 @@ static void spawn_obstacle(Obstacle obs[MAX_OBS]) {
     o->active = 1;
 
     if (rng_chance_percent(78)) {
+        // -------- CACTUS (a terra)
         o->type = OBS_CACTUS;
         o->w = rng_range_i32(6, 16);
         o->h = rng_range_i32(10, 20);
         o->x = (f32)(LCD_W + 2);
         o->y = (f32)(GROUND_Y - o->h);
     } else {
+        // -------- BIRD (in aria)
         o->type = OBS_BIRD;
         o->w = 14;
         o->h = 8;
         o->x = (f32)(LCD_W + 2);
 
-        // due altezze
-        if (rng_chance_percent(50)) o->y = (f32)(GROUND_Y - 18);
-        else                        o->y = (f32)(GROUND_Y - 26);
+        // vogliamo che "duck" (12px) possa passare sotto
+        // gap = GROUND_Y - (bird_bottom) >= DINO_DUCK_H_PIX + margin
+        const i32 margin = 2;
+        const i32 gap_ok = DINO_DUCK_H_PIX + margin;
+
+        // y che rende duck necessario e sufficiente
+        i32 y_duck = GROUND_Y - (gap_ok + o->h);
+
+        // y più alto (duck non necessario, ma sempre ok)
+        i32 y_high = y_duck - 10;
+
+        // clamp per sicurezza (non andare sopra lo schermo)
+        if (y_high < 0) y_high = 0;
+
+        // mix: spesso uccello basso (duck richiesto), ogni tanto più alto
+        if (rng_chance_percent(60)) o->y = (f32)y_duck;
+        else                        o->y = (f32)y_high;
     }
 }
+
 
 static void despawn_if_offscreen(Obstacle* o) {
     if (o->active && (o->x + (f32)o->w < -2.0f)) o->active = 0;
@@ -228,13 +240,35 @@ static void despawn_if_offscreen(Obstacle* o) {
 
 int dino_runner_game(void) {
     display_init_lcd();
-    set_palette(PONG_CUSTOM_PALETTE_INDEX);  // cambia se vuoi
+    // Palette di gioco (sfondo/terrain ecc.)
+    set_palette(DINO_CUSTOM_PALETTE_INDEX);
+
+    TextureHandle dino_run_tex  = load_texture_from_sprite_p(
+    dino_state1_sprite.height, dino_state1_sprite.width, dino_state1_sprite.data,
+    BW_INDEX
+);
+
+    TextureHandle dino_duck_tex = load_texture_from_sprite_p(
+        dino_state2_sprite.height, dino_state2_sprite.width, dino_state2_sprite.data,
+        BW_INDEX
+    );
+
     set_screen_color(T_ONE);
+
+    // Dimensioni reali (hitbox = sprite)
+    const i32 DINO_RUN_W  = (i32)dino_state1_sprite.width;
+    const i32 DINO_RUN_H  = (i32)dino_state1_sprite.height;
+    const i32 DINO_DUCK_W = (i32)dino_state2_sprite.width;
+    const i32 DINO_DUCK_H = (i32)dino_state2_sprite.height;
 
     GameState state = IDLE;
 
-    Dino dino;
-    reset_dino(&dino);
+    Dino dino = (Dino){
+        .y = (f32)(GROUND_Y - DINO_RUN_H),
+        .vy = 0.0f,
+        .on_ground = 1,
+        .duck = 0
+    };
 
     Obstacle obs[MAX_OBS];
     clear_obstacles(obs);
@@ -244,10 +278,12 @@ int dino_runner_game(void) {
     f32 speed = SPEED_START;
     i32 spawn_cd = rng_range_i32(SPAWN_MIN_FR, SPAWN_MAX_FR);
 
+    // proximity for START + delta jump
     f32 proximity = get_proximity();
     f32 prox0 = proximity;
     f32 prox_prev = proximity;
 
+    i32 jump_cd = 0;
     i32 gameover_cd = 0;
 
     while (!window_should_close()) {
@@ -269,30 +305,46 @@ int dino_runner_game(void) {
                 speed = SPEED_START;
                 spawn_cd = rng_range_i32(SPAWN_MIN_FR, SPAWN_MAX_FR);
 
-                reset_dino(&dino);
+                dino.duck = 0;
+                dino.on_ground = 1;
+                dino.vy = 0.0f;
+                dino.y = (f32)(GROUND_Y - DINO_RUN_H);
+
                 clear_obstacles(obs);
+                jump_cd = 0;
             }
         }
         else if (state == PLAYING) {
+            if (jump_cd > 0) jump_cd--;
+
             // duck solo a terra
             dino.duck = (duck && dino.on_ground) ? 1 : 0;
 
-            // jump solo se a terra
-            if (jump && dino.on_ground) {
-                dino.vy = JUMP_VY;
-                dino.on_ground = 0;
+            // dimensioni attuali (in base allo sprite)
+            i32 cur_w = dino.duck ? DINO_DUCK_W : DINO_RUN_W;
+            i32 cur_h = dino.duck ? DINO_DUCK_H : DINO_RUN_H;
+
+            // Se passi in duck mentre sei a terra, riallinea la y al terreno
+            if (dino.on_ground) {
+                dino.y = (f32)(GROUND_Y - cur_h);
             }
 
-            // fisica
+            // jump solo se a terra e cooldown finito
+            if (jump && dino.on_ground && jump_cd == 0) {
+                dino.vy = JUMP_VY;
+                dino.on_ground = 0;
+                jump_cd = JUMP_COOLDOWN_FR;
+            }
+
+            // physics
             dino.vy += GRAVITY;
             dino.vy = clampf(dino.vy, -50.0f, VY_MAX);
             dino.y  += dino.vy;
 
-            i32 dino_h = dino.duck ? DINO_DUCK_H : DINO_H;
-            f32 ground_top = (f32)(GROUND_Y - dino_h);
-
-            if (dino.y >= ground_top) {
-                dino.y = ground_top;
+            // FIX pavimento (int)
+            i32 ground_top_i = GROUND_Y - cur_h;
+            if (dino.y >= (f32)ground_top_i) {
+                dino.y = (f32)ground_top_i;
                 dino.vy = 0.0f;
                 dino.on_ground = 1;
             }
@@ -311,16 +363,14 @@ int dino_runner_game(void) {
 
                 i32 min_fr = SPAWN_MIN_FR - (i32)((speed - SPEED_START) * 3.0f);
                 i32 max_fr = SPAWN_MAX_FR - (i32)((speed - SPEED_START) * 4.0f);
-                if (min_fr < 26) min_fr = 26;
-                if (max_fr < 45) max_fr = 45;
+                if (min_fr < 30) min_fr = 30;
+                if (max_fr < 55) max_fr = 55;
 
                 spawn_cd = rng_range_i32(min_fr, max_fr);
             }
 
             // move obstacles + collision
             i32 dino_yi = (i32)dino.y;
-            i32 dino_hi = dino.duck ? DINO_DUCK_H : DINO_H;
-
             for (int i = 0; i < MAX_OBS; i++) {
                 if (!obs[i].active) continue;
 
@@ -328,7 +378,7 @@ int dino_runner_game(void) {
                 despawn_if_offscreen(&obs[i]);
 
                 if (obs[i].active) {
-                    if (aabb_i32(DINO_X, dino_yi, DINO_W, dino_hi,
+                    if (aabb_i32(DINO_X, dino_yi, cur_w, cur_h,
                                  (i32)obs[i].x, (i32)obs[i].y, obs[i].w, obs[i].h)) {
                         state = GAMEOVER;
                         gameover_cd = GAMEOVER_FRAMES;
@@ -349,19 +399,21 @@ int dino_runner_game(void) {
         clear_screen();
 
         // ground
-        draw_rectangle(0, GROUND_Y, LCD_W, 2, T_THREE);
+        draw_rectangle(0, GROUND_Y, LCD_W, 20, T_TWO);
 
-        // dino
+        // dino sprite
         {
-            i32 dh = (state == PLAYING && dino.duck) ? DINO_DUCK_H : DINO_H;
-            if (state == IDLE) dh = DINO_H;
-            draw_rectangle(DINO_X, (i32)dino.y, DINO_W, dh, T_TWO);
+            if (state == PLAYING && dino.duck) {
+                draw_texture((u8)DINO_X, (u8)((i32)dino.y), dino_duck_tex);
+            } else {
+                draw_texture((u8)DINO_X, (u8)((i32)dino.y), dino_run_tex);
+            }
         }
 
-        // obstacles
+        // obstacles (ancora rettangoli)
         for (int i = 0; i < MAX_OBS; i++) {
             if (!obs[i].active) continue;
-            draw_rectangle((i32)obs[i].x, (i32)obs[i].y, obs[i].w, obs[i].h, T_THREE);
+            draw_rectangle((i32)obs[i].x, (i32)obs[i].y, obs[i].w, obs[i].h, T_TWO);
         }
 
         // score top-right (7seg)
@@ -381,7 +433,7 @@ int dino_runner_game(void) {
 
         // overlays
         if (state == IDLE) {
-            draw_rectangle(LCD_W - 10, 2, 6, 2, T_THREE);
+            draw_rectangle(LCD_W - 10, 2, 6, 2, T_TWO);
         }
         if (state == GAMEOVER) {
             draw_rectangle_outline_p(12, 32, LCD_W - 24, 64, 2.0f, T_ONE, BW_INDEX);

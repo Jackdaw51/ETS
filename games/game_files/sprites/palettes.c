@@ -32,8 +32,17 @@
 }\
 }\
 
+#define DINO_CUSTOM_PALETTE (Palette) { \
+.colors = { \
+232, 214, 170, 255, \
+76, 125,  72, 255, \
+0,   0,   0, 255  \
+} \
+}
 
-const Palette PaletteArray[MAX_PALETTES] = { BW,RETRO_RBY, OLIVE_GREEN, PONG_CUSTOM_PALETTE };
+
+
+const Palette PaletteArray[MAX_PALETTES] = { BW,RETRO_RBY, OLIVE_GREEN, PONG_CUSTOM_PALETTE, DINO_CUSTOM_PALETTE };
 
 	
 

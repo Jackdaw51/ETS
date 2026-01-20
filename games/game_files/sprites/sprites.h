@@ -29,3 +29,9 @@ extern const uint8_t wuf1[];
 
 extern const Sprite wdf1_sprite;
 extern const uint8_t wdf1[];
+
+extern const Sprite dino_state1_sprite;
+extern const uint8_t dino_state1[];
+
+extern const Sprite dino_state2_sprite;
+extern const uint8_t dino_state2[];
