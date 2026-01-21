@@ -77,3 +77,13 @@ void draw_texture(u8 x, u8 y, TextureHandle texture_index);
 f32 get_proximity(void);
 joystick_t get_joystick(void);
 
+void set_render_update_rate(u16 rate);
+void set_physics_update_rate(u16 rate);
+
+u16 get_physics_ticks(void);
+u16 get_render_ticks(void);
+
+void decrement_physics_ticks(void);
+void decrement_render_ticks(void);
+
+
