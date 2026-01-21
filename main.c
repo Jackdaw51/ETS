@@ -2,6 +2,7 @@
 #include "incl/hcsr04.h"
 #include "incl/IRrecv.h"
 #include "incl/joystick.h"
+#include "incl/screen.h"
 
 volatile uint8_t ta_done = 0;
 
@@ -24,31 +25,38 @@ int main(void)
 
     js_init();
 
+    screen_init();
+
+    //__WFI();
+
     joystick_t a;
 
     while (1)
     {
-        // float distance_cm = trigger_hcsr04();
 
         P1->OUT &= ~BIT0; // Turn off Red LED
         P2->OUT &= ~BIT1; // Turn off Green LED
 
-        // if (distance_cm > 100)
-        // {
-        //     P1->OUT ^= BIT0; // Toggle Red LED state
-        // }
-        // else
-        // {
-        //     P2->OUT ^= BIT1; // Toggle Green LED state
-        // }
-        //        __WFI(); // Enter low-power mode until an interrupt occurs
+        /*
+        float distance_cm = trigger_hcsr04();
+
+        if (distance_cm > 100)
+        {
+            P1->OUT ^= BIT0; // Toggle Red LED state
+        }
+        else
+        {
+            P2->OUT ^= BIT1; // Toggle Green LED state
+        }
+        //__WFI(); // Enter low-power mode until an interrupt occurs
+        */
         a = read_joystick();
         switch (a)
         {
-        case JS_UP:
+        case JS_DOWN:
             P1->OUT ^= BIT0;
             break;
-        case JS_LEFT:
+        case JS_RIGHT:
             P2->OUT ^= BIT1;
             break;
         case JS_BUTTON:
@@ -58,8 +66,9 @@ int main(void)
         default:
             break;
         }
+        LCD_FillColor(0xF800);
+        LCD_FillColor(0xF800);
 
-        sleep_ms(10);
     }
 }
 void init_red(void)
