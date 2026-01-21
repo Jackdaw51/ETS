@@ -3,10 +3,10 @@
 #define JOYSTICK_H
 
 typedef enum {
-    JS_UP = 0,
-    JS_DOWN,
-    JS_LEFT,
+    JS_DOWN = 0,
+    JS_UP,
     JS_RIGHT,
+    JS_LEFT,
     JS_BUTTON,
     JS_NONE
 } joystick_t;
