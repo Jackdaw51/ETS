@@ -1,6 +1,6 @@
 #include "palettes.h"
 
-#define BW (Palette){\ 
+#define BW (Palette){\
 	.colors = {\
 		0,0,0,255,\
 		85,85,85,255,\
@@ -10,17 +10,17 @@
 
 #define RETRO_RBY (Palette){\
 	.colors = {\
-		255, 77, 77,255,\  
-    51, 204, 204,255,\    
-    255, 204, 51,255,\    
+		255, 77, 77,255,\
+    	51, 204, 204,255,\
+    	255, 204, 51,255,\
 	}\
 }\
 
 #define OLIVE_GREEN (Palette){\
 	.colors = {\
-    48,98,48,255,\
-		15,56,15,255,\  
-    155,188,15,255\    
+    	48,98,48,255,\
+		15,56,15,255,\
+    	155,188,15,255,\
 	}\
 }\
 
@@ -48,8 +48,32 @@
 	}\
 }\
 
-const Palette PaletteArray[MAX_PALETTES] = { BW,RETRO_RBY, OLIVE_GREEN };
-const Palette565 PaletteArray565[MAX_PALETTES] = { BW_565,RETRO_RBY_565, OLIVE_GREEN_565 };
+#define SNAKE_PALETTE (Palette565){\
+	.colors = {\
+		0x0000,\
+		0x1284,\
+		0x1ba6,\
+	}\
+}\
+
+#define FIBONACCI_RAT_PALETTE (Palette565){\
+	.colors = {\
+		0x0000,\
+		0x8430,\
+		0xf41f,\
+	}\
+}\
+
+#define APPLE_PALETTE (Palette565){\
+	.colors = {\
+		0x0000,\
+		0xb082,\
+		0x1284,\
+	}\
+}\
+
+const Palette PaletteArray[MAX_PALETTES] = { BW, RETRO_RBY, OLIVE_GREEN };
+const Palette565 PaletteArray565[MAX_PALETTES] = { BW_565, RETRO_RBY_565, OLIVE_GREEN_565, SNAKE_PALETTE, FIBONACCI_RAT_PALETTE, APPLE_PALETTE };
 
 	
 

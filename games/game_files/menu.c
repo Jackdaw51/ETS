@@ -3,10 +3,10 @@
 #include "display/display.h"
 #include "stddef.h"
 
-#define NUMBER_OF_GAMES 3
+#define NUMBER_OF_GAMES 4
 
 u8 menu(){
-	char* example_game_names[NUMBER_OF_GAMES] = {"COD","LEGEND OF ZELDA", "ROWAN"};
+	char* example_game_names[NUMBER_OF_GAMES] = {"COD","LEGEND OF ZELDA", "ROWAN", "SNAKE"};
 	TextBuilder game_title_builders[NUMBER_OF_GAMES];
 
 	u8 chosen = 0;
@@ -18,6 +18,7 @@ u8 menu(){
 		game_title_builders[0] = (TextBuilder){ .handles = (BuilderElement[3]){}, .len = 3};
 		game_title_builders[1] = (TextBuilder){ .handles = (BuilderElement[15]){}, .len = 15};
 		game_title_builders[2] = (TextBuilder){ .handles = (BuilderElement[5]){}, .len = 5};
+		game_title_builders[3] = (TextBuilder){ .handles = (BuilderElement[5]){}, .len = 5};
 
 		TextBuilder menu_text_builder = (TextBuilder){ .handles = (BuilderElement[4]){}, .len = 4};
 
@@ -42,10 +43,15 @@ u8 menu(){
 					case 1:
 						break;
 					case 2:
+						// Start Rowan
 						chosen = 2;
 						break;
+					case 3:
+						// Start snake
+						chosen = 3;
+						break;
 				};
-				printf("You chose: %s",example_game_names[game_choice_index]);
+				printf("You chose: %s\n",example_game_names[game_choice_index]);
 				fflush(stdout);
 			} else if(action == JS_UP){
 				if(game_choice_index == 0){
