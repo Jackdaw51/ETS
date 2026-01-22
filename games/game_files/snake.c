@@ -12,7 +12,6 @@ void start_snake(){
   joystick_t joystick;
   State game_state = PLAYING;
   Quad_Direction direction = Q_RIGHT;
-  set_palette(RETRO_RBY_INDEX);
 
   u8 snake_x[MAP_SIZE]; // Work as circular buffers
   u8 snake_y[MAP_SIZE];
@@ -26,6 +25,31 @@ void start_snake(){
   u8 food_x = 3*(MAP_WIDTH/4);
   u8 food_y = MAP_HEIGHT/2;
 
+  
+  set_palette(SNAKE_INDEX);
+  set_screen_color(0); // Background color should be se to black
+
+  TextureHandle food_texture = load_texture_from_sprite_p(apple_sprite.height, apple_sprite.width, apple_sprite.data, APPLE_INDEX);
+  TextureHandle rat_texture = load_texture_from_sprite_p(rat_sprite.height, rat_sprite.width, rat_sprite.data, RAT_INDEX);
+  TextureHandle snake_texture[14]; // 14 different snake sprites
+  // Main pieces
+  snake_texture[0] = load_texture_from_sprite(sn_horizontal_sprite.height, sn_horizontal_sprite.width, sn_horizontal_sprite.data);
+  snake_texture[1] = load_texture_from_sprite(sn_vertical_sprite.height, sn_vertical_sprite.width, sn_vertical_sprite.data);
+  // Turning
+  snake_texture[2] = load_texture_from_sprite(sn_upleft_sprite.height, sn_upleft_sprite.width, sn_upleft_sprite.data);
+  snake_texture[3] = load_texture_from_sprite(sn_upright_sprite.height, sn_upright_sprite.width, sn_upright_sprite.data);
+  snake_texture[4] = load_texture_from_sprite(sn_downleft_sprite.height, sn_downleft_sprite.width, sn_downleft_sprite.data);
+  snake_texture[5] = load_texture_from_sprite(sn_downright_sprite.height, sn_downright_sprite.width, sn_downright_sprite.data);
+  // Heads
+  snake_texture[6] = load_texture_from_sprite(sn_head_up_sprite.height, sn_head_up_sprite.width, sn_head_up_sprite.data);
+  snake_texture[7] = load_texture_from_sprite(sn_head_down_sprite.height, sn_head_down_sprite.width, sn_head_down_sprite.data);
+  snake_texture[8] = load_texture_from_sprite(sn_head_left_sprite.height, sn_head_left_sprite.width, sn_head_left_sprite.data);
+  snake_texture[9] = load_texture_from_sprite(sn_head_right_sprite.height, sn_head_right_sprite.width, sn_head_right_sprite.data);
+  // Tails
+  snake_texture[10] = load_texture_from_sprite(sn_tail_up_sprite.height, sn_tail_up_sprite.width, sn_tail_up_sprite.data);
+  snake_texture[11] = load_texture_from_sprite(sn_tail_down_sprite.height, sn_tail_down_sprite.width, sn_tail_down_sprite.data);
+  snake_texture[12] = load_texture_from_sprite(sn_tail_left_sprite.height, sn_tail_left_sprite.width, sn_tail_left_sprite.data);
+  snake_texture[13] = load_texture_from_sprite(sn_tail_right_sprite.height, sn_tail_right_sprite.width, sn_tail_right_sprite.data);
 
   while(!window_should_close()){
     display_begin();
@@ -113,19 +137,29 @@ void start_snake(){
 
         // Drawing goes after this line
 		    clear_screen();
-        set_screen_color(2);
+        draw_snake(snake_x, snake_y, snake_length, snake_texture);
+        if (game_state == PLAYING) {
+          // Draw the food at new position
+          if (rand() % 10 == 0) { // !!!PROBABLY SHOULD CHANGE THE RAND FUNCTION
+            // 10% chance of being a rat
+            draw_food(food_x, food_y, rat_texture);
+          } else {
+            draw_food(food_x, food_y, food_texture);
+          }
+        }
+
         break;
 
       case LOST:
         // Drawing goes after this line
 		    clear_screen();
-        set_screen_color(0);
+        set_screen_color(1);
         break;
         
       case WIN:
         // Drawing goes after this line
 		    clear_screen();
-        set_screen_color(1);
+        set_screen_color(2);
         break;
     }
 
@@ -168,4 +202,96 @@ boolean new_food(u8* food_x, u8* food_y, u8* snake_x, u8* snake_y, u8 snake_leng
   }
 
   return true;
+}
+
+void draw_snake(u8* snake_x, u8* snake_y, u8 snake_length, TextureHandle* snake_texture) {
+  // Draw the snake based on its segments' positions
+  for (u8 i = 0; i < snake_length; i++) {
+    TextureHandle segment_texture;
+    // Determine which texture to use based on segment position
+    if (i == 0) {
+      // Tail segment
+      if (snake_x[i] == snake_x[i+1]) {
+        // Vertical tail
+        if (snake_y[i] < snake_y[i+1]) {
+          segment_texture = snake_texture[10]; // Tail up
+        } else {
+          segment_texture = snake_texture[11]; // Tail down
+        }
+      } else {
+        // Horizontal tail
+        if (snake_x[i] < snake_x[i+1]) {
+          segment_texture = snake_texture[12]; // Tail left
+        } else {
+          segment_texture = snake_texture[13]; // Tail right
+        }
+      }
+    } else if (i == snake_length - 1) {
+      // Head segment
+      if (snake_x[i] == snake_x[i-1]) {
+        // Vertical head
+        if (snake_y[i] < snake_y[i-1]) {
+          segment_texture = snake_texture[6]; // Head up
+        } else {
+          segment_texture = snake_texture[7]; // Head down
+        }
+      } else {
+        // Horizontal head
+        if (snake_x[i] < snake_x[i-1]) {
+          segment_texture = snake_texture[8]; // Head left
+        } else {
+          segment_texture = snake_texture[9]; // Head right
+        }
+      }
+    } else {
+      // Body segment
+      if (snake_x[i] == snake_x[i-1]) {
+        if (snake_x[i] == snake_x[i+1]) {
+          // Vertical segment
+          segment_texture = snake_texture[1];
+        } else {
+          // Turning segment
+          if ((snake_y[i] < snake_y[i-1] && snake_x[i] < snake_x[i+1]) ||
+              (snake_y[i] > snake_y[i-1] && snake_x[i] > snake_x[i+1])) {
+            segment_texture = snake_texture[5]; // Downright
+          } else if ((snake_y[i] < snake_y[i-1] && snake_x[i] > snake_x[i+1]) ||
+                     (snake_y[i] > snake_y[i-1] && snake_x[i] < snake_x[i+1])) {
+            segment_texture = snake_texture[4]; // Downleft
+          } else if ((snake_x[i] < snake_x[i-1] && snake_y[i] < snake_y[i+1]) ||
+                     (snake_x[i] > snake_x[i-1] && snake_y[i] > snake_y[i+1])) {
+            segment_texture = snake_texture[2]; // Upleft
+          } else {
+            segment_texture = snake_texture[3]; // Upright
+          }
+        }
+        //if (snake_y[i] == snake_y[i-1])
+      } else { // For how the snake is saved, we shouldn't need to check also the y coordinates
+        if (snake_y[i] == snake_y[i+1]) {
+          // Horizontal segment
+          segment_texture = snake_texture[0];
+        } else {
+          // Turning segment
+          if ((snake_x[i] < snake_x[i-1] && snake_y[i] < snake_y[i+1]) ||
+              (snake_x[i] > snake_x[i-1] && snake_y[i] > snake_y[i+1])) {
+            segment_texture = snake_texture[2]; // Upleft
+          } else if ((snake_x[i] < snake_x[i-1] && snake_y[i] > snake_y[i+1]) ||
+                     (snake_x[i] > snake_x[i-1] && snake_y[i] < snake_y[i+1])) {
+            segment_texture = snake_texture[3]; // Upright
+          } else if ((snake_y[i] < snake_y[i-1] && snake_x[i] < snake_x[i+1]) ||
+                     (snake_y[i] > snake_y[i-1] && snake_x[i] > snake_x[i+1])) {
+            segment_texture = snake_texture[5]; // Downright
+          } else {
+            segment_texture = snake_texture[4]; // Downleft
+          }
+        }
+      }
+    }
+
+    draw_texture(snake_x[i]*8, snake_y[i]*8, segment_texture);
+  }
+
+}
+
+void draw_food(u8 food_x, u8 food_y, TextureHandle food_texture) {
+  draw_texture(food_x*8, food_y*8, food_texture);
 }
