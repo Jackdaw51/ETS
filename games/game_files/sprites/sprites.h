@@ -184,3 +184,51 @@ extern const uint8_t lower_y[];
 
 extern const Sprite lower_z_sprite;
 extern const uint8_t lower_z[];
+
+extern const Sprite apple_sprite;
+extern const uint8_t apple[];
+
+extern const Sprite rat_sprite;
+extern const uint8_t rat[];
+
+extern const Sprite sn_horizontal_sprite;
+extern const uint8_t sn_horizontal[];
+
+extern const Sprite sn_vertical_sprite;
+extern const uint8_t sn_vertical[];
+
+extern const Sprite sn_upleft_sprite;
+extern const uint8_t sn_upleft[];
+
+extern const Sprite sn_upright_sprite;
+extern const uint8_t sn_upright[];
+
+extern const Sprite sn_downleft_sprite;
+extern const uint8_t sn_downleft[];
+
+extern const Sprite sn_downright_sprite;
+extern const uint8_t sn_downright[];
+
+extern const Sprite sn_head_up_sprite;
+extern const uint8_t sn_head_up[];
+
+extern const Sprite sn_head_down_sprite;
+extern const uint8_t sn_head_down[];
+
+extern const Sprite sn_head_left_sprite;
+extern const uint8_t sn_head_left[];
+
+extern const Sprite sn_head_right_sprite;
+extern const uint8_t sn_head_right[];
+
+extern const Sprite sn_tail_up_sprite;
+extern const uint8_t sn_tail_up[];
+
+extern const Sprite sn_tail_down_sprite;
+extern const uint8_t sn_tail_down[];
+
+extern const Sprite sn_tail_left_sprite;
+extern const uint8_t sn_tail_left[];
+
+extern const Sprite sn_tail_right_sprite;
+extern const uint8_t sn_tail_right[];

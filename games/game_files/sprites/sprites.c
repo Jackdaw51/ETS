@@ -1626,3 +1626,67 @@ const uint8_t lower_z[] = {
 };
 const Sprite lower_z_sprite = {20,10,lower_z};
 
+const uint8_t apple[] = {
+};
+const Sprite apple_sprite = {8,8,apple};
+
+const uint8_t rat[] = {
+};
+const Sprite rat_sprite = {8,8,rat};
+
+const uint8_t sn_horizontal[] = {
+};
+const Sprite sn_horizontal_sprite = {8,8,sn_horizontal};
+
+const uint8_t sn_vertical[] = {
+};
+const Sprite sn_vertical_sprite = {8,8,sn_vertical};
+
+const uint8_t sn_upleft[] = {
+};
+const Sprite sn_upleft_sprite = {8,8,sn_upleft};
+
+const uint8_t sn_upright[] = {
+};
+const Sprite sn_upright_sprite = {8,8,sn_upright};
+
+const uint8_t sn_downleft[] = {
+};
+const Sprite sn_downleft_sprite = {8,8,sn_downleft};
+
+const uint8_t sn_downright[] = {
+};
+const Sprite sn_downright_sprite = {8,8,sn_downright};
+
+const uint8_t sn_head_up[] = {
+};
+const Sprite sn_head_up_sprite = {8,8,sn_head_up};
+
+const uint8_t sn_head_down[] = {
+};
+const Sprite sn_head_down_sprite = {8,8,sn_head_down};
+
+const uint8_t sn_head_left[] = {
+};
+const Sprite sn_head_left_sprite = {8,8,sn_head_left};
+
+const uint8_t sn_head_right[] = {
+};
+const Sprite sn_head_right_sprite = {8,8,sn_head_right};
+
+const uint8_t sn_tail_up[] = {
+};
+const Sprite sn_tail_up_sprite = {8,8,sn_tail_up};
+
+const uint8_t sn_tail_down[] = {
+};
+const Sprite sn_tail_down_sprite = {8,8,sn_tail_down};
+
+const uint8_t sn_tail_left[] = {
+};
+const Sprite sn_tail_left_sprite = {8,8,sn_tail_left};
+
+const uint8_t sn_tail_right[] = {
+};
+const Sprite sn_tail_right_sprite = {8,8,sn_tail_right};
+
