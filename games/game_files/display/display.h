@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include "types.h"
 #include "../sprites/palettes.h"
+<<<<<<< Updated upstream
 
 // When drawing 
 
@@ -15,6 +16,12 @@ typedef enum TWOS_COLOURS {
 	T_THREE = 2,
 	T_TRANSPARENT = 3,
 } TWOS_COLOURS;
+=======
+#include "../../../incl/joystick.h"
+#include "../../../incl/screen.h"
+#include "../../../incl/hcsr04.h"
+#include "text_lut.h"
+>>>>>>> Stashed changes
 
 // ------------------------------------------------------------------
 // Opening and Closing the window

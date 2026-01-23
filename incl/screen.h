@@ -10,3 +10,9 @@ void write_data(u8 data);
 void screen_init();
 void LCD_FillColor(uint16_t);
 void LCD_Init(void);
+
+void set_address_window(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
+void write_data_fast(uint8_t highByte, uint8_t lowByte);
+void pin_init();
+void pin_des();
+

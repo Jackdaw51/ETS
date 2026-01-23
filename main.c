@@ -1,14 +1,21 @@
 #include <msp432p401r.h>
 #include "incl/hcsr04.h"
-#include "incl/IRrecv.h"
+//#include "incl/IRrecv.h"
 #include "incl/joystick.h"
 #include "incl/screen.h"
+#include "games/game_files/example.h"
+#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+
 
 volatile uint8_t ta_done = 0;
 
 void init_red(void);
 void init_green(void);
 void sleep_ms(uint32_t ms);
+
+
+volatile uint32_t myMCLK = 0;
+volatile uint32_t mySMCLK = 0;
 
 int main(void)
 {
@@ -20,8 +27,14 @@ int main(void)
     init_green();
     init_red();
     init_hcsr04();
-    init_timerA2();
-    init_gpio_ir();
+
+    CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_12);
+
+    // 2. Connect MCLK (CPU) and SMCLK (SPI) to the 12 MHz DCO
+    CS_initClockSignal(CS_MCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1);
+    CS_initClockSignal(CS_SMCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1);
+    //init_timerA2();
+    //init_gpio_ir();
 
     js_init();
 
@@ -34,41 +47,43 @@ int main(void)
     while (1)
     {
 
-        P1->OUT &= ~BIT0; // Turn off Red LED
-        P2->OUT &= ~BIT1; // Turn off Green LED
+        // P1->OUT &= ~BIT0; // Turn off Red LED
+        // P2->OUT &= ~BIT1; // Turn off Green LED
 
-        /*
-        float distance_cm = trigger_hcsr04();
+        // /*
+        // float distance_cm = trigger_hcsr04();
 
-        if (distance_cm > 100)
-        {
-            P1->OUT ^= BIT0; // Toggle Red LED state
-        }
-        else
-        {
-            P2->OUT ^= BIT1; // Toggle Green LED state
-        }
-        //__WFI(); // Enter low-power mode until an interrupt occurs
-        */
-        a = read_joystick();
-        switch (a)
-        {
-        case JS_DOWN:
-            P1->OUT ^= BIT0;
-            break;
-        case JS_RIGHT:
-            P2->OUT ^= BIT1;
-            break;
-        case JS_BUTTON:
-            P1->OUT ^= BIT0;
-            P2->OUT ^= BIT1;
-            break;
-        default:
-            break;
-        }
-        LCD_FillColor(0xF800);
-        LCD_FillColor(0xF800);
-
+        // if (distance_cm > 100)
+        // {
+        //     P1->OUT ^= BIT0; // Toggle Red LED state
+        // }
+        // else
+        // {
+        //     P2->OUT ^= BIT1; // Toggle Green LED state
+        // }
+        // //__WFI(); // Enter low-power mode until an interrupt occurs
+        // */
+        // a = read_joystick();
+        // switch (a)
+        // {
+        // case JS_DOWN:
+        //     P1->OUT ^= BIT0;
+        //     break;
+        // case JS_RIGHT:
+        //     P2->OUT ^= BIT1;
+        //     break;
+        // case JS_BUTTON:
+        //     P1->OUT ^= BIT0;
+        //     P2->OUT ^= BIT1;
+        //     break;
+        // default:
+        //     break;
+        // }
+         //LCD_FillColor(0xF800);
+         //LCD_FillColor(0x0000);
+        //myMCLK = CS_getMCLK();   // Returns frequency in Hz (e.g., 48000000)
+        //mySMCLK = CS_getSMCLK(); // Returns frequency in Hz
+        m_example();
     }
 }
 void init_red(void)

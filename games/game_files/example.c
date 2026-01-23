@@ -1,23 +1,38 @@
+<<<<<<< Updated upstream
 #include "display/display.h"
 #include "sprites/sprites.h"
 #include "sprites/palettes.h"
+=======
+>>>>>>> Stashed changes
 #include "example.h"
-#include "stddef.h"
-#include <math.h>
 
 i32 proximity_to_y(f32 proximity, u8 maxY){
   f32 ratio = (f32)maxY/1023.0f;
-	return (i32)round(proximity * ratio);
+	return (i32)(proximity * ratio + 0.5f);
 };
 
+<<<<<<< Updated upstream
 int main(){
 	display_init_lcd();
+=======
+void m_example(){
+    display_init_lcd();
+    start_example();
+    display_close();
+}
+
+//int main(){
+//s  m_example();
+//}
+
+void start_example(){
+>>>>>>> Stashed changes
   f32 proximity;
   f32 proximity_old;
 	i32 sprite_y = 0;
+	i32 old_sprite_y = 0;
 
   // Using the base palette when generating sprites
-	set_palette(BW_INDEX);
 
   TextureHandle R_handle = load_texture_from_sprite(upper_R_sprite.height,upper_R_sprite.width,upper_R_sprite.data);
   TextureHandle O_handle = load_texture_from_sprite(upper_O_sprite.height,upper_O_sprite.width,upper_O_sprite.data);
@@ -32,10 +47,10 @@ int main(){
 
   // Using a specified palette
 
-  TextureHandle wdf1_texture_handle2 = load_texture_from_sprite_p(wdf1_sprite.height,wdf1_sprite.width,wdf1_sprite.data,OLIVE_GREEN_INDEX);
-  TextureHandle wdf2_texture_handle2 = load_texture_from_sprite_p(wdf2_sprite.height,wdf2_sprite.width,wdf2_sprite.data,OLIVE_GREEN_INDEX);
-  TextureHandle wuf1_texture_handle2 = load_texture_from_sprite_p(wuf1_sprite.height,wuf1_sprite.width,wuf1_sprite.data,OLIVE_GREEN_INDEX);
-  TextureHandle wuf2_texture_handle2 = load_texture_from_sprite_p(wuf2_sprite.height,wuf2_sprite.width,wuf2_sprite.data,OLIVE_GREEN_INDEX);
+  TextureHandle wdf1_texture_handle2 = load_texture_from_sprite_p(wdf1_sprite.height,wdf1_sprite.width,wdf1_sprite.data,RETRO_RBY_INDEX);
+  TextureHandle wdf2_texture_handle2 = load_texture_from_sprite_p(wdf2_sprite.height,wdf2_sprite.width,wdf2_sprite.data,RETRO_RBY_INDEX);
+  TextureHandle wuf1_texture_handle2 = load_texture_from_sprite_p(wuf1_sprite.height,wuf1_sprite.width,wuf1_sprite.data,RETRO_RBY_INDEX);
+  TextureHandle wuf2_texture_handle2 = load_texture_from_sprite_p(wuf2_sprite.height,wuf2_sprite.width,wuf2_sprite.data,RETRO_RBY_INDEX);
 
   // game data
 
@@ -66,6 +81,7 @@ int main(){
 
   u8 max_height = 128-wdf1_sprite.height;
 
+<<<<<<< Updated upstream
   // Setting the color map and palette
   //u8 map[3] = {2,1,0};
   //set_mapping_array(map);
@@ -75,6 +91,10 @@ int main(){
 
   // Setting up static world
   // note that to make blocks move you would put this inside the loop and clear the world_blocks array at the start of the loop
+=======
+  set_screen_color(T_ONE);
+  set_palette(OLIVE_GREEN_INDEX);
+>>>>>>> Stashed changes
 
   world_blocks[world_blocks_len++] = new_block(0,70,30,30,T_THREE);
   world_blocks[world_blocks_len++] = new_block(0,100,24,20,T_THREE);
@@ -87,10 +107,7 @@ int main(){
     // INPUT
 		proximity = get_proximity();
 
-    // every 7 frames change the texture
-    // STATE CHANGE
-
-    if(counter2 == 7){
+    if(counter2 == 3){
       counter = (counter==0 ? 1 : 0);
       counter2 = 0;
     }
@@ -103,10 +120,12 @@ int main(){
 
     sprite_y = proximity_to_y(proximity,max_height);
 
+    p2.prev_y = p2.y;
     p2.y = 128-sprite_y-p1.height;
     p2.d = 1-direction;
     p2.animation_n = counter%2;
 
+    p1.prev_y = p1.y;
     p1.y = sprite_y;
     p1.d = direction;
     p1.animation_n = counter%2;
@@ -114,6 +133,7 @@ int main(){
     // DRAWING
     clear_screen();
 
+<<<<<<< Updated upstream
     for(int i = 0; i < world_blocks_len; i++){
       //draw_block(world_blocks[i]);
     }
@@ -123,6 +143,16 @@ int main(){
     draw_texture(94,48,W_handle);
     draw_texture(104,48,A_handle);
     draw_texture(114,48,N_handle);
+=======
+    int i;
+    for(i = 0; i < world_blocks_len; i++){
+      //draw_block(world_blocks[i]);
+    }
+
+    draw_rectangle(0,0,20,50,T_THREE);
+    draw_rectangle(60,50,50,40,T_TWO);
+	  //draw_text_h(74,p1.y,1,&rowan_builder);
+>>>>>>> Stashed changes
     draw_character(&p1);
     //draw_character(&p2);
 
@@ -135,6 +165,7 @@ int main(){
 
 
 void draw_character(Character* c){
+  //draw_rectangle(c->x,c->prev_y,c->width,c->height,T_THREE);
   draw_texture(c->x,c->y,c->animation_pack[c->d][c->animation_n]);
 }
 
