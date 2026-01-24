@@ -10,8 +10,6 @@
 #define MAP_SIZE (MAP_WIDTH * MAP_HEIGHT)
 
 
-
-
 void start_snake(){
   joystick_t joystick;
   State game_state = PLAYING;
@@ -158,6 +156,7 @@ void start_snake(){
 
     // Drawing goes after this line
     clear_screen();
+    draw_texture(food_x*8, food_y*8, food_texture);
     draw_snake(snake_x, snake_y, snake_tail_pos, snake_length, snake_texture);
     if (game_state == PLAYING) {
       // Draw the food at new position

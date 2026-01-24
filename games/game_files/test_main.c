@@ -24,7 +24,8 @@ int main(){
 		start_example();
 		break;
 	  case 4:
-		start_snake();
+		//start_snake();
+		test_snake();
 		break;
 	}
   }
