@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FPGA Game Scores</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 5px 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Live Game Scores</h1>
+  <div id="games"></div>
+
+  <script>
+    async function updateScores() {
+      const res = await fetch("http://localhost:5000/scores");
+      const data = await res.json();
+
+      const container = document.getElementById("games");
+      container.innerHTML = "";
+
+      for (const game in data) {
+        if (data[game].length === 0) continue; // skip empty
+        
+        const title = document.createElement("h2");
+        title.textContent = `Game: ${game}`;
+        container.appendChild(title);
+
+        const table = document.createElement("table");
+        table.innerHTML = `
+          <tr>
+            <th>Player</th>
+            <th>Score</th>
+          </tr>
+        `;
+
+        data[game].forEach(entry => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${entry.player}</td>
+            <td>${entry.score}</td>
+          `;
+          table.appendChild(row);
+        });
+
+        container.appendChild(table);
+      }
+    }
+
+    setInterval(updateScores, 1000);
+  </script>
+</body>
+</html>
