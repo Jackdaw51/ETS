@@ -35,3 +35,15 @@ extern const uint8_t dino_state1[];
 
 extern const Sprite dino_state2_sprite;
 extern const uint8_t dino_state2[];
+
+extern const Sprite spaceship_sprite;
+extern const uint8_t spaceship[];
+
+extern const Sprite alien_1_sprite;
+extern const uint8_t alien_1[];
+
+extern const Sprite alien_2_sprite;
+extern const uint8_t alien_2[];
+
+extern const Sprite ufo_bonus_sprite;
+extern const uint8_t ufo_bonus[];
