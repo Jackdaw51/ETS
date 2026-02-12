@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
 
-#define MAX_PALETTES 10
+#define MAX_PALETTES 16
 // Indices used to recognize pallettes inside the palette array
 #define BW_INDEX 0
 #define RETRO_RBY_INDEX 1
@@ -23,5 +23,3 @@ typedef struct {
 
 extern const Palette565 PaletteArray565[MAX_PALETTES];
 extern const Palette PaletteArray[MAX_PALETTES];
-
-
