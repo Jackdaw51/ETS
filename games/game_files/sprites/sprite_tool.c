@@ -128,15 +128,17 @@ int main(int argc, char** argv){
           }
         }
         if(!allowed){
+          printf("Tried Palette %d\n",pal);
+          printf("Pixel in position: (%d,%d) is invalid\n",row_ptr,col_ptr);
+          printf("This pixel has values:\n");
+          printf("r:%d\n",r);
+          printf("g:%d\n",g);
+          printf("b:%d\n",b);
+          printf("a:%d\n\n",a);
           unfound_counter++;
 
-          if(unfound_counter == MAX_PALETTES-1){
+          if(unfound_counter == MAX_PALETTES){
             printf("Could not find a valid palette to match the png\n");
-            printf("Erroneous pixel value is:\n");
-            printf("r:%d\n",r);
-            printf("g:%d\n",g);
-            printf("b:%d\n",b);
-            printf("a:%d\n",a);
             printf("Please ensure that the correct RGBA8 Palette is in the PaletteArray\n");
             return 1;
           }
