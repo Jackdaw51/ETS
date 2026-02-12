@@ -1,8 +1,3 @@
-// game_files/dino_runner.c
-// Dino Runner - usa dino_state1 (run) e dino_state2 (duck)
-// Mondo: DINO_CUSTOM_PALETTE_INDEX (T_ONE sabbia, T_TWO verde, T_THREE nero)
-// Dino: caricato in BW_INDEX (stabile/visibile)
-// Score/UI: usa la palette corrente (quindi T_THREE = nero vero)
 
 #include <stdio.h>
 
@@ -31,23 +26,61 @@
 // Dino position (x fisso)
 #define DINO_X        22
 
-// Physics (frame-based)
-#define GRAVITY       0.30f
-#define JUMP_VY      -7.2f
-#define VY_MAX        8.0f
-
-// Speed
-#define SPEED_START   1.30f
-#define SPEED_MUL     1.002f
-#define SPEED_MAX     4.50f
-
 // Obstacles
 #define MAX_OBS       6
-#define SPAWN_MIN_FR  48
-#define SPAWN_MAX_FR  95
+#define SPAWN_MIN_FR  80
+#define SPAWN_MAX_FR  110
 
 // Jump cooldown
 #define JUMP_COOLDOWN_FR 10
+
+// Walk animation speed (frames per step)
+#define WALK_ANIM_PERIOD 7   // 5..10: più basso = più veloce
+
+// ------------------------------------------------------------
+// HITBOX TUNING (FIX gameover fantasma)
+#define HIT_PAD_L  3
+#define HIT_PAD_R  3
+#define HIT_PAD_T  2
+#define HIT_PAD_B  1
+
+#define OBS_PAD_L  1
+#define OBS_PAD_R  1
+#define OBS_PAD_T  1
+#define OBS_PAD_B  1
+
+// Debug: disegna rettangoli hitbox (0 = off, 1 = on)
+#define DEBUG_HITBOX 0
+
+// ------------------------------------------------------------
+// FIXED POINT Q8.8  (SAFE: niente shift di negativi)
+#define FP_SHIFT 8
+#define FP_ONE   (1 << FP_SHIFT)
+
+// NB: TO_FP con moltiplicazione => evita UB su negativi
+#define TO_FP_I32(x)     ((i32)(x) * (i32)FP_ONE)
+#define FP_TO_I16(xfp)   ((i16)((i32)(xfp) / (i32)FP_ONE))  // robusto anche per negativi
+
+// Fisica (valori originali):
+#define GRAVITY_FP   ((i16)77)
+#define JUMP_VY_FP   ((i16)-1843)
+#define VY_MAX_FP    ((i16)2048)
+
+// Speed
+#define SPEED_START_FP ((i16)350)
+#define SPEED_MAX_FP   ((i16)1280)
+#define SPEED_INC_DIV  300
+
+// ------------------------------------------------------------
+// NUVOLE (solo background scrolling)
+#define CLOUD_COUNT          3
+#define CLOUD_Y_MIN          10
+#define CLOUD_Y_MAX          50
+#define CLOUD_RESPAWN_PAD_X  12      // margine extra quando respawna a destra
+#define CLOUD_GAP_MIN        40
+#define CLOUD_GAP_MAX        90
+#define CLOUD_PARALLAX_DIV   3       // più alto = più lente (speed/3)
+#define CLOUD_IDLE_STEP_FP   (FP_ONE / 2) // 0.5 px/frame quando sei in IDLE
 
 typedef enum {
     IDLE = 0,
@@ -56,37 +89,41 @@ typedef enum {
 } GameState;
 
 typedef enum {
-    OBS_CACTUS = 0,
-    OBS_BIRD   = 1
+    OBS_SMALL_CACTUS = 0,
+    OBS_BIG_CACTUS   = 1,
+    OBS_BIRD         = 2
 } ObsType;
 
-// ------------------------------------------------------------
-// Struct ottimizzati
-
 typedef struct {
-    u8 active;
-    u8 type;      // ObsType in 1 byte
-    f32 x;        // può diventare negativo
-    u8  y;        // 0..127
-    u8  w, h;     // dimensioni piccole
+    u8  active;
+    u8  type;      // ObsType in 1 byte
+    i32 x_fp;      // Q8.8 (i32 necessario)
+    u8  y;         // 0..127
+    u8  w, h;      // dimensioni piccole
 } Obstacle;
 
 typedef struct {
-    f32 y;
-    f32 vy;
+    i32 y_fp;      // Q8.8 (i32 per sicurezza overflow)
+    i16 vy_fp;     // Q8.8
     u8  on_ground;
     u8  duck;
 } Dino;
 
+typedef struct {
+    i32 x_fp;      // Q8.8
+    u8  y;         // px
+} Cloud;
+
 // ------------------------------------------------------------
 // Helpers
 
-static inline f32 clampf(f32 v, f32 lo, f32 hi) {
+static inline f32 absf(f32 v) { return (v < 0.0f) ? -v : v; }
+
+static inline i16 clamp_i16(i16 v, i16 lo, i16 hi) {
     if (v < lo) return lo;
     if (v > hi) return hi;
     return v;
 }
-static inline f32 absf(f32 v) { return (v < 0.0f) ? -v : v; }
 
 static u8 count_digits_u32(u32 v) {
     if (v == 0) return 1;
@@ -95,20 +132,20 @@ static u8 count_digits_u32(u32 v) {
     return n;
 }
 
-// AABB: posizioni signed (i16) perché x può essere negativa, dimensioni u8
+// AABB: posizioni signed (i16), dimensioni u8
 static u8 aabb_i16_u8(i16 ax, i16 ay, u8 aw, u8 ah,
                       i16 bx, i16 by, u8 bw, u8 bh) {
-    i32 al = ax, ar = (i32)ax + (i32)aw;
-    i32 at = ay, ab = (i32)ay + (i32)ah;
+    i16 al = ax, ar = (i16)(ax + (i16)aw);
+    i16 at = ay, ab = (i16)(ay + (i16)ah);
 
-    i32 bl = bx, br = (i32)bx + (i32)bw;
-    i32 bt = by, bb = (i32)by + (i32)bh;
+    i16 bl = bx, br = (i16)(bx + (i16)bw);
+    i16 bt = by, bb = (i16)(by + (i16)bh);
 
     return (ar >= bl) && (al <= br) && (ab >= bt) && (at <= bb);
 }
 
 // ------------------------------------------------------------
-// Simple RNG
+// RNG
 
 static u32 rng_state = 123456789u;
 
@@ -130,7 +167,7 @@ static u8 rng_chance_percent_u8(u8 pct) {
 }
 
 // ------------------------------------------------------------
-// 7-seg digits (usa la palette CORRENTE)
+// 7-seg (palette corrente)
 
 static void draw_seg_digit(i32 x, i32 y, i32 s, i32 thick, int d, TWOS_COLOURS col) {
     static const u8 mask[10] = {
@@ -180,7 +217,7 @@ static void draw_int_7seg(i32 x, i32 y, i32 s, i32 thick, u32 value, TWOS_COLOUR
 }
 
 // ------------------------------------------------------------
-// Game helpers
+// Obstacles
 
 static void clear_obstacles(Obstacle obs[MAX_OBS]) {
     for (u8 i = 0; i < MAX_OBS; i++) obs[i].active = 0;
@@ -196,25 +233,36 @@ static void spawn_obstacle(Obstacle obs[MAX_OBS], u8 duck_h) {
     Obstacle* o = &obs[(u8)idx];
     o->active = 1;
 
-    if (rng_chance_percent_u8(78)) {
-        // -------- CACTUS
-        o->type = (u8)OBS_CACTUS;
-        o->w = rng_range_u8(6, 16);
-        o->h = rng_range_u8(10, 20);
-        o->x = (f32)(LCD_W + 2);
-        o->y = (u8)(GROUND_Y - (i32)o->h);
+    // scelta tipo: 60% cactus (small/big), 40% bird
+    u8 r = (u8)(rng_u32() % 100u);
+
+    if (r < 60) {
+        // cactus
+        if (rng_chance_percent_u8(55)) {
+            o->type = (u8)OBS_SMALL_CACTUS;
+            o->w = small_cactus_sprite.width;
+            o->h = small_cactus_sprite.height;
+        } else {
+            o->type = (u8)OBS_BIG_CACTUS;
+            o->w = big_cactus_sprite.width;
+            o->h = big_cactus_sprite.height;
+        }
+
+        o->x_fp = TO_FP_I32(LCD_W + 2);
+        o->y = (u8)(GROUND_Y - (i16)o->h);
+
     } else {
-        // -------- BIRD
+        // bird
         o->type = (u8)OBS_BIRD;
-        o->w = 14;
-        o->h = 8;
-        o->x = (f32)(LCD_W + 2);
+        o->w = bird_sprite.width;
+        o->h = bird_sprite.height;
+        o->x_fp = TO_FP_I32(LCD_W + 2);
 
         const i16 margin = 2;
         i16 gap_ok = (i16)duck_h + margin;
 
         i16 y_duck = (i16)GROUND_Y - (gap_ok + (i16)o->h);
-        i16 y_high = y_duck - 10;
+        i16 y_high = (i16)(y_duck - 10);
 
         if (y_high < 0) y_high = 0;
         if (y_duck < 0) y_duck = 0;
@@ -225,7 +273,43 @@ static void spawn_obstacle(Obstacle obs[MAX_OBS], u8 duck_h) {
 }
 
 static void despawn_if_offscreen(Obstacle* o) {
-    if (o->active && (o->x + (f32)o->w < -2.0f)) o->active = 0;
+    if (!o->active) return;
+    i32 right_fp = o->x_fp + ((i32)o->w * (i32)FP_ONE);
+    if (right_fp < TO_FP_I32(-2)) o->active = 0;
+}
+
+// ------------------------------------------------------------
+// Clouds (solo background)
+
+static void init_clouds(Cloud c[CLOUD_COUNT]) {
+    i16 x = 10;
+    for (u8 i = 0; i < CLOUD_COUNT; i++) {
+        u8 y = rng_range_u8((u8)CLOUD_Y_MIN, (u8)CLOUD_Y_MAX);
+        u8 gap = rng_range_u8((u8)CLOUD_GAP_MIN, (u8)CLOUD_GAP_MAX);
+        c[i].x_fp = TO_FP_I32(x);
+        c[i].y = y;
+        x += (i16)(cloud_sprite.width + gap);
+    }
+}
+
+static void update_clouds(Cloud c[CLOUD_COUNT], i16 bg_step_fp) {
+    // bg_step_fp = quanto “scorre” lo sfondo (Q8.8)
+    for (u8 i = 0; i < CLOUD_COUNT; i++) {
+        c[i].x_fp -= (i32)bg_step_fp;
+
+        // se esce a sinistra, respawna a destra con gap random
+        if (c[i].x_fp + TO_FP_I32((i16)cloud_sprite.width) < TO_FP_I32(-2)) {
+            // trova x_max attuale
+            i32 max_x = c[0].x_fp;
+            for (u8 k = 1; k < CLOUD_COUNT; k++) {
+                if (c[k].x_fp > max_x) max_x = c[k].x_fp;
+            }
+
+            u8 gap = rng_range_u8((u8)CLOUD_GAP_MIN, (u8)CLOUD_GAP_MAX);
+            c[i].x_fp = max_x + TO_FP_I32((i16)cloud_sprite.width + (i16)gap + (i16)CLOUD_RESPAWN_PAD_X);
+            c[i].y = rng_range_u8((u8)CLOUD_Y_MIN, (u8)CLOUD_Y_MAX);
+        }
+    }
 }
 
 // ------------------------------------------------------------
@@ -234,12 +318,11 @@ static void despawn_if_offscreen(Obstacle* o) {
 int dino_runner_game(void) {
     display_init_lcd();
 
-    // Mondo con palette dinosauro
     set_palette(DINO_CUSTOM_PALETTE_INDEX);
     set_screen_color(T_ONE); // sabbia
 
-    // Dino caricato in BW (così non sparisce sulla sabbia)
-    TextureHandle dino_run_tex  = load_texture_from_sprite_p(
+    // --- Dino sprites (BW) ---
+    TextureHandle dino_idle_jump_tex = load_texture_from_sprite_p(
         dino_state1_sprite.height, dino_state1_sprite.width, dino_state1_sprite.data,
         BW_INDEX
     );
@@ -247,8 +330,36 @@ int dino_runner_game(void) {
         dino_state2_sprite.height, dino_state2_sprite.width, dino_state2_sprite.data,
         BW_INDEX
     );
+    TextureHandle dino_walk_a_tex = load_texture_from_sprite_p(
+        dino_state3_sprite.height, dino_state3_sprite.width, dino_state3_sprite.data,
+        BW_INDEX
+    );
+    TextureHandle dino_walk_b_tex = load_texture_from_sprite_p(
+        dino_state4_sprite.height, dino_state4_sprite.width, dino_state4_sprite.data,
+        BW_INDEX
+    );
 
-    // Dimensioni reali (hitbox = sprite)
+    // --- Obstacles sprites ---
+    TextureHandle small_cactus_tex = load_texture_from_sprite_p(
+        small_cactus_sprite.height, small_cactus_sprite.width, small_cactus_sprite.data,
+        DINO_CUSTOM_PALETTE_INDEX
+    );
+    TextureHandle big_cactus_tex = load_texture_from_sprite_p(
+        big_cactus_sprite.height, big_cactus_sprite.width, big_cactus_sprite.data,
+        DINO_CUSTOM_PALETTE_INDEX
+    );
+    TextureHandle bird_tex = load_texture_from_sprite_p(
+        bird_sprite.height, bird_sprite.width, bird_sprite.data,
+        DINO_CUSTOM_PALETTE_INDEX
+    );
+
+    // --- Clouds sprite ---
+    TextureHandle cloud_tex = load_texture_from_sprite_p(
+        cloud_sprite.height, cloud_sprite.width, cloud_sprite.data,
+        BW_INDEX
+    );
+
+    // Hitbox base
     const u8 DINO_RUN_W  = dino_state1_sprite.width;
     const u8 DINO_RUN_H  = dino_state1_sprite.height;
     const u8 DINO_DUCK_W = dino_state2_sprite.width;
@@ -257,98 +368,136 @@ int dino_runner_game(void) {
     u8 state = (u8)IDLE;
 
     Dino dino;
-    dino.y = (f32)(GROUND_Y - (i32)DINO_RUN_H);
-    dino.vy = 0.0f;
+    dino.y_fp = TO_FP_I32(GROUND_Y - (i16)DINO_RUN_H);
+    dino.vy_fp = 0;
     dino.on_ground = 1;
     dino.duck = 0;
 
     Obstacle obs[MAX_OBS];
     clear_obstacles(obs);
 
+    // clouds
+    Cloud clouds[CLOUD_COUNT];
+    init_clouds(clouds);
+
     u32 score = 0;
 
-    f32 speed = SPEED_START;
-    u8 spawn_cd = rng_range_u8(SPAWN_MIN_FR, SPAWN_MAX_FR);
+    i16 speed_fp = SPEED_START_FP;
+    u8  spawn_cd = rng_range_u8(SPAWN_MIN_FR, SPAWN_MAX_FR);
 
+    // Proximity baseline
     f32 proximity = get_proximity();
     f32 prox0 = proximity;
     f32 prox_prev = proximity;
 
     u8 jump_cd = 0;
 
+    // walk anim
+    u8 walk_tick = 0;
+    u8 walk_frame = 0;
+
     while (!window_should_close()) {
         display_begin();
 
-        // -------- INPUT
+        // -------- INPUT (float, solo qui)
         proximity = get_proximity();
         f32 dprox = absf(proximity - prox_prev);
         prox_prev = proximity;
 
-        u8 jump = (dprox >= PROX_JUMP_DELTA) ? 1 : 0;
-        u8 duck = (proximity >= PROX_DUCK_TH) ? 1 : 0;
+        u8 jump = (dprox >= PROX_JUMP_DELTA) ? 1u : 0u;
+        u8 duck = (proximity >= PROX_DUCK_TH) ? 1u : 0u;
 
         // -------- UPDATE
         if (state == (u8)IDLE) {
+            walk_tick = 0;
+            walk_frame = 0;
+
+            // nuvole in idle (lente)
+            update_clouds(clouds, (i16)CLOUD_IDLE_STEP_FP);
+
             if (absf(proximity - prox0) >= PROX_START_DELTA || jump) {
                 state = (u8)PLAYING;
                 score = 0;
-                speed = SPEED_START;
+                speed_fp = SPEED_START_FP;
                 spawn_cd = rng_range_u8(SPAWN_MIN_FR, SPAWN_MAX_FR);
 
                 dino.duck = 0;
                 dino.on_ground = 1;
-                dino.vy = 0.0f;
-                dino.y = (f32)(GROUND_Y - (i32)DINO_RUN_H);
+                dino.vy_fp = 0;
+                dino.y_fp = TO_FP_I32(GROUND_Y - (i16)DINO_RUN_H);
 
                 clear_obstacles(obs);
                 jump_cd = 0;
+
+                // evita jump fantasma al primo frame
+                prox_prev = proximity;
             }
         }
         else if (state == (u8)PLAYING) {
             if (jump_cd > 0) jump_cd--;
 
-            dino.duck = (duck && dino.on_ground) ? 1 : 0;
+            dino.duck = (duck && dino.on_ground) ? 1u : 0u;
 
             u8 cur_w = dino.duck ? DINO_DUCK_W : DINO_RUN_W;
             u8 cur_h = dino.duck ? DINO_DUCK_H : DINO_RUN_H;
 
             if (dino.on_ground) {
-                dino.y = (f32)(GROUND_Y - (i32)cur_h);
+                dino.y_fp = TO_FP_I32(GROUND_Y - (i16)cur_h);
             }
 
-            if (jump && dino.on_ground && jump_cd == 0) {
-                dino.vy = JUMP_VY;
+            // jump
+            if (jump && dino.on_ground && (jump_cd == 0)) {
+                dino.vy_fp = JUMP_VY_FP;
                 dino.on_ground = 0;
                 jump_cd = (u8)JUMP_COOLDOWN_FR;
             }
 
             // physics
-            dino.vy += GRAVITY;
-            dino.vy = clampf(dino.vy, -50.0f, VY_MAX);
-            dino.y  += dino.vy;
+            dino.vy_fp = (i16)(dino.vy_fp + GRAVITY_FP);
+            dino.vy_fp = clamp_i16(dino.vy_fp, (i16)-32760, VY_MAX_FP);
+            dino.y_fp  = (i32)(dino.y_fp + (i32)dino.vy_fp);
 
-            // clamp pavimento
-            i16 ground_top_i = (i16)GROUND_Y - (i16)cur_h;
-            if (dino.y >= (f32)ground_top_i) {
-                dino.y = (f32)ground_top_i;
-                dino.vy = 0.0f;
+            i32 ground_top_fp = TO_FP_I32(GROUND_Y - (i16)cur_h);
+            if (dino.y_fp >= ground_top_fp) {
+                dino.y_fp = ground_top_fp;
+                dino.vy_fp = 0;
                 dino.on_ground = 1;
             }
 
-            // speed up
-            speed *= SPEED_MUL;
-            if (speed > SPEED_MAX) speed = SPEED_MAX;
+            // walk anim solo quando corre
+            if (dino.on_ground && !dino.duck) {
+                walk_tick++;
+                if (walk_tick >= (u8)WALK_ANIM_PERIOD) {
+                    walk_tick = 0;
+                    walk_frame ^= 1u;
+                }
+            } else {
+                walk_tick = 0;
+                walk_frame = 0;
+            }
 
-            // score
-            score += 1;
+            // speed + score
+            speed_fp = (i16)(speed_fp + (i16)(speed_fp / SPEED_INC_DIV));
+            if (speed_fp > SPEED_MAX_FP) speed_fp = SPEED_MAX_FP;
+            score += 1u;
+
+            // nuvole (parallasse: più lente degli ostacoli)
+            i16 cloud_step_fp = (i16)(speed_fp / (i16)CLOUD_PARALLAX_DIV);
+            if (cloud_step_fp < 1) cloud_step_fp = 1;
+            update_clouds(clouds, cloud_step_fp);
 
             // spawn
             if (spawn_cd > 0) spawn_cd--;
             if (spawn_cd == 0) {
                 spawn_obstacle(obs, DINO_DUCK_H);
 
-                i16 min_fr = (i16)SPAWN_MIN_FR - (i16)((speed - SPEED_START) * 3.0f);
-                i16 max_fr = (i16)SPAWN_MAX_FR - (i16)((speed - SPEED_START) * 4.0f);
+                i16 delta_fp = (i16)(speed_fp - SPEED_START_FP);
+                // approx in px (Q8.8 -> int)
+                i16 delta_px = (i16)((delta_fp + (FP_ONE/2)) >> FP_SHIFT);
+
+                i16 min_fr = (i16)SPAWN_MIN_FR - (i16)(delta_px * 3);
+                i16 max_fr = (i16)SPAWN_MAX_FR - (i16)(delta_px * 4);
+
                 if (min_fr < 30) min_fr = 30;
                 if (max_fr < 55) max_fr = 55;
                 if (max_fr < min_fr) max_fr = min_fr;
@@ -356,56 +505,96 @@ int dino_runner_game(void) {
                 spawn_cd = rng_range_u8((u8)min_fr, (u8)max_fr);
             }
 
-            // move obstacles + collision
-            i16 dino_yi = (i16)(i32)dino.y;
+            // collision + move obstacles
+            i16 dino_yi = FP_TO_I16(dino.y_fp);
+
+            i16 dino_x_hit = (i16)DINO_X + (i16)HIT_PAD_L;
+            i16 dino_y_hit = dino_yi + (i16)HIT_PAD_T;
+
+            u8 dino_w_hit = cur_w;
+            u8 dino_h_hit = cur_h;
+
+            if (dino_w_hit > (u8)(HIT_PAD_L + HIT_PAD_R)) dino_w_hit = (u8)(dino_w_hit - (HIT_PAD_L + HIT_PAD_R));
+            if (dino_h_hit > (u8)(HIT_PAD_T + HIT_PAD_B)) dino_h_hit = (u8)(dino_h_hit - (HIT_PAD_T + HIT_PAD_B));
 
             for (u8 i = 0; i < MAX_OBS; i++) {
                 if (!obs[i].active) continue;
 
-                obs[i].x -= speed;
+                obs[i].x_fp -= (i32)speed_fp;
                 despawn_if_offscreen(&obs[i]);
+                if (!obs[i].active) continue;
 
-                if (obs[i].active) {
-                    i16 ox = (i16)(i32)obs[i].x;
-                    i16 oy = (i16)obs[i].y;
+                i16 ox = FP_TO_I16(obs[i].x_fp);
+                i16 oy = (i16)obs[i].y;
 
-                    if (aabb_i16_u8((i16)DINO_X, dino_yi, cur_w, cur_h,
-                                    ox, oy, obs[i].w, obs[i].h)) {
-                        // Niente schermata gameover: esco subito
-                        display_end();
-                        display_close();
-                        return (int)score;
-                    }
+                i16 ox_hit = (i16)(ox + (i16)OBS_PAD_L);
+                i16 oy_hit = (i16)(oy + (i16)OBS_PAD_T);
+
+                u8 ow_hit = obs[i].w;
+                u8 oh_hit = obs[i].h;
+
+                if (ow_hit > (u8)(OBS_PAD_L + OBS_PAD_R)) ow_hit = (u8)(ow_hit - (OBS_PAD_L + OBS_PAD_R));
+                if (oh_hit > (u8)(OBS_PAD_T + OBS_PAD_B)) oh_hit = (u8)(oh_hit - (OBS_PAD_T + OBS_PAD_B));
+
+#if DEBUG_HITBOX
+                draw_rectangle_outline((i32)dino_x_hit, (i32)dino_y_hit, (i32)dino_w_hit, (i32)dino_h_hit, 1.0f, T_THREE);
+                draw_rectangle_outline((i32)ox_hit, (i32)oy_hit, (i32)ow_hit, (i32)oh_hit, 1.0f, T_THREE);
+#endif
+
+                if (aabb_i16_u8(dino_x_hit, dino_y_hit, dino_w_hit, dino_h_hit,
+                                ox_hit, oy_hit, ow_hit, oh_hit)) {
+                    display_end();
+                    display_close();
+                    return (int)score;
                 }
             }
         }
 
-        // -------- DRAW (solo IDLE/PLAYING)
+        // -------- DRAW
         clear_screen();
 
-        // ground verde
-        draw_rectangle(0, GROUND_Y, LCD_W, 20, T_TWO);
-
-        // dino sprite
-        {
-            i16 dy = (i16)(i32)dino.y;
-            if (dy < 0) dy = 0;
-            if (dy > 255) dy = 255;
-
-            if (state == (u8)PLAYING && dino.duck) {
-                draw_texture((u8)DINO_X, (u8)dy, dino_duck_tex);
-            } else {
-                draw_texture((u8)DINO_X, (u8)dy, dino_run_tex);
+        // draw clouds (prima del terreno)
+        for (u8 i = 0; i < CLOUD_COUNT; i++) {
+            i16 cx = FP_TO_I16(clouds[i].x_fp);
+            if (cx > -40 && cx < 220) { // piccolo culling grezzo
+                draw_texture((u8)cx, clouds[i].y, cloud_tex);
             }
         }
 
-        // obstacles verdi
-        for (u8 i = 0; i < MAX_OBS; i++) {
-            if (!obs[i].active) continue;
-            draw_rectangle((i32)obs[i].x, (i32)obs[i].y, (i32)obs[i].w, (i32)obs[i].h, T_TWO);
+        draw_rectangle(0, GROUND_Y, LCD_W, 20, T_TWO);
+
+        // scegli texture dino
+        TextureHandle dino_tex = dino_idle_jump_tex;
+        if (state == (u8)IDLE) {
+            dino_tex = dino_idle_jump_tex; // state1
+        } else {
+            if (!dino.on_ground) dino_tex = dino_idle_jump_tex;      // jump -> state1
+            else if (dino.duck)  dino_tex = dino_duck_tex;           // duck -> state2
+            else                 dino_tex = (walk_frame == 0) ? dino_walk_a_tex : dino_walk_b_tex; // walk -> 3/4
         }
 
-        // score top-right (nero)
+        {
+            i16 dy = FP_TO_I16(dino.y_fp);
+            if (dy < 0) dy = 0;
+            if (dy > 255) dy = 255;
+            draw_texture((u8)DINO_X, (u8)dy, dino_tex);
+        }
+
+        // draw obstacles as textures
+        for (u8 i = 0; i < MAX_OBS; i++) {
+            if (!obs[i].active) continue;
+
+            i16 ox = FP_TO_I16(obs[i].x_fp);
+            u8  oy = obs[i].y;
+
+            TextureHandle t = small_cactus_tex;
+            if (obs[i].type == (u8)OBS_BIG_CACTUS) t = big_cactus_tex;
+            else if (obs[i].type == (u8)OBS_BIRD)  t = bird_tex;
+
+            draw_texture((u8)ox, oy, t);
+        }
+
+        // score
         if (state == (u8)PLAYING) {
             i32 s = 3, thick = 2;
             u8 digits = count_digits_u32(score);
@@ -417,7 +606,7 @@ int dino_runner_game(void) {
             i32 score_x = LCD_W - margin_r - total_w;
             i32 score_y = 2;
 
-            draw_int_7seg(score_x, score_y, s, thick, score, T_THREE);
+            draw_int_7seg(score_x, score_y, s, thick, score, T_THREE); // nero
         }
 
         display_end();
@@ -428,8 +617,7 @@ int dino_runner_game(void) {
 }
 
 // ------------------------------------------------------------
-// MAIN DI TEST
-
+// MAIN
 int main(void) {
     int score = dino_runner_game();
     printf("Score: %d\n", score);

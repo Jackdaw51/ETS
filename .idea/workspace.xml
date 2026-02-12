@@ -16,14 +16,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f7eed982-2e4e-44f3-8b93-fc1e3549e1b7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/games/game_files/space_invaders.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/alien_1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/alien_2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/spaceship.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ufo_bonus.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_files/sprites/palettes.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/sprites/palettes.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_files/sprites/palettes.h" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/sprites/palettes.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_files/sprites/sprite_tool" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/big_cactus.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/bird.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/cloud.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/dino_state3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/dino_state4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/small_cactus.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_exes/dino_runner" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_exes/dino_runner" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_exes/space_invaders" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_exes/space_invaders" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_files/dino_runner.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/dino_runner.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_files/space_invaders.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/space_invaders.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/games/game_files/sprites/sprites.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/sprites/sprites.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/games/game_files/sprites/sprites.h" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/sprites/sprites.h" afterDir="false" />
     </list>
@@ -121,7 +124,7 @@
       <option name="presentableId" value="Default" />
       <updated>1770720594109</updated>
       <workItem from="1770720595241" duration="541000" />
-      <workItem from="1770721786033" duration="27537000" />
+      <workItem from="1770721786033" duration="39435000" />
     </task>
     <servers />
   </component>

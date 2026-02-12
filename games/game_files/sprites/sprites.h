@@ -47,3 +47,22 @@ extern const uint8_t alien_2[];
 
 extern const Sprite ufo_bonus_sprite;
 extern const uint8_t ufo_bonus[];
+
+extern const Sprite bird_sprite;
+extern const uint8_t bird[];
+
+extern const Sprite dino_state4_sprite;
+extern const uint8_t dino_state4[];
+
+extern const Sprite dino_state3_sprite;
+extern const uint8_t dino_state3[];
+
+
+extern const Sprite small_cactus_sprite;
+extern const uint8_t small_cactus[];
+
+extern const Sprite big_cactus_sprite;
+extern const uint8_t big_cactus[];
+
+extern const Sprite cloud_sprite;
+extern const uint8_t cloud[];
