@@ -10,3 +10,4 @@ void write_data(u8 data);
 void screen_init();
 void LCD_FillColor(uint16_t);
 void LCD_Init(void);
+void DMA_send_frame(uint8_t *frame_buffer, uint8_t *palette_buffer);

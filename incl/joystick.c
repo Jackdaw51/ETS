@@ -77,7 +77,7 @@ void adc_init_js(void)
 
     ADC14_configureMultiSequenceMode(ADC_MEM0, ADC_MEM1, false);
 
-
+    
     ADC14_configureConversionMemory(ADC_MEM0,
                                     ADC_VREFPOS_AVCC_VREFNEG_VSS,
                                     ADC_INPUT_A15, ADC_NONDIFFERENTIAL_INPUTS);

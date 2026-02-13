@@ -1,32 +1,58 @@
 #include <msp432p401r.h>
 #include "incl/hcsr04.h"
-#include "incl/IRrecv.h"
 #include "incl/joystick.h"
 #include "incl/screen.h"
-
-volatile uint8_t ta_done = 0;
+#include <ti/devices/msp432p4xx/driverlib/driverlib.h>
+#include "incl/timers.h"
+#include "incl/light_sensor.h"
+#include "games/game_files/example.h"
 
 void init_red(void);
 void init_green(void);
-void sleep_ms(uint32_t ms);
 
 int main(void)
 {
     WDT_A->CTL = WDT_A_CTL_PW | WDT_A_CTL_HOLD; // stop watchdog timer
-    NVIC_EnableIRQ(TA0_0_IRQn);
-    NVIC_EnableIRQ(TA3_0_IRQn);
+
+    uint32_t mclk = CLOCK_SPEED;
+    switch (mclk)
+    {
+    case 12000000:
+        CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_12);
+        break;
+    case 24000000:
+        CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_24);
+        break;
+    default:
+
+        break;
+    }
+
+    CS_initClockSignal(CS_MCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1);
+
+    // 3. Set SMCLK (SPI Source) to 24 MHz (24 / 1)
+    CS_initClockSignal(CS_SMCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1);
     __enable_irq();
+    init_A0();
+    init_A1();
+    init_A2();
+    init_A3();
 
     init_green();
     init_red();
     init_hcsr04();
-    init_timerA2();
-    init_gpio_ir();
 
     js_init();
-
-    screen_init();
-
+    I2C_Unstick();
+    I2C_Init();
+    //screen_init();
+    if (APDS_Write(APDS_ENABLE, 0x05) < 0)
+    {
+        // Handle error
+        P1->OUT |= BIT0; // Turn on Red LED to indicate error
+        while (1)
+            ;
+    }
     //__WFI();
 
     joystick_t a;
@@ -34,12 +60,10 @@ int main(void)
     while (1)
     {
 
+        // float distance_cm = trigger_hcsr04();
+        uint16_t distance_cm = APDS_ReadProximity();
         P1->OUT &= ~BIT0; // Turn off Red LED
         P2->OUT &= ~BIT1; // Turn off Green LED
-
-        /*
-        float distance_cm = trigger_hcsr04();
-
         if (distance_cm > 100)
         {
             P1->OUT ^= BIT0; // Toggle Red LED state
@@ -49,26 +73,25 @@ int main(void)
             P2->OUT ^= BIT1; // Toggle Green LED state
         }
         //__WFI(); // Enter low-power mode until an interrupt occurs
-        */
-        a = read_joystick();
-        switch (a)
-        {
-        case JS_DOWN:
-            P1->OUT ^= BIT0;
-            break;
-        case JS_RIGHT:
-            P2->OUT ^= BIT1;
-            break;
-        case JS_BUTTON:
-            P1->OUT ^= BIT0;
-            P2->OUT ^= BIT1;
-            break;
-        default:
-            break;
-        }
-        LCD_FillColor(0xF800);
-        LCD_FillColor(0xF800);
-
+        // a = read_joystick();
+        // switch (a)
+        // {
+        // case JS_DOWN:
+        //     P1->OUT ^= BIT0;
+        //     break;
+        // case JS_RIGHT:
+        //     P2->OUT ^= BIT1;
+        //     break;
+        // case JS_BUTTON:
+        //     P1->OUT ^= BIT0;
+        //     P2->OUT ^= BIT1;
+        //     break;
+        // default:
+        //     break;
+        // }
+        // LCD_FillColor(0xF800);
+        // LCD_FillColor(0xF800);
+        // m_example();
     }
 }
 void init_red(void)
@@ -81,29 +104,3 @@ void init_green(void)
     P2->DIR |= BIT1;  // Set P2.1 as output (Green LED)
     P2->OUT &= ~BIT1; // Initialize Green LED to OFF
 }
-
-//up to around 20 ms
-void sleep_ms(uint32_t ms)
-{
-    ta_done = 0;
-
-    TIMER_A3->CTL = TIMER_A_CTL_CLR;
-    TIMER_A3->CCTL[0] = TIMER_A_CCTLN_CCIE;   // Enable CCR0 interrupt
-    TIMER_A3->CCR[0] = ms * 3000 - 1;             // 3 MHz → 10 ms
-    TIMER_A3->CTL = TIMER_A_CTL_SSEL__SMCLK | // SMCLK
-                    TIMER_A_CTL_MC__UP;
-
-
-    while (!ta_done)
-        __WFI();                              // Sleep
-    ta_done = 0;
-
-    TIMER_A3->CTL = TIMER_A_CTL_MC__STOP;     // Stop timer
-}
-
-void TA3_0_IRQHandler(void)
-{
-    TIMER_A3->CCTL[0] &= ~TIMER_A_CCTLN_CCIFG; // Clear interrupt flag
-    ta_done = 1;
-}
-
