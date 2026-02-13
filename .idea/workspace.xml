@@ -17,13 +17,6 @@
   <component name="ChangeListManager">
     <list default="true" id="f7eed982-2e4e-44f3-8b93-fc1e3549e1b7" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_exes/dino_runner" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_exes/dino_runner" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_exes/pong_wall" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_exes/pong_wall" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_exes/space_invaders" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_exes/space_invaders" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_files/display/rr_display.c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_files/pong_wall.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/pong_wall.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_files/space_invaders.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/space_invaders.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_files/sprites/palettes.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/sprites/palettes.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -303,7 +303,7 @@ int pong_wall_game(void) {
             draw_digits_7seg(score_x, score_y, s, thick, score_digits, score_n, T_ONE);
         }
 
-        // Overlay IDLE
+
         if (state == IDLE) {
             draw_rectangle(LCD_W - 10, 2, 6, 2, T_THREE); // mini “ready” indicator
         }
