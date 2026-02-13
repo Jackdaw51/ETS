@@ -1,27 +1,27 @@
-#include "display/display.h"
-#include "display/types.h"
-#include "sprites/sprites.h"
-#include "sprites/palettes.h"
 #include "example.h"
-#include "stddef.h"
-#include <math.h>
 
 i32 proximity_to_y(f32 proximity, u8 maxY){
   f32 ratio = (f32)maxY/1023.0f;
-	return (i32)round(proximity * ratio);
+	return (i32)(proximity * ratio + 0.5f);
 };
+
+void m_example(){
+    display_init_lcd();
+    start_example();
+    display_close();
+}
 
 void start_example(){
   f32 proximity;
   f32 proximity_old;
 	i32 sprite_y = 0;
+	i32 old_sprite_y = 0;
 
   // Using the base palette when generating sprites
-	set_palette(BW_INDEX);
 
-	TextBuilder rowan_builder = (TextBuilder){ .handles = (BuilderElement[8]){}, .len = 8 };
-	load_text("Rowan Li",&rowan_builder);
-	
+TextBuilder rowan_builder = (TextBuilder){ .handles = (BuilderElement[8]){}, .len = 8 };
+load_text("Rowan Li",&rowan_builder);
+
   TextureHandle wdf1_texture_handle = load_texture_from_sprite(wdf1_sprite.height,wdf1_sprite.width,wdf1_sprite.data);
   TextureHandle wdf2_texture_handle = load_texture_from_sprite(wdf2_sprite.height,wdf2_sprite.width,wdf2_sprite.data);
   TextureHandle wuf1_texture_handle = load_texture_from_sprite(wuf1_sprite.height,wuf1_sprite.width,wuf1_sprite.data);
@@ -29,10 +29,10 @@ void start_example(){
 
   // Using a specified palette
 
-  TextureHandle wdf1_texture_handle2 = load_texture_from_sprite_p(wdf1_sprite.height,wdf1_sprite.width,wdf1_sprite.data,OLIVE_GREEN_INDEX);
-  TextureHandle wdf2_texture_handle2 = load_texture_from_sprite_p(wdf2_sprite.height,wdf2_sprite.width,wdf2_sprite.data,OLIVE_GREEN_INDEX);
-  TextureHandle wuf1_texture_handle2 = load_texture_from_sprite_p(wuf1_sprite.height,wuf1_sprite.width,wuf1_sprite.data,OLIVE_GREEN_INDEX);
-  TextureHandle wuf2_texture_handle2 = load_texture_from_sprite_p(wuf2_sprite.height,wuf2_sprite.width,wuf2_sprite.data,OLIVE_GREEN_INDEX);
+  TextureHandle wdf1_texture_handle2 = load_texture_from_sprite_p(wdf1_sprite.height,wdf1_sprite.width,wdf1_sprite.data,RETRO_RBY_INDEX);
+  TextureHandle wdf2_texture_handle2 = load_texture_from_sprite_p(wdf2_sprite.height,wdf2_sprite.width,wdf2_sprite.data,RETRO_RBY_INDEX);
+  TextureHandle wuf1_texture_handle2 = load_texture_from_sprite_p(wuf1_sprite.height,wuf1_sprite.width,wuf1_sprite.data,RETRO_RBY_INDEX);
+  TextureHandle wuf2_texture_handle2 = load_texture_from_sprite_p(wuf2_sprite.height,wuf2_sprite.width,wuf2_sprite.data,RETRO_RBY_INDEX);
 
   // game data
 
@@ -62,10 +62,8 @@ void start_example(){
   i32 direction = 0;
 
   u8 max_height = 128-wdf1_sprite.height;
-
-  set_screen_color(0);
-	set_mapping_array((u8[3]){1,0,2});
-	set_palette(RETRO_RBY_INDEX);
+  set_screen_color(T_ONE);
+  set_palette(OLIVE_GREEN_INDEX);
 
   world_blocks[world_blocks_len++] = new_block(0,70,30,30,T_THREE);
   world_blocks[world_blocks_len++] = new_block(0,100,24,20,T_THREE);
@@ -78,10 +76,7 @@ void start_example(){
     // INPUT
 		proximity = get_proximity();
 
-    // every 7 frames change the texture
-    // STATE CHANGE
-
-    if(counter2 == 7){
+    if(counter2 == 3){
       counter = (counter==0 ? 1 : 0);
       counter2 = 0;
     }
@@ -90,7 +85,7 @@ void start_example(){
       counter2++;
       if(proximity > proximity_old) direction = 0;
       if(proximity < proximity_old) direction = 1;
-    } 
+    }
 
     sprite_y = proximity_to_y(proximity,max_height);
 
@@ -109,7 +104,14 @@ void start_example(){
       draw_block(world_blocks[i]);
     }
 
-		draw_text_h(74,p1.y,1,&rowan_builder);
+    int i;
+    for(i = 0; i < world_blocks_len; i++){
+      //draw_block(world_blocks[i]);
+    }
+
+    draw_rectangle(0,0,20,50,T_THREE);
+    draw_rectangle(60,50,50,40,T_TWO);
+	  //draw_text_h(74,p1.y,1,&rowan_builder);
     draw_character(&p1);
     draw_character(&p2);
 
@@ -171,7 +173,7 @@ Block new_block_outlined(u8 x, u8 y, u8 width, u8 height,u8 thickness, TWOS_COLO
   };
 };
 
- 
+
 void draw_block(Block b){
   switch(b.style){
     case FILLP:
