@@ -3,18 +3,8 @@
 #include <stdint.h>
 #include "types.h"
 #include "../sprites/palettes.h"
-
-// When drawing 
-
-// ------------------------------------------------------------------
-// color enum 
-
-typedef enum TWOS_COLOURS {
-	T_ONE = 0,
-	T_TWO = 1,
-	T_THREE = 2,
-	T_TRANSPARENT = 3,
-} TWOS_COLOURS;
+#include "../../../incl/joystick.h"
+#include "text_lut.h"
 
 // ------------------------------------------------------------------
 // Opening and Closing the window
@@ -37,17 +27,23 @@ void set_screen_color(TWOS_COLOURS color);
 void clear_screen(void);
 void clear_screen_c(TWOS_COLOURS color);
 void draw_pixel(i32 x, i32 y,TWOS_COLOURS color);
-void draw_line(i32 start_x, i32 start_y,i32 end_x, i32 end_y,TWOS_COLOURS color); 
 
 // This is the x and y of the top left corner
 void draw_rectangle(i32 x, i32 y, i32 width, i32 height,TWOS_COLOURS color);
-void draw_rectangle_outline(i32 x, i32 y, i32 width, i32 height,f32 thickness,TWOS_COLOURS color);
+void draw_rectangle_outline(i32 x, i32 y, i32 width, i32 height,u8 thickness,TWOS_COLOURS color);
 
 // Drawing with a different palette to the base
 
 void draw_rectangle_p(i32 x, i32 y, i32 width, i32 height,TWOS_COLOURS color, u8 p);
-void draw_rectangle_outline_p(i32 x, i32 y, i32 width, i32 height,f32 thickness,TWOS_COLOURS color, u8 p);
+void draw_rectangle_outline_p(i32 x, i32 y, i32 width, i32 height,u8 thickness,TWOS_COLOURS color, u8 p);
 
+
+// buf handles length must be as long as string
+void set_space_len(u8 len);
+void load_text(const char *text,TextBuilder* builder);
+void load_text_p(const char *text,TextBuilder* builder,u8 p);
+void draw_text_h(i32 x, i32 y,i32 extra_spacing, TextBuilder* builder);
+void draw_text_v(i32 x, i32 y,i32 extra_spacing, TextBuilder* builder);
 
 // ------------------------------------------------------------------
 // Texture drawing functions
@@ -79,5 +75,15 @@ void draw_texture(u8 x, u8 y, TextureHandle texture_index);
 // ------------------------------------------------------------------
 // function to get the value of the proximity sensor  
 f32 get_proximity(void);
+joystick_t get_joystick(void);
+
+void set_render_update_rate(u16 rate);
+void set_physics_update_rate(u16 rate);
+
+u16 get_physics_ticks(void);
+u16 get_render_ticks(void);
+
+void decrement_physics_ticks(void);
+void decrement_render_ticks(void);
 
 

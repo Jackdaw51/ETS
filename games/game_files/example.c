@@ -1,4 +1,5 @@
 #include "display/display.h"
+#include "display/types.h"
 #include "sprites/sprites.h"
 #include "sprites/palettes.h"
 #include "example.h"
@@ -10,14 +11,16 @@ i32 proximity_to_y(f32 proximity, u8 maxY){
 	return (i32)round(proximity * ratio);
 };
 
-int main(){
-	display_init_lcd();
+void start_example(){
   f32 proximity;
   f32 proximity_old;
 	i32 sprite_y = 0;
 
   // Using the base palette when generating sprites
 	set_palette(BW_INDEX);
+
+	TextBuilder rowan_builder = (TextBuilder){ .handles = (BuilderElement[8]){}, .len = 8 };
+	load_text("Rowan Li",&rowan_builder);
 	
   TextureHandle wdf1_texture_handle = load_texture_from_sprite(wdf1_sprite.height,wdf1_sprite.width,wdf1_sprite.data);
   TextureHandle wdf2_texture_handle = load_texture_from_sprite(wdf2_sprite.height,wdf2_sprite.width,wdf2_sprite.data);
@@ -60,16 +63,9 @@ int main(){
 
   u8 max_height = 128-wdf1_sprite.height;
 
-  // Setting the color map and palette
-  u8 map[3] = {2,1,0};
-  set_mapping_array(map);
+  set_screen_color(0);
+	set_mapping_array((u8[3]){1,0,2});
 	set_palette(RETRO_RBY_INDEX);
-
-  // Selecting which color is the background
-  set_screen_color(1);
-
-  // Setting up static world
-  // note that to make blocks move you would put this inside the loop and clear the world_blocks array at the start of the loop
 
   world_blocks[world_blocks_len++] = new_block(0,70,30,30,T_THREE);
   world_blocks[world_blocks_len++] = new_block(0,100,24,20,T_THREE);
@@ -113,14 +109,13 @@ int main(){
       draw_block(world_blocks[i]);
     }
 
+		draw_text_h(74,p1.y,1,&rowan_builder);
     draw_character(&p1);
     draw_character(&p2);
 
     proximity_old = proximity;
     display_end();
   }
-
-  display_close();
 }
 
 

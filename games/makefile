@@ -4,12 +4,14 @@ CFLAGS  := -std=c11 -Wall -Wextra -O2
 
 # -------- Your sources --------
 SRC     ?= game_files/example.c
-OUT     ?= game
+
+OUT := $(basename $(notdir $(SRC)))
+
 OUTDIR  := game_exes
 
-T_PLATFORM := game_files/display/rl_display.c
-SPRITES    := game_files/sprites/sprites.c
-PALETTES   := game_files/sprites/palettes.c
+T_PLATFORM ?= game_files/display/rl_display.c
+SPRITES := game_files/sprites/sprites.c
+PALETTES := game_files/sprites/palettes.c
 
 INCLUDES := -I.
 
@@ -25,17 +27,12 @@ SYS_LIBS := -lopengl32 -lgdi32 -lwinmm
 # Output
 TARGET := $(OUTDIR)/$(OUT)
 
+# -------- Build rules --------
 all: $(TARGET)
 
-# Create output dir (cmd, not bash)
-$(OUTDIR):
-	@cmd /C if not exist "$(OUTDIR)" mkdir "$(OUTDIR)"
-
-$(TARGET): $(OUTDIR) $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES)
-	$(CC) $(CFLAGS) $(INCLUDES) $(RAYLIB_INC) \
-		$(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES) \
-		-o $(TARGET) \
-		$(RAYLIB_LIB) $(SYS_LIBS)
+$(TARGET): $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES)
+	mkdir -p $(OUTDIR)
+	$(CC) $(CFLAGS) $(INCLUDES) $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES) -o $(TARGET) $(LIB) $(LIBS)
 
 play: $(TARGET)
 	./$(TARGET)
@@ -43,4 +40,5 @@ play: $(TARGET)
 clean:
 	@cmd /C if exist "$(OUTDIR)" rmdir /S /Q "$(OUTDIR)"
 
-.PHONY: all play clean
+.PHONY: all clean
+
