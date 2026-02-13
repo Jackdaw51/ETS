@@ -6,15 +6,24 @@
 #define BW_INDEX 0
 #define RETRO_RBY_INDEX 1
 #define OLIVE_GREEN_INDEX 2
+#define SNAKE_INDEX 3
+#define RAT_INDEX 4
+#define APPLE_INDEX 5
+#define PONG_CUSTOM_PALETTE_INDEX 3
+#define DINO_CUSTOM_PALETTE_INDEX 4
+#define SPACESHIP_PALETTE_INDEX 5
+#define ALIEN_1_PALETTE_INDEX 6
+#define ALIEN_2_PALETTE_INDEX 7
+#define UFO_PALETTE_INDEX 8
 
 
 typedef struct {
-	uint8_t colors[3*4];
+    uint8_t colors[3*4];
 } Palette;
 
-#define PALETTE_ARR_LEN 3
-
-//#define PALETTE_ARR_LEN 3
+typedef struct {
+    uint16_t colors[3];
+} Palette565;
 
 extern const Palette565 PaletteArray565[MAX_PALETTES];
 extern const Palette PaletteArray[MAX_PALETTES];

@@ -16,19 +16,115 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f7eed982-2e4e-44f3-8b93-fc1e3549e1b7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/big_cactus.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/bird.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/cloud.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/dino_state3.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/dino_state4.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/small_cactus.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_exes/menu" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_exes/rglite" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_exes/test_main" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/display/pixel_mask_lut.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/display/pixel_mask_lut.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/display/rr_display.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/display/text_lut.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/display/text_lut.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/menu.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/menu.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/rglite.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/snake.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/snake.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/font_generator.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_a.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_b.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_c.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_d.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_e.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_f.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_g.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_h.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_i.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_j.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_k.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_l.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_m.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_n.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_o.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_p.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_q.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_r.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_s.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_t.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_u.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_v.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_w.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_x.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_y.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/lower_z.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_A.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_B.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_C.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_D.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_E.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_F.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_G.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_H.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_I.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_J.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_K.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_L.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_M.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_N.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_O.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_P.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_Q.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_R.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_S.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_T.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_U.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_V.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_W.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_X.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_Y.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/ets_font/upper_Z.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/snake_pngs/apple.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/snake_pngs/rat.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/snake_pngs/sn_downleft_rightup.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/snake_pngs/sn_downright_leftup.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/snake_pngs/sn_head_down.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/snake_pngs/sn_head_left.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/snake_pngs/sn_head_right.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/snake_pngs/sn_head_up.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/snake_pngs/sn_horizontal.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/snake_pngs/sn_tail_down.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/snake_pngs/sn_tail_left.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/snake_pngs/sn_tail_right.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/snake_pngs/sn_tail_up.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/snake_pngs/sn_upleft_rightdown.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/snake_pngs/sn_upright_leftdown.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/pngs/snake_pngs/sn_vertical.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/sprites/sprite_tool_l" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/games/game_files/test_main.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/incl/screen.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/incl/screen.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/MQTT_message_example.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/broker.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/scores.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/sender.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/server.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/templates/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_exes/dino_runner" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_exes/dino_runner" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_exes/space_invaders" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_exes/space_invaders" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_files/dino_runner.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/dino_runner.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_files/space_invaders.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/space_invaders.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_files/display/display.h" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/display/display.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_files/display/libraylib.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_files/display/rl_display.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/display/rl_display.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_files/display/types.h" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/display/types.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_files/example.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/example.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_files/example.h" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/example.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_files/sprites/palettes.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/sprites/palettes.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_files/sprites/palettes.h" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/sprites/palettes.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_files/sprites/sprite_tool.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/sprites/sprite_tool.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_files/sprites/sprite_tool_m" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/sprites/sprite_tool_m" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/games/game_files/sprites/sprites.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/sprites/sprites.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/games/game_files/sprites/sprites.h" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/sprites/sprites.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/makefile" beforeDir="false" afterPath="$PROJECT_DIR$/games/makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/incl/joystick.c" beforeDir="false" afterPath="$PROJECT_DIR$/incl/joystick.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/incl/joystick.h" beforeDir="false" afterPath="$PROJECT_DIR$/incl/joystick.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,41 +155,57 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/sprites.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/sprites.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/sprites.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/sprites.h" root0="SKIP_HIGHLIGHTING" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 6
 }</component>
   <component name="ProjectId" id="39TWZ86aAAlcyFcZBVIXmjMFy0b" />
-  <component name="ProjectStatusUIService"><![CDATA[{
-  "uiKindId": "Widget"
-}]]></component>
+  <component name="ProjectStatusUIService">{
+  &quot;uiKindId&quot;: &quot;Widget&quot;
+}</component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "C/C++ File.template.c.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.RadMigrateCodeStyle": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "max",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/pngs",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;C/C++ File.template.c.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Merging max&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/pngs&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Massimo\Documents\GitHub\ETS\games\game_files\sprites\pngs" />

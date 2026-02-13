@@ -18,18 +18,21 @@
 }\
 }
 
+#define PONG_CUSTOM_PALETTE (Palette){\
+.colors = {\
+200, 195, 185, 255,\
+215, 90,  175, 255,\
+90,  130, 185, 255\
+}\
+}
+
 #define OLIVE_GREEN (Palette){\
 	.colors = {\
     48,98,48,255,\
-		15,56,15,255,\  
+	15,56,15,255,\
     155,188,15,255\    
 	}\
 }\
-
-
-
-
-const Palette PaletteArray[MAX_PALETTES] = { BW,RETRO_RBY, OLIVE_GREEN };
 
 #define DINO_CUSTOM_PALETTE (Palette){\
 .colors = {\
