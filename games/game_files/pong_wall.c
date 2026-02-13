@@ -1,5 +1,3 @@
-// game_files/pong_wall.c
-
 #include <stdio.h>
 
 #include "display/display.h"
@@ -10,12 +8,6 @@
 // LCD size (da vostro example.c: H=128; W tipico = 160)
 #define LCD_W 160
 #define LCD_H 128
-
-// Proximity range (da example.c: 0..1023)
-#define PROX_MAX 1023.0f
-
-// Start condition: quanto deve cambiare la proximity per far partire la partita
-#define PROX_START_DELTA 8.0f
 
 // Paddle settings
 #define PADDLE_W 28
@@ -30,8 +22,9 @@
 #define SPEED_UP_MUL 1.03f
 #define SPEED_MAX    5.0f
 
-// Quanto tempo mostrare il game-over prima di uscire (frame)
-#define GAMEOVER_FRAMES 90
+
+// Joystick -> paddle tuning (non tocca fisica/logica del gioco)
+#define PADDLE_STEP 3          // pixel per tick
 
 typedef enum {
     IDLE = 0,       // aspetta movimento barra
@@ -55,14 +48,21 @@ static inline f32 clampf(f32 v, f32 lo, f32 hi) {
 
 static inline f32 absf(f32 v) { return (v < 0.0f) ? -v : v; }
 
-// map prox [0..1023] -> x [0 .. LCD_W - PADDLE_W]
-static inline i16 prox_to_paddle_x(f32 prox) {
-    // ratio DEVE restare float
-    const f32 ratio = (f32)(LCD_W - PADDLE_W) / PROX_MAX;
-    i16 x = (i16)(prox * ratio + 0.5f);
-    if (x < 0) x = 0;
-    if (x > (LCD_W - PADDLE_W)) x = (LCD_W - PADDLE_W);
-    return x;
+// ------------------------------------------------------------
+// Joystick helper
+// PC: WASD/ENTER in HOLD -> movimento continuo
+// MSP432: usa get_joystick()
+static inline joystick_t joystick_action(void) {
+#if defined(__MSP432P401R__) || defined(TARGET_IS_MSP432P4XX) || defined(__TI_COMPILER_VERSION__)
+    return get_joystick();
+#else
+    if (IsKeyDown(KEY_ENTER)) return JS_BUTTON;
+    if (IsKeyDown(KEY_W))     return JS_UP;
+    if (IsKeyDown(KEY_A))     return JS_LEFT;
+    if (IsKeyDown(KEY_S))     return JS_DOWN;
+    if (IsKeyDown(KEY_D))     return JS_RIGHT;
+    return JS_NONE;
+#endif
 }
 
 // ------------------------------------------------------------
@@ -170,29 +170,29 @@ int pong_wall_game(void) {
     score_to_digits(score);
 
     GameState state = IDLE;
-    u8 gameover_countdown = 0;
 
     // Paddle
-    f32 proximity = 0.0f;
-    f32 prox0 = 0.0f;
-    i16 paddle_x = 0;
-
-    // baseline
-    proximity = get_proximity();
-    prox0 = proximity;
+    i16 paddle_x = (i16)((LCD_W - PADDLE_W) / 2); // parti centrato
 
     init_ball(&ball);
 
     while (!window_should_close()) {
         display_begin();
 
-        // ---------------- INPUT
-        proximity = get_proximity();
-        paddle_x = prox_to_paddle_x(proximity);
+        // ---------------- INPUT (joystick)
+        joystick_t action = joystick_action();
+
+        if (action == JS_LEFT)  paddle_x -= PADDLE_STEP;
+        if (action == JS_RIGHT) paddle_x += PADDLE_STEP;
+
+        // clamp paddle
+        if (paddle_x < 0) paddle_x = 0;
+        if (paddle_x > (LCD_W - PADDLE_W)) paddle_x = (LCD_W - PADDLE_W);
 
         // ---------------- STATE UPDATE
         if (state == IDLE) {
-            if (absf(proximity - prox0) >= PROX_START_DELTA) {
+            // come prima: “parti quando l’utente si muove”
+            if (action != JS_NONE) {
                 state = PLAYING;
                 score = 0;
                 score_to_digits(score);

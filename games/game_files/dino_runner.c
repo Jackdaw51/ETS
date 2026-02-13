@@ -11,15 +11,6 @@
 #define LCD_W 160
 #define LCD_H 128
 
-// Start condition
-#define PROX_START_DELTA 8.0f
-
-// Jump gesture (delta frame-to-frame)
-#define PROX_JUMP_DELTA  28.0f
-
-// Duck threshold
-#define PROX_DUCK_TH     750.0f
-
 // Ground
 #define GROUND_Y      (LCD_H - 18)
 
@@ -117,7 +108,23 @@ typedef struct {
 // ------------------------------------------------------------
 // Helpers
 
-static inline f32 absf(f32 v) { return (v < 0.0f) ? -v : v; }
+// ------------------------------------------------------------
+// Joystick helper
+// PC: WASD/ENTER in HOLD -> input continuo
+// MSP432: usa get_joystick()
+static inline joystick_t joystick_action(void) {
+#if defined(__MSP432P401R__) || defined(TARGET_IS_MSP432P4XX) || defined(__TI_COMPILER_VERSION__)
+    return get_joystick();
+#else
+    if (IsKeyDown(KEY_ENTER)) return JS_BUTTON;
+    if (IsKeyDown(KEY_W))     return JS_UP;
+    if (IsKeyDown(KEY_A))     return JS_LEFT;
+    if (IsKeyDown(KEY_S))     return JS_DOWN;
+    if (IsKeyDown(KEY_D))     return JS_RIGHT;
+    return JS_NONE;
+#endif
+}
+
 
 static inline i16 clamp_i16(i16 v, i16 lo, i16 hi) {
     if (v < lo) return lo;
@@ -385,10 +392,6 @@ int dino_runner_game(void) {
     i16 speed_fp = SPEED_START_FP;
     u8  spawn_cd = rng_range_u8(SPAWN_MIN_FR, SPAWN_MAX_FR);
 
-    // Proximity baseline
-    f32 proximity = get_proximity();
-    f32 prox0 = proximity;
-    f32 prox_prev = proximity;
 
     u8 jump_cd = 0;
 
@@ -399,13 +402,15 @@ int dino_runner_game(void) {
     while (!window_should_close()) {
         display_begin();
 
-        // -------- INPUT (float, solo qui)
-        proximity = get_proximity();
-        f32 dprox = absf(proximity - prox_prev);
-        prox_prev = proximity;
+        // -------- INPUT (joystick)
+        joystick_t a = joystick_action();
 
-        u8 jump = (dprox >= PROX_JUMP_DELTA) ? 1u : 0u;
-        u8 duck = (proximity >= PROX_DUCK_TH) ? 1u : 0u;
+        // HOLD behavior:
+        // - UP tenuto: jump "richiesto" sempre
+        // - DOWN tenuto: duck sempre (solo se on_ground)
+        u8 jump = (a == JS_UP || a == JS_BUTTON) ? 1u : 0u;
+        u8 duck = (a == JS_DOWN) ? 1u : 0u;
+
 
         // -------- UPDATE
         if (state == (u8)IDLE) {
@@ -415,7 +420,8 @@ int dino_runner_game(void) {
             // nuvole in idle (lente)
             update_clouds(clouds, (i16)CLOUD_IDLE_STEP_FP);
 
-            if (absf(proximity - prox0) >= PROX_START_DELTA || jump) {
+            if (a != JS_NONE || jump) {
+
                 state = (u8)PLAYING;
                 score = 0;
                 speed_fp = SPEED_START_FP;
@@ -428,9 +434,6 @@ int dino_runner_game(void) {
 
                 clear_obstacles(obs);
                 jump_cd = 0;
-
-                // evita jump fantasma al primo frame
-                prox_prev = proximity;
             }
         }
         else if (state == (u8)PLAYING) {

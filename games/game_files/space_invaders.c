@@ -22,12 +22,8 @@
 #define LCD_W 160
 #define LCD_H 128
 
-// Input (proximity)
-#define PROX_MAX_INT       1023
-#define PROX_START_DELTA   8.0f   // (resta float solo perché la start condition era così; vedi sotto)
-
-// Player movement: aumenta la "corsa" ai bordi
-#define SHIP_RANGE_EXTRA_PX   10   // px extra virtuali a sx/dx
+// Joystick -> ship tuning
+#define SHIP_STEP_PX  3   // pixel per tick (come paddle)
 
 // Auto-fire
 #define AUTO_FIRE_PERIOD_FR  8
@@ -197,7 +193,6 @@ static inline i32 clampi32(i32 v, i32 lo, i32 hi) {
     if (v > hi) return hi;
     return v;
 }
-static inline f32 absf(f32 v) { return (v < 0.0f) ? -v : v; }
 
 static u8 aabb_i32(i32 ax, i32 ay, i32 aw, i32 ah,
                    i32 bx, i32 by, i32 bw, i32 bh) {
@@ -226,6 +221,22 @@ static u8 rng_range_u8(u8 lo, u8 hi) {
     if (hi <= lo) return lo;
     u32 span = (u32)(hi - lo) + 1u;
     return (u8)(lo + (u8)(rng_u32() % span));
+}
+// ------------------------------------------------------------
+// Joystick helper
+// PC: WASD/ENTER in HOLD -> movimento continuo
+// MSP432: usa get_joystick()
+static inline joystick_t joystick_actiaon(void) {
+#if defined(__MSP432P401R__) || defined(TARGET_IS_MSP432P4XX) || defined(__TI_COMPILER_VERSION__)
+    return get_joystick();
+#else
+    if (IsKeyDown(KEY_ENTER)) return JS_BUTTON;
+    if (IsKeyDown(KEY_W))     return JS_UP;
+    if (IsKeyDown(KEY_A))     return JS_LEFT;
+    if (IsKeyDown(KEY_S))     return JS_DOWN;
+    if (IsKeyDown(KEY_D))     return JS_RIGHT;
+    return JS_NONE;
+#endif
 }
 
 // ------------------------------------------------------------
@@ -336,18 +347,6 @@ static void draw_combo_dots(u8 combo_lvl) {
     }
 }
 
-// ------------------------------------------------------------
-// Mapping ship_x con aritmetica intera (niente float)
-// range virtuale più largo, poi clamp allo schermo
-static i32 map_ship_x_i32(i32 prox) {
-    if (prox < 0) prox = 0;
-    if (prox > PROX_MAX_INT) prox = PROX_MAX_INT;
-
-    const i32 span = (LCD_W - SHIP_W) + 2 * SHIP_RANGE_EXTRA_PX;
-    // x = prox * span / 1023 - extra
-    i32 x = (prox * span) / PROX_MAX_INT - SHIP_RANGE_EXTRA_PX;
-    return clampi32(x, 0, (LCD_W - SHIP_W));
-}
 
 // ------------------------------------------------------------
 // EXPLOSION DRAW
@@ -400,9 +399,6 @@ int space_invaders_game(void) {
 
     GameState state = IDLE;
 
-    // NB: get_proximity() probabilmente float: cast a int
-    f32 proximity_f = get_proximity();
-    f32 prox0_f = proximity_f;
 
     i32 ship_x = (LCD_W - SHIP_W) / 2;
 
@@ -456,15 +452,21 @@ int space_invaders_game(void) {
     while (!window_should_close()) {
         display_begin();
 
-        // ---------- INPUT ----------
-        proximity_f = get_proximity();
-        i32 prox_i = (i32)proximity_f;
-        ship_x = map_ship_x_i32(prox_i);
+        // ---------- INPUT (joystick) ----------
+        joystick_t action = joystick_action();
+
+        if (action == JS_LEFT)  ship_x -= SHIP_STEP_PX;
+        if (action == JS_RIGHT) ship_x += SHIP_STEP_PX;
+
+        // clamp ship
+        ship_x = clampi32(ship_x, 0, (LCD_W - SHIP_W));
+
 
         // ---------- UPDATE ----------
         if (state == IDLE) {
             // start condition come prima (soglia su float, ma 1 sola operazione semplice)
-            if (absf(proximity_f - prox0_f) >= PROX_START_DELTA) {
+            // start: appena c'è input (come pong)
+            if (action != JS_NONE) {
                 state = PLAYING;
 
                 score = 0;
