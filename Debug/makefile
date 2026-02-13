@@ -14,17 +14,18 @@ ORDERED_OBJS += \
 "./startup_msp432p401r_ccs.obj" \
 "./system_msp432p401r.obj" \
 "./games/game_files/display/fb_display.obj" \
-"./games/game_files/display/text_lut.obj" \
 "./games/game_files/example.obj" \
 "./games/game_files/sprites/palettes.obj" \
 "./games/game_files/sprites/sprites.obj" \
 "./incl/hcsr04.obj" \
 "./incl/joystick.obj" \
+"./incl/light_sensor.obj" \
 "./incl/screen.obj" \
+"./incl/timers.obj" \
 "../msp432p401r.cmd" \
 $(GEN_CMDS__FLAG) \
 -llibc.a \
--l"C:/Users/Rowan Li Tangalin/Documents/simplelink_msp432p4_sdk_3_40_01_02/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/ccs/msp432p4xx_driverlib.lib" \
+-l"C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/ccs/msp432p4xx_driverlib.lib" \
 
 -include ../makefile.init
 
@@ -153,15 +154,15 @@ all: $(OBJS) $(CMD_SRCS) $(A_SRCS) $(GEN_CMDS)
 ETS.out: $(OBJS) $(CMD_SRCS) $(A_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: Arm Linker'
-	"C:/ti/ccs1280/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me -O4 --opt_for_speed=5 --advice:power=all --define=__MSP432P401R__ --define=ccs -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"ETS.map" --heap_size=1024 --stack_size=512 -i"C:/ti/ccs1280/ccs/ccs_base/arm/include" -i"C:/ti/ccs1280/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/lib" -i"C:/ti/ccs1280/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="ETS_linkInfo.xml" --rom_model -o "ETS.out" $(ORDERED_OBJS) $(A_SRCS)
+	"C:/ti/ccs1280/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me -Ooff --opt_for_speed=3 --advice:power=all --define=__MSP432P401R__ --define=ccs -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"ETS.map" --heap_size=1024 --stack_size=512 -i"C:/ti/ccs1280/ccs/ccs_base/arm/include" -i"C:/ti/ccs1280/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/lib" -i"C:/ti/ccs1280/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="ETS_linkInfo.xml" --rom_model -o "ETS.out" $(ORDERED_OBJS) $(A_SRCS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" "games\game_files\display\fb_display.obj" "games\game_files\display\text_lut.obj" "games\game_files\example.obj" "games\game_files\sprites\palettes.obj" "games\game_files\sprites\sprites.obj" "incl\hcsr04.obj" "incl\joystick.obj" "incl\screen.obj" 
-	-$(RM) "main.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" "games\game_files\display\fb_display.d" "games\game_files\display\text_lut.d" "games\game_files\example.d" "games\game_files\sprites\palettes.d" "games\game_files\sprites\sprites.d" "incl\hcsr04.d" "incl\joystick.d" "incl\screen.d" 
+	-$(RM) "main.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" "games\game_files\display\fb_display.obj" "games\game_files\example.obj" "games\game_files\sprites\palettes.obj" "games\game_files\sprites\sprites.obj" "incl\hcsr04.obj" "incl\joystick.obj" "incl\light_sensor.obj" "incl\screen.obj" "incl\timers.obj" 
+	-$(RM) "main.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" "games\game_files\display\fb_display.d" "games\game_files\example.d" "games\game_files\sprites\palettes.d" "games\game_files\sprites\sprites.d" "incl\hcsr04.d" "incl\joystick.d" "incl\light_sensor.d" "incl\screen.d" "incl\timers.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

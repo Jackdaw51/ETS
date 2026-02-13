@@ -1,4 +1,7 @@
 #pragma once
+#include "display/display.h"
+#include "sprites/sprites.h"
+#include "sprites/palettes.h"
 
 typedef enum {
   UP,

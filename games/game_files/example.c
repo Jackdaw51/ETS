@@ -1,4 +1,5 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 #include "display/display.h"
 #include "sprites/sprites.h"
 #include "sprites/palettes.h"
@@ -6,15 +7,22 @@
 >>>>>>> Stashed changes
 #include "example.h"
 
+=======
+#include "example.h"
+#include "../../incl/timers.h"
+>>>>>>> Stashed changes
 i32 proximity_to_y(f32 proximity, u8 maxY){
   f32 ratio = (f32)maxY/1023.0f;
 	return (i32)(proximity * ratio + 0.5f);
 };
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 int main(){
 	display_init_lcd();
 =======
+=======
+>>>>>>> Stashed changes
 void m_example(){
     display_init_lcd();
     start_example();
@@ -26,6 +34,9 @@ void m_example(){
 //}
 
 void start_example(){
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
   f32 proximity;
   f32 proximity_old;
@@ -34,12 +45,6 @@ void start_example(){
 
   // Using the base palette when generating sprites
 
-  TextureHandle R_handle = load_texture_from_sprite(upper_R_sprite.height,upper_R_sprite.width,upper_R_sprite.data);
-  TextureHandle O_handle = load_texture_from_sprite(upper_O_sprite.height,upper_O_sprite.width,upper_O_sprite.data);
-  TextureHandle W_handle = load_texture_from_sprite(upper_W_sprite.height,upper_W_sprite.width,upper_W_sprite.data);
-  TextureHandle A_handle = load_texture_from_sprite(upper_A_sprite.height,upper_A_sprite.width,upper_A_sprite.data);
-  TextureHandle N_handle = load_texture_from_sprite(upper_N_sprite.height,upper_N_sprite.width,upper_N_sprite.data);
-	
   TextureHandle wdf1_texture_handle = load_texture_from_sprite(wdf1_sprite.height,wdf1_sprite.width,wdf1_sprite.data);
   TextureHandle wdf2_texture_handle = load_texture_from_sprite(wdf2_sprite.height,wdf2_sprite.width,wdf2_sprite.data);
   TextureHandle wuf1_texture_handle = load_texture_from_sprite(wuf1_sprite.height,wuf1_sprite.width,wuf1_sprite.data);
@@ -82,6 +87,7 @@ void start_example(){
   u8 max_height = 128-wdf1_sprite.height;
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   // Setting the color map and palette
   //u8 map[3] = {2,1,0};
   //set_mapping_array(map);
@@ -91,6 +97,10 @@ void start_example(){
 
   // Setting up static world
   // note that to make blocks move you would put this inside the loop and clear the world_blocks array at the start of the loop
+=======
+  set_screen_color(T_ONE);
+  set_palette(OLIVE_GREEN_INDEX);
+>>>>>>> Stashed changes
 =======
   set_screen_color(T_ONE);
   set_palette(OLIVE_GREEN_INDEX);
@@ -134,6 +144,7 @@ void start_example(){
     clear_screen();
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     for(int i = 0; i < world_blocks_len; i++){
       //draw_block(world_blocks[i]);
     }
@@ -153,11 +164,22 @@ void start_example(){
     draw_rectangle(60,50,50,40,T_TWO);
 	  //draw_text_h(74,p1.y,1,&rowan_builder);
 >>>>>>> Stashed changes
+=======
+    int i;
+    for(i = 0; i < world_blocks_len; i++){
+      //draw_block(world_blocks[i]);
+    }
+
+    draw_rectangle(0,0,20,50,T_THREE);
+    draw_rectangle(60,50,50,40,T_TWO);
+	  //draw_text_h(74,p1.y,1,&rowan_builder);
+>>>>>>> Stashed changes
     draw_character(&p1);
-    //draw_character(&p2);
+    draw_character(&p2);
 
     proximity_old = proximity;
     display_end();
+    sleep_ms(10);
   }
 
   display_close();
