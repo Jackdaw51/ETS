@@ -1,49 +1,26 @@
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-#include "display/display.h"
-#include "sprites/sprites.h"
-#include "sprites/palettes.h"
-=======
->>>>>>> Stashed changes
 #include "example.h"
 
-=======
-#include "example.h"
-#include "../../incl/timers.h"
->>>>>>> Stashed changes
 i32 proximity_to_y(f32 proximity, u8 maxY){
   f32 ratio = (f32)maxY/1023.0f;
 	return (i32)(proximity * ratio + 0.5f);
 };
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-int main(){
-	display_init_lcd();
-=======
-=======
->>>>>>> Stashed changes
 void m_example(){
     display_init_lcd();
     start_example();
     display_close();
 }
 
-//int main(){
-//s  m_example();
-//}
-
 void start_example(){
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
   f32 proximity;
   f32 proximity_old;
 	i32 sprite_y = 0;
 	i32 old_sprite_y = 0;
 
   // Using the base palette when generating sprites
+
+TextBuilder rowan_builder = (TextBuilder){ .handles = (BuilderElement[8]){}, .len = 8 };
+load_text("Rowan Li",&rowan_builder);
 
   TextureHandle wdf1_texture_handle = load_texture_from_sprite(wdf1_sprite.height,wdf1_sprite.width,wdf1_sprite.data);
   TextureHandle wdf2_texture_handle = load_texture_from_sprite(wdf2_sprite.height,wdf2_sprite.width,wdf2_sprite.data);
@@ -85,26 +62,8 @@ void start_example(){
   i32 direction = 0;
 
   u8 max_height = 128-wdf1_sprite.height;
-
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  // Setting the color map and palette
-  //u8 map[3] = {2,1,0};
-  //set_mapping_array(map);
-  set_screen_color(1);
-	set_palette(RETRO_RBY_INDEX);
-  // Selecting which color is the background
-
-  // Setting up static world
-  // note that to make blocks move you would put this inside the loop and clear the world_blocks array at the start of the loop
-=======
   set_screen_color(T_ONE);
   set_palette(OLIVE_GREEN_INDEX);
->>>>>>> Stashed changes
-=======
-  set_screen_color(T_ONE);
-  set_palette(OLIVE_GREEN_INDEX);
->>>>>>> Stashed changes
 
   world_blocks[world_blocks_len++] = new_block(0,70,30,30,T_THREE);
   world_blocks[world_blocks_len++] = new_block(0,100,24,20,T_THREE);
@@ -126,16 +85,14 @@ void start_example(){
       counter2++;
       if(proximity > proximity_old) direction = 0;
       if(proximity < proximity_old) direction = 1;
-    } 
+    }
 
     sprite_y = proximity_to_y(proximity,max_height);
 
-    p2.prev_y = p2.y;
     p2.y = 128-sprite_y-p1.height;
     p2.d = 1-direction;
     p2.animation_n = counter%2;
 
-    p1.prev_y = p1.y;
     p1.y = sprite_y;
     p1.d = direction;
     p1.animation_n = counter%2;
@@ -143,18 +100,10 @@ void start_example(){
     // DRAWING
     clear_screen();
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     for(int i = 0; i < world_blocks_len; i++){
-      //draw_block(world_blocks[i]);
+      draw_block(world_blocks[i]);
     }
 
-    draw_texture(74,48,R_handle);
-    draw_texture(84,48,O_handle);
-    draw_texture(94,48,W_handle);
-    draw_texture(104,48,A_handle);
-    draw_texture(114,48,N_handle);
-=======
     int i;
     for(i = 0; i < world_blocks_len; i++){
       //draw_block(world_blocks[i]);
@@ -163,31 +112,16 @@ void start_example(){
     draw_rectangle(0,0,20,50,T_THREE);
     draw_rectangle(60,50,50,40,T_TWO);
 	  //draw_text_h(74,p1.y,1,&rowan_builder);
->>>>>>> Stashed changes
-=======
-    int i;
-    for(i = 0; i < world_blocks_len; i++){
-      //draw_block(world_blocks[i]);
-    }
-
-    draw_rectangle(0,0,20,50,T_THREE);
-    draw_rectangle(60,50,50,40,T_TWO);
-	  //draw_text_h(74,p1.y,1,&rowan_builder);
->>>>>>> Stashed changes
     draw_character(&p1);
     draw_character(&p2);
 
     proximity_old = proximity;
     display_end();
-    sleep_ms(10);
   }
-
-  display_close();
 }
 
 
 void draw_character(Character* c){
-  //draw_rectangle(c->x,c->prev_y,c->width,c->height,T_THREE);
   draw_texture(c->x,c->y,c->animation_pack[c->d][c->animation_n]);
 }
 
@@ -239,7 +173,7 @@ Block new_block_outlined(u8 x, u8 y, u8 width, u8 height,u8 thickness, TWOS_COLO
   };
 };
 
- 
+
 void draw_block(Block b){
   switch(b.style){
     case FILLP:
