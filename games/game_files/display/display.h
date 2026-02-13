@@ -5,6 +5,7 @@
 #include "../sprites/palettes.h"
 #include "../sprites/sprites.h"
 #include "../../../incl/joystick.h"
+#include "../../../incl/screen.h"
 #include "text_lut.h"
 // ------------------------------------------------------------------
 // Opening and Closing the window

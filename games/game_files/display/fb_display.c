@@ -35,7 +35,7 @@
 typedef struct {
 	Sprite s;
 	u8 p_index;
-} FbTexture;    
+} FbTexture;
 
 // Frame info
 static u8 frame_buffer[5120];
@@ -62,7 +62,7 @@ void draw_pixel(i32 x, i32 y,TWOS_COLOURS color){
 };
 
 void display_init_lcd(void){
-   
+
 };
 void display_init(i32 width, i32 height);
 void display_close(void){};
@@ -72,35 +72,19 @@ void display_close(void){};
 void display_begin(void){};
 void display_end(void){
     // send everything
-    set_address_window(0, 0, 159, 127);
-    pin_init();
-
-    int x;
-    int y;
-    for(y = 0; y < FRAME_HEIGHT; y++){
-        for(x = 0; x < FRAME_WIDTH; x++){
-            u16 color = GET_COLOR(x,y);
-
-            u8 high = (color >> 8);
-            u8 low = (color & 0xFF);
-
-            write_data_fast(high,low);
-        }
-    }
-
-    pin_des();
+    DMA_send_frame(frame_buffer,palette_buffer);
 };
 u8 window_should_close(void){
     return 0;
 }
 
 
-// Set mapping array is intended to be used when loading a sprite with a 
+// Set mapping array is intended to be used when loading a sprite with a
 // different palette from the one it was drawn in
 
 // It chooses which index of the original palette maps to which index of the new palette
 
-// eg 
+// eg
 // Palette 1 BW {Black,DarkGray,White}
 // Palette 2 RGB {R,G,B}
 
@@ -108,7 +92,7 @@ u8 window_should_close(void){
 // DarkGray (1) to R (0)
 // Black (0) to B (2)
 // White (2) to G (1)
-// I can do set_mapping_array(2,0,1) 
+// I can do set_mapping_array(2,0,1)
 void set_mapping_array(u8* map){};
 
 // It helps to #define palette indexes in the palettes.h file so you don't have to remember them
@@ -133,7 +117,7 @@ void clear_screen(void){
     u32 extended_palette = (base_palette_index | base_palette_index << 4 | base_palette_index << 8 | base_palette_index << 12 | base_palette_index << 16
                             | base_palette_index << 20 | base_palette_index << 24 | base_palette_index << 28);
 
-    
+
     for(i = 0; i < FRAME_WIDTH*FRAME_HEIGHT/(PIXEL_PER_BYTE*4); i++){
         f_fptr[i] = extended_pixel;
     }
@@ -141,7 +125,7 @@ void clear_screen(void){
     for(i = 0; i < FRAME_WIDTH*FRAME_HEIGHT/(PALETTE_PER_BYTE*4); i++){
         p_fptr[i] = extended_palette;
     }
-}; 
+};
 void clear_screen_c(TWOS_COLOURS color){};
 
 
@@ -150,7 +134,7 @@ void draw_rectangle(i32 x, i32 y, i32 width, i32 height,TWOS_COLOURS color){
 	int i;
     int j;
     int n_y;
-    
+
     if(width >= 48){
         u32 extended_pixel = (color | color << 2 | color << 4 | color << 6 | color << 8 | color << 10
                             | color << 12 | color << 14 | color << 16 | color << 18 | color << 20 | color << 22
@@ -163,7 +147,7 @@ void draw_rectangle(i32 x, i32 y, i32 width, i32 height,TWOS_COLOURS color){
             u32* r_fptr = (u32*)GET_FRAME_PTR(x,n_y);
             for(j = 0; j < width/16; j++){
                 r_fptr[j] = extended_pixel;
-            }    
+            }
 
             for(j = 0; j<leftovers; j++){
                 int n_x = x+width-leftovers+j;
@@ -180,7 +164,7 @@ void draw_rectangle(i32 x, i32 y, i32 width, i32 height,TWOS_COLOURS color){
             u16* r_fptr = (u16*)GET_FRAME_PTR(x,n_y);
             for(j = 0; j < width/8; j++){
                 r_fptr[j] = extended_pixel;
-            }    
+            }
 
             for(j = 0; j<leftovers; j++){
                 int n_x = x+width-leftovers+j;
@@ -198,7 +182,7 @@ void draw_rectangle(i32 x, i32 y, i32 width, i32 height,TWOS_COLOURS color){
             u8* r_fptr = (u8*)GET_FRAME_PTR(x,n_y);
             for(j = 0; j < width/4; j++){
                 r_fptr[j] = extended_pixel;
-            }    
+            }
 
             for(j = 0; j<leftovers; j++){
                 int n_x = x+width-leftovers+j;
@@ -258,7 +242,7 @@ void draw_rectangle_p(i32 x, i32 y, i32 width, i32 height,TWOS_COLOURS color, u8
 
     draw_rectangle(x,y,width,height,color);
 
-    base_palette_index = old_base_palette_index; 
+    base_palette_index = old_base_palette_index;
 };
 void draw_rectangle_outline_p(i32 x, i32 y, i32 width, i32 height,u8 thickness,TWOS_COLOURS color, u8 p){
     u8 old_base_palette_index = base_palette_index;
@@ -282,7 +266,7 @@ void draw_text_v(i32 x, i32 y,i32 extra_spacing, TextBuilder* builder){};
 // so if you want multiple colored versions you must load multiple
 
 
-TextureHandle load_texture_from_sprite(u8 height, u8 width, const u8* sprite){	
+TextureHandle load_texture_from_sprite(u8 height, u8 width, const u8* sprite){
     texture_array[texture_array_index] = (FbTexture){ .p_index = base_palette_index,.s = (Sprite){ .width = width, .height = height, .data = sprite}};
 	return texture_array_index++;
 };
@@ -352,14 +336,14 @@ void draw_texture(u8 x, u8 y, TextureHandle texture_index){
                     SET_PALETTE_ELEMENT(n_x,n_y,base_palette_index);
                 }
 			}
-		} 
+		}
 	}
 
     base_palette_index = old_base_palette_index;
 };
 
 // ------------------------------------------------------------------
-// function to get the value of the proximity sensor  
+// function to get the value of the proximity sensor
 
 static f32 proximity = 0;
 
