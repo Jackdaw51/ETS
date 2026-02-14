@@ -1,5 +1,6 @@
 #pragma once
 #include <msp432p401r.h>
+
 /* --- APDS-9930 I2C Address --- */
 #define APDS9930_ADDR   0x39
 

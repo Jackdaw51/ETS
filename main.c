@@ -45,17 +45,6 @@ int main(void)
     init_green();
     init_red();
     init_hcsr04();
-<<<<<<< HEAD
-=======
-
-    CS_setDCOCenteredFrequency(CS_DCO_FREQUENCY_12);
-
-    // 2. Connect MCLK (CPU) and SMCLK (SPI) to the 12 MHz DCO
-    CS_initClockSignal(CS_MCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1);
-    CS_initClockSignal(CS_SMCLK, CS_DCOCLK_SELECT, CS_CLOCK_DIVIDER_1);
-    //init_timerA2();
-    //init_gpio_ir();
->>>>>>> 78a2633c05fb290f4c5c199bd116c1ae4f09e799
 
     js_init();
     I2C_Unstick();
@@ -74,28 +63,11 @@ int main(void)
 
     while (1)
     {
-
-<<<<<<< HEAD
+        transmitString("GET:WEATHER\n");
         // float distance_cm = trigger_hcsr04();
-        uint16_t distance_cm = APDS_ReadProximity();
-        P1->OUT &= ~BIT0; // Turn off Red LED
-        P2->OUT &= ~BIT1; // Turn off Green LED
-        if (distance_cm > 100)
-        {
-            P1->OUT ^= BIT0; // Toggle Red LED state
-        }
-        else
-        {
-            P2->OUT ^= BIT1; // Toggle Green LED state
-        }
-        //__WFI(); // Enter low-power mode until an interrupt occurs
-=======
+        // uint16_t distance_cm = APDS_ReadProximity();
         // P1->OUT &= ~BIT0; // Turn off Red LED
         // P2->OUT &= ~BIT1; // Turn off Green LED
-
-        // /*
-        // float distance_cm = trigger_hcsr04();
-
         // if (distance_cm > 100)
         // {
         //     P1->OUT ^= BIT0; // Toggle Red LED state
@@ -104,9 +76,7 @@ int main(void)
         // {
         //     P2->OUT ^= BIT1; // Toggle Green LED state
         // }
-        // //__WFI(); // Enter low-power mode until an interrupt occurs
-        // */
->>>>>>> 78a2633c05fb290f4c5c199bd116c1ae4f09e799
+        //__WFI(); // Enter low-power mode until an interrupt occurs
         // a = read_joystick();
         // switch (a)
         // {
@@ -123,17 +93,9 @@ int main(void)
         // default:
         //     break;
         // }
-<<<<<<< HEAD
         // LCD_FillColor(0xF800);
         // LCD_FillColor(0xF800);
         // m_example();
-=======
-         //LCD_FillColor(0xF800);
-         //LCD_FillColor(0x0000);
-        //myMCLK = CS_getMCLK();   // Returns frequency in Hz (e.g., 48000000)
-        //mySMCLK = CS_getSMCLK(); // Returns frequency in Hz
-        m_example();
->>>>>>> 78a2633c05fb290f4c5c199bd116c1ae4f09e799
     }
 }
 void init_red(void)
