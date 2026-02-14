@@ -159,36 +159,36 @@ void renderSlice(uint8_t *pang, uint8_t *frame_buffer, uint8_t *palette_buffer)
         uint8_t elh_4 = (el4 >> 8);
         uint8_t ell_5 = el5 & 0xFF;
         uint8_t elh_5 = (el5 >> 8);
-        uint8_t ell_6 = el6 & 0xFF; 
-        uint8_t elh_6 = (el6 >> 8);    
+        uint8_t ell_6 = el6 & 0xFF;
+        uint8_t elh_6 = (el6 >> 8);
         uint8_t ell_7 = el7 & 0xFF;
         uint8_t elh_7 = (el7 >> 8);
         uint8_t ell_8 = el8 & 0xFF;
         uint8_t elh_8 = (el8 >> 8);
 
-        uint8_t *pang_fptr = &pang[i*16];
-        pang_fptr[0] = elh_1;     // High byte
-        pang_fptr[1] = ell_1;     // High byte
-        pang_fptr[2] = elh_2;     // High byte
-        pang_fptr[3] = ell_2;     // High byte
-        pang_fptr[4] = elh_3;     // High byte
-        pang_fptr[5] = ell_3;     // High byte
-        pang_fptr[6] = elh_4;     // High byte
-        pang_fptr[7] = ell_4;     // High byte
-        pang_fptr[8] = elh_5;     // High byte
-        pang_fptr[9] = ell_5;     // High byte
-        pang_fptr[10] = elh_6;    // High byte
-        pang_fptr[11] = ell_6;    // High byte
-        pang_fptr[12] = elh_7;    // High byte
-        pang_fptr[13] = ell_7;    // High byte
-        pang_fptr[14] = elh_8;    // High byte
-        pang_fptr[15] = ell_8;    // High byte
+        uint8_t *pang_fptr = &pang[i * 16];
+        pang_fptr[0] = elh_1;  // High byte
+        pang_fptr[1] = ell_1;  // High byte
+        pang_fptr[2] = elh_2;  // High byte
+        pang_fptr[3] = ell_2;  // High byte
+        pang_fptr[4] = elh_3;  // High byte
+        pang_fptr[5] = ell_3;  // High byte
+        pang_fptr[6] = elh_4;  // High byte
+        pang_fptr[7] = ell_4;  // High byte
+        pang_fptr[8] = elh_5;  // High byte
+        pang_fptr[9] = ell_5;  // High byte
+        pang_fptr[10] = elh_6; // High byte
+        pang_fptr[11] = ell_6; // High byte
+        pang_fptr[12] = elh_7; // High byte
+        pang_fptr[13] = ell_7; // High byte
+        pang_fptr[14] = elh_8; // High byte
+        pang_fptr[15] = ell_8; // High byte
     }
 }
 
 void DMA_send_frame(uint8_t *frame_buffer, uint8_t *palette_buffer)
 {
-    
+
     uint32_t currentOffset = 0;
     bool usePing = true; // Toggle to track which buffer to use
     // We must fill the first buffer before we start the loop
@@ -268,8 +268,9 @@ void DMA_INT0_IRQHandler(void)
     dmaTransferDone = true;
 }
 
-#define SPI_WRITE_BYTE(byte) \
-    while(!(EUSCI_B0->IFG & EUSCI_B_IFG_TXIFG)); \
+#define SPI_WRITE_BYTE(byte)                     \
+    while (!(EUSCI_B0->IFG & EUSCI_B_IFG_TXIFG)) \
+        ;                                        \
     EUSCI_B0->TXBUF = (byte);
 
 // --- SPI Configuration ---
@@ -301,7 +302,6 @@ void LCD_Command(uint8_t cmd)
     GPIO_setOutputHighOnPin(LCD_CS_PORT, LCD_CS_PIN); // CS High = Deselect
 }
 
-<<<<<<< HEAD
 void write_data_fast(uint8_t highByte, uint8_t lowByte)
 {
     while (!(EUSCI_B0->IFG & EUSCI_B_IFG_TXIFG))
@@ -317,27 +317,12 @@ void write_data_fast(uint8_t highByte, uint8_t lowByte)
 
 void LCD_Data(uint8_t data)
 {
-=======
-void write_data_fast(uint8_t highByte, uint8_t lowByte){
-    while(!(EUSCI_B0->IFG & EUSCI_B_IFG_TXIFG));
-            // Write byte directly to register
-            EUSCI_B0->TXBUF = highByte;
-
-            // SEND LOW BYTE
-            while(!(EUSCI_B0->IFG & EUSCI_B_IFG_TXIFG));
-            EUSCI_B0->TXBUF = lowByte;
-}
-
-
-void LCD_Data(uint8_t data) {
->>>>>>> 78a2633c05fb290f4c5c199bd116c1ae4f09e799
     GPIO_setOutputHighOnPin(LCD_DC_PORT, LCD_DC_PIN); // DC High = Data
     GPIO_setOutputLowOnPin(LCD_CS_PORT, LCD_CS_PIN);
     SPI_Write(data);
     GPIO_setOutputHighOnPin(LCD_CS_PORT, LCD_CS_PIN);
 }
 
-<<<<<<< HEAD
 void set_address_window(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 {
     // Note: Some screens have an offset (e.g., x0 + 2). Try adding +2 if pixels are cut off.
@@ -352,27 +337,12 @@ void set_address_window(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
     LCD_Data(y0); // Y Start
     LCD_Data(0x00);
     LCD_Data(y1); // Y End
-=======
-void set_address_window(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1) {
-    // Note: Some screens have an offset (e.g., x0 + 2). Try adding +2 if pixels are cut off.
-    LCD_Command(ST7735_CASET); // Column Addr Set
-    LCD_Data(0x00); LCD_Data(x0); // X Start
-    LCD_Data(0x00); LCD_Data(x1); // X End
-
-    LCD_Command(ST7735_RASET); // Row Addr Set
-    LCD_Data(0x00); LCD_Data(y0); // Y Start
-    LCD_Data(0x00); LCD_Data(y1); // Y End
->>>>>>> 78a2633c05fb290f4c5c199bd116c1ae4f09e799
 
     LCD_Command(ST7735_RAMWR); // Write to RAM
 }
 
-<<<<<<< HEAD
 void LCD_Init()
 {
-=======
-void LCD_Init() {
->>>>>>> 78a2633c05fb290f4c5c199bd116c1ae4f09e799
     // 1. Hardware Reset
     GPIO_setOutputHighOnPin(LCD_RST_PORT, LCD_RST_PIN);
     sleep_ms(100);
@@ -416,17 +386,12 @@ void LCD_SetAddressWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
     LCD_Command(ST7735_RAMWR); // Write to RAM
 }
 
-<<<<<<< HEAD
 void pin_init()
 {
-=======
-void pin_init(){
->>>>>>> 78a2633c05fb290f4c5c199bd116c1ae4f09e799
     GPIO_setOutputHighOnPin(LCD_DC_PORT, LCD_DC_PIN);
     GPIO_setOutputLowOnPin(LCD_CS_PORT, LCD_CS_PIN);
 }
 
-<<<<<<< HEAD
 void pin_des()
 {
     GPIO_setOutputHighOnPin(LCD_CS_PORT, LCD_CS_PIN);
@@ -434,14 +399,6 @@ void pin_des()
 
 void LCD_FillColor(uint16_t color)
 {
-=======
-
-void pin_des(){
-    GPIO_setOutputHighOnPin(LCD_CS_PORT, LCD_CS_PIN);
-}
-
-void LCD_FillColor(uint16_t color) {
->>>>>>> 78a2633c05fb290f4c5c199bd116c1ae4f09e799
     uint8_t hi = color >> 8;
     uint8_t lo = color & 0xFF;
 
@@ -487,11 +444,7 @@ void screen_init(void)
 
     // 5. Fill Screen with RED
     // Color format is RGB565. Red = 0xF800
-<<<<<<< HEAD
     // LCD_FillColor(0xF800);
 
     DMA_init();
-=======
-    //LCD_FillColor(0xF800);
->>>>>>> 78a2633c05fb290f4c5c199bd116c1ae4f09e799
 }

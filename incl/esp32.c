@@ -32,24 +32,10 @@ void init_esp32_communication()
 {
     /* Configure UART Pins: P3.2 (RX) and P3.3 (TX) */
     GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P3,
-                                               GPIO_PIN2 | GPIO_PIN3, GPIO_PRIMARY_MODULE_FUNCTION);
+                                               GPIO_PIN2 | GPIO_PIN3,
+                                               GPIO_PRIMARY_MODULE_FUNCTION);
 
     /* Initialize UART A2 */
     UART_initModule(EUSCI_A2_BASE, &uartConfig);
     UART_enableModule(EUSCI_A2_BASE);
-}
-
-int main(void)
-{
-    /* Stop Watchdog  */
-
-    while (1)
-    {
-        // Send a message to the ESP32
-        
-
-        // Simple delay (roughly 1 second at 24MHz)
-        for (uint32_t i = 0; i < 2000000; i++)
-            ;
-    }
 }
