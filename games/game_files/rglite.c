@@ -8,7 +8,7 @@
 #define CHOICE_Y_OFFSET 3
 
 #define CHOICE_WIDTH 15
-#define CHOICE_GAP 4 
+#define CHOICE_GAP 4
 
 #define NON_CHOICE_THICKNESS 2.0f
 
@@ -22,7 +22,7 @@ const u8 difficulty_to_choices[3] = {2,4,8};
 
 void draw_choices(u8 choice,u8 n_choices, u8 choice_height){
     int i;
-	for(int i=0; i < n_choices; i++){
+	for(i=0; i < n_choices; i++){
 		if(i == choice){
 			draw_rectangle_p(CHOICE_X_OFFSET,CHOICE_Y_OFFSET+i*(choice_height+CHOICE_GAP),CHOICE_WIDTH,choice_height,T_ONE,RETRO_RBY_INDEX);
 		} else {
@@ -50,7 +50,7 @@ int main(){
 	set_screen_color(T_TWO);
 
 	Difficulty d = MEDIUM;
-	
+
 	u8 n_choices = difficulty_to_choices[0];
 	u8 choice_height = (u8)((128 - 2*CHOICE_Y_OFFSET - (n_choices-1)*CHOICE_GAP)/(f32)n_choices);
 
@@ -78,4 +78,3 @@ int main(){
 
   display_close();
 }
-

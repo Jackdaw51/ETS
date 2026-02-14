@@ -52,12 +52,12 @@ int main(int argc, char** argv){
 	free(comparison_string);
 
 	// Turn the png into a 2bpp array
-	
+
 	FILE *header = fopen("sprites.h","a");
 	FILE *impl = fopen("sprites.c","a");
 
-	char (*header_output)[MAX_SPRITE_LINE_LEN] = malloc(sizeof(char)*MAX_SPRITE_LINES*MAX_SPRITE_LINE_LEN); 
-	char (*impl_output)[MAX_SPRITE_LINE_LEN] = malloc(sizeof(char)*MAX_SPRITE_LINES*MAX_SPRITE_LINE_LEN); 
+	char (*header_output)[MAX_SPRITE_LINE_LEN] = malloc(sizeof(char)*MAX_SPRITE_LINES*MAX_SPRITE_LINE_LEN);
+	char (*impl_output)[MAX_SPRITE_LINE_LEN] = malloc(sizeof(char)*MAX_SPRITE_LINES*MAX_SPRITE_LINE_LEN);
 
 	int header_out_len = 0;
 	int impl_out_len = 0;
@@ -97,12 +97,10 @@ int main(int argc, char** argv){
   sprintf(impl_output[impl_out_len++],"const uint8_t %s[] = {\n",output_name);
 
   int unfound_counter = 0;
-  for(int pal = 0; pal < PALETTE_ARR_LEN; pal++){
+  for(int pal = 0; pal < MAX_PALETTES; pal++){
     char (*scratch_space)[MAX_SPRITE_LINE_LEN] = malloc(sizeof(char)*MAX_SPRITE_LINES*MAX_SPRITE_LINE_LEN);
     int scratch_space_len = 0;
 
-    int unfound_counter = 0;
-      
     unsigned char *allowed_p = PaletteArray[pal].colors;
     int counter = 0;
     unsigned char temp_space = 255;
@@ -130,10 +128,18 @@ int main(int argc, char** argv){
           }
         }
         if(!allowed){
+          printf("Tried Palette %d\n",pal);
+          printf("Pixel in position: (%d,%d) is invalid\n",row_ptr,col_ptr);
+          printf("This pixel has values:\n");
+          printf("r:%d\n",r);
+          printf("g:%d\n",g);
+          printf("b:%d\n",b);
+          printf("a:%d\n\n",a);
           unfound_counter++;
 
-          if(unfound_counter == PALETTE_ARR_LEN){
-            printf("Could not find a valid palette to match the png");
+          if(unfound_counter == MAX_PALETTES){
+            printf("Could not find a valid palette to match the png\n");
+            printf("Please ensure that the correct RGBA8 Palette is in the PaletteArray\n");
             return 1;
           }
           goto next_palette;
@@ -141,7 +147,7 @@ int main(int argc, char** argv){
 
         unsigned char shifted_index = (3-index) << ((3-counter)*2);
         temp_space = temp_space & (shifted_index^255);
-        
+
         if(counter == 3){
           sprintf(scratch_space[scratch_space_len++],"%d,",temp_space);
           counter = 0;
@@ -174,11 +180,11 @@ int main(int argc, char** argv){
 
 
 	for(int i = 0; i < header_out_len; i++){
-		fprintf(header,"%s",header_output[i]);	
+		fprintf(header,"%s",header_output[i]);
 	}
 
 	for(int i = 0; i < impl_out_len; i++){
-		fprintf(impl,"%s",impl_output[i]);	
+		fprintf(impl,"%s",impl_output[i]);
 	}
 
 	fclose(header);
