@@ -5,7 +5,7 @@
 #include "menu.h"
 #include "stddef.h"
 
-int main_tmp(){
+int main(){
   display_init_lcd();
   u8 screen = 0;
 
@@ -24,7 +24,8 @@ int main_tmp(){
 		start_example();
 		break;
 	  case 4:
-		start_snake();
+		//start_snake();
+		test_snake();
 		break;
 	}
   }

@@ -1,4 +1,3 @@
-
 #include "palettes.h"
 
 #define BW (Palette){\
@@ -71,6 +70,12 @@
         28,  104, 0,   255,\
         133, 243, 255, 255\
     }\
+}\#define SNAKE_PALETTE (Palette){\
+	.colors = {\
+		0, 0, 0, 255,\
+		16, 81, 33, 255,\
+		25, 117, 49, 255,\
+	}\
 }\
 
 #define SNAKE_PALETTE_565 (Palette565){\
@@ -81,11 +86,27 @@
 	}\
 }\
 
+#define FIBONACCI_RAT_PALETTE (Palette){\
+	.colors = {\
+		0, 0, 0, 255,\
+		132, 134, 132, 255,\
+		247, 130, 255, 255,\
+	}\
+}\
+
 #define FIBONACCI_RAT_PALETTE_565 (Palette565){\
 	.colors = {\
 		0x0000,\
 		0x8430,\
 		0xf41f,\
+	}\
+}\
+
+#define APPLE_PALETTE (Palette){\
+	.colors = {\
+		0, 0, 0, 255,\
+		182, 16, 16, 255,\
+		16, 81, 33, 255,\
 	}\
 }\
 
@@ -173,6 +194,9 @@ const Palette565 PaletteArray565[MAX_PALETTES] = {
     BW_565,
     RETRO_RBY_565,
     OLIVE_GREEN_565,
+	SNAKE_PALETTE_565,
+	FIBONACCI_RAT_PALETTE_565,
+	APPLE_PALETTE_565
 };
 
 const Palette PaletteArray[MAX_PALETTES] = {
@@ -184,5 +208,8 @@ const Palette PaletteArray[MAX_PALETTES] = {
 	SPACESHIP_PALETTE,
 	ALIEN_1_PALETTE,
 	ALIEN_2_PALETTE,
-	UFO_PALETTE
+	UFO_PALETTE,
+	SNAKE_PALETTE,
+	FIBONACCI_RAT_PALETTE,
+	APPLE_PALETTE
 };
