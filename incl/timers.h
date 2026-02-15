@@ -6,3 +6,5 @@ void init_A1(void);
 void init_A2(void);
 void init_A3(void);
 void sleep_ms(uint32_t ms);
+
+volatile uint32_t game_tick = 0;

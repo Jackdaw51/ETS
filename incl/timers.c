@@ -3,6 +3,13 @@
 // Using Timer A0 for general purpose delays
 
 volatile uint8_t ta_done = 0;
+extern volatile uint32_t game_tick;
+
+void restart_game_tick()
+{
+    TIMER_A1->CTL |= TIMER_A_CTL_MC__UP | TIMER_A_CTL_CLR; // start timer and clear
+    game_tick = 0;
+}
 
 void init_A0()
 {
@@ -17,14 +24,19 @@ void init_A0()
 }
 void init_A1()
 {
-    TIMER_A1->CCR[0] = 16384; // 500 ms at 32.768 kHz
-    TIMER_A1->CTL = TIMER_A_CTL_TASSEL_1 | // ACLK
-                    TIMER_A_CTL_MC_1 |     // up mode
-                    TIMER_A_CTL_CLR;       // clear timer
-    TIMER_A1->CTL &= ~TIMER_A_CTL_MC_MASK; // stop timer
+    TIMER_A1->CCR[0] = 328;                 // ~10 ms at 32.768 kHz
+    TIMER_A1->CTL = TIMER_A_CTL_TASSEL_1 |  // ACLK
+                    TIMER_A_CTL_MC_1 |      // up mode
+                    TIMER_A_CTL_CLR;        // clear timer
+    TIMER_A1->CTL &= ~TIMER_A_CTL_MC_MASK;  // stop timer
     TIMER_A1->CCTL[0] = TIMER_A_CCTLN_CCIE; // enable interrupt
 
     NVIC_EnableIRQ(TA1_0_IRQn);
+}
+TA1_0_IRQHandler(void)
+{
+    TIMER_A1->CCTL[0] &= ~TIMER_A_CCTLN_CCIFG; // clear flag
+    game_tick++;
 }
 
 void init_A2(void)
