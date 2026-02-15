@@ -1,3 +1,4 @@
+
 #pragma once
 #include "display/display.h"
 #include "sprites/sprites.h"
@@ -50,3 +51,4 @@ Block new_block(u8 x, u8 y, u8 width, u8 height, TWOS_COLOURS color);
 Block new_block_p(u8 x, u8 y, u8 width, u8 height, TWOS_COLOURS color, u8 p_index);
 Block new_block_outlined(u8 x, u8 y, u8 width, u8 height,u8 thickness, TWOS_COLOURS color);
 Block new_block_outlined_p(u8 x, u8 y, u8 width, u8 height,u8 thickness, TWOS_COLOURS color, u8 p_index);
+

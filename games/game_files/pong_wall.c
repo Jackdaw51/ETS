@@ -1,5 +1,3 @@
-// game_files/pong_wall.c
-
 #include <stdio.h>
 
 #include "display/display.h"
@@ -7,15 +5,9 @@
 #include "stddef.h"
 
 // ------------------------------------------------------------
-// LCD size (da vostro example.c: H=128; W tipico = 160)
+// LCD size
 #define LCD_W 160
 #define LCD_H 128
-
-// Proximity range (da example.c: 0..1023)
-#define PROX_MAX 1023.0f
-
-// Start condition: quanto deve cambiare la proximity per far partire la partita
-#define PROX_START_DELTA 8.0f
 
 // Paddle settings
 #define PADDLE_W 28
@@ -30,13 +22,14 @@
 #define SPEED_UP_MUL 1.03f
 #define SPEED_MAX    5.0f
 
-// Quanto tempo mostrare il game-over prima di uscire (frame)
-#define GAMEOVER_FRAMES 90
+
+// Joystick -> paddle tuning
+#define PADDLE_STEP 3          // pixel per tick
 
 typedef enum {
-    IDLE = 0,       // aspetta movimento barra
-    PLAYING = 1,    // partita in corso
-    GAMEOVER = 2    // mostra overlay e poi esce
+    IDLE = 0,
+    PLAYING = 1,
+    GAMEOVER = 2
 } GameState;
 
 typedef struct {
@@ -55,19 +48,26 @@ static inline f32 clampf(f32 v, f32 lo, f32 hi) {
 
 static inline f32 absf(f32 v) { return (v < 0.0f) ? -v : v; }
 
-// map prox [0..1023] -> x [0 .. LCD_W - PADDLE_W]
-static inline i16 prox_to_paddle_x(f32 prox) {
-    // ratio DEVE restare float
-    const f32 ratio = (f32)(LCD_W - PADDLE_W) / PROX_MAX;
-    i16 x = (i16)(prox * ratio + 0.5f);
-    if (x < 0) x = 0;
-    if (x > (LCD_W - PADDLE_W)) x = (LCD_W - PADDLE_W);
-    return x;
+// ------------------------------------------------------------
+// Joystick helper
+// PC: WASD/ENTER in HOLD -> continuous input
+// MSP432: uses get_joystick()
+static inline joystick_t joystick_action(void) {
+#ifdef SIMULATION_PC
+    if (IsKeyDown(KEY_ENTER)) return JS_BUTTON;
+    if (IsKeyDown(KEY_W))     return JS_UP;
+    if (IsKeyDown(KEY_A))     return JS_LEFT;
+    if (IsKeyDown(KEY_S))     return JS_DOWN;
+    if (IsKeyDown(KEY_D))     return JS_RIGHT;
+    return JS_NONE;
+#else
+    return get_joystick();
+#endif
 }
 
+
 // ------------------------------------------------------------
-// 7-seg digits (no font needed)
-// Segment mapping: bit6..bit0 = A,B,C,D,E,F,G (scelto così per semplicità)
+// 7-seg digits
 
 static void draw_seg_digit(i16 x, i16 y, i16 s, i16 thick, u8 d, TWOS_COLOURS col) {
     // masks for digits 0..9 (A B C D E F G)
@@ -109,7 +109,6 @@ static void draw_seg_digit(i16 x, i16 y, i16 s, i16 thick, u8 d, TWOS_COLOURS co
 
 static void draw_digits_7seg(i16 x, i16 y, i16 s, i16 thick,
                              const u8* digits, u8 n, TWOS_COLOURS col) {
-    // digits[] è già MSB -> LSB
     const i16 step = (i16)(3*s + s); // digit width + gap
     for (u8 i = 0; i < n; ++i) {
         draw_seg_digit(x, y, s, thick, digits[i], col);
@@ -117,19 +116,18 @@ static void draw_digits_7seg(i16 x, i16 y, i16 s, i16 thick,
     }
 }
 
-// Cache: calcolo delle cifre solo quando score cambia
+// Cache: compute the numbers only when score changes
 static u8 score_digits[6];
 static u8 score_n = 1;
 
 static void score_to_digits(u16 v) {
-    // produce digits in MSB->LSB dentro score_digits[], aggiorna score_n
+    // produce digits in MSB->LSB dentro score_digits[], update score_n
     if (v == 0) {
         score_digits[0] = 0;
         score_n = 1;
         return;
     }
 
-    // prima in reverse (LSB->MSB) in un buffer piccolo
     u8 tmp[6];
     u8 n = 0;
     while (v > 0 && n < 6) {
@@ -145,7 +143,7 @@ static void score_to_digits(u16 v) {
 }
 
 // ------------------------------------------------------------
-// Game init/reset (solo valori, NON riavvia in automatico)
+// Game init/reset
 
 static void init_ball(Ball* b) {
     b->x  = (LCD_W * 0.5f) - (BALL_S * 0.5f);
@@ -155,14 +153,13 @@ static void init_ball(Ball* b) {
 }
 
 // ------------------------------------------------------------
-// FUNZIONE GIOCO: ritorna lo score finale
-// Nel progetto finale la chiamerai dal main "hub".
+//GAME
 
 int pong_wall_game(void) {
     display_init_lcd();
     set_palette(PONG_CUSTOM_PALETTE_INDEX);
 
-    // background color index (come nel vostro example)
+    // background color index
     set_screen_color(T_ONE);
 
     Ball ball;
@@ -170,29 +167,29 @@ int pong_wall_game(void) {
     score_to_digits(score);
 
     GameState state = IDLE;
-    u8 gameover_countdown = 0;
 
     // Paddle
-    f32 proximity = 0.0f;
-    f32 prox0 = 0.0f;
-    i16 paddle_x = 0;
-
-    // baseline
-    proximity = get_proximity();
-    prox0 = proximity;
+    i16 paddle_x = (i16)((LCD_W - PADDLE_W) / 2); // parti centrato
 
     init_ball(&ball);
 
     while (!window_should_close()) {
         display_begin();
 
-        // ---------------- INPUT
-        proximity = get_proximity();
-        paddle_x = prox_to_paddle_x(proximity);
+        // ---------------- INPUT (joystick)
+        joystick_t action = joystick_action();
+
+        if (action == JS_LEFT)  paddle_x -= PADDLE_STEP;
+        if (action == JS_RIGHT) paddle_x += PADDLE_STEP;
+
+        // clamp paddle
+        if (paddle_x < 0) paddle_x = 0;
+        if (paddle_x > (LCD_W - PADDLE_W)) paddle_x = (LCD_W - PADDLE_W);
 
         // ---------------- STATE UPDATE
         if (state == IDLE) {
-            if (absf(proximity - prox0) >= PROX_START_DELTA) {
+            // start when it moves
+            if (action != JS_NONE) {
                 state = PLAYING;
                 score = 0;
                 score_to_digits(score);
@@ -212,16 +209,16 @@ int pong_wall_game(void) {
                 ball.vx = -ball.vx;
             }
 
-            // Top wall ("muro" da colpire)
+            // Top wall
             if (ball.y <= 0.0f) {
                 ball.y = 0.0f;
                 ball.vy = -ball.vy;
 
                 // score
-                if (score < 999999u) score++; // cap soft (così non esplode la visualizzazione)
+                if (score < 999999u) score++; // cap soft
                 score_to_digits(score);
 
-                // Speed up leggero mantenendo segno
+                // slow speed up of the ball
                 f32 spx = absf(ball.vx) * SPEED_UP_MUL;
                 f32 spy = absf(ball.vy) * SPEED_UP_MUL;
                 if (spx > SPEED_MAX) spx = SPEED_MAX;
@@ -231,7 +228,7 @@ int pong_wall_game(void) {
                 ball.vy = (ball.vy < 0.0f) ? -spy : spy;
             }
 
-            // Paddle collision (solo se la palla sta scendendo)
+            // Paddle collision
             if (ball.vy > 0.0f) {
                 i16 bx = (i16)ball.x;
                 i16 by = (i16)ball.y;
@@ -253,11 +250,11 @@ int pong_wall_game(void) {
                     (bb >= pt) && (bt <= pb);
 
                 if (overlap) {
-                    // rimbalzo verso l'alto
+                    // bounce upwards
                     ball.y = (f32)(PADDLE_Y - BALL_S);
                     ball.vy = -absf(ball.vy);
 
-                    // "spin": cambia vx in base a dove colpisce la racchetta
+                    // "spin": change vx based on where the paddle hits
                     f32 paddle_center = (f32)paddle_x + (PADDLE_W * 0.5f);
                     f32 ball_center   = ball.x + (BALL_S * 0.5f);
 
@@ -271,7 +268,7 @@ int pong_wall_game(void) {
 
             if (ball.y > (f32)LCD_H) {
                 display_end();
-                break;   // esci subito, ritorna score
+                break;   // exit and return score
             }
 
         } else { }
@@ -279,7 +276,7 @@ int pong_wall_game(void) {
         // ---------------- DRAW
         clear_screen();
 
-        // Riga in alto per indicare il muro
+        // top wall
         draw_rectangle(0, 0, LCD_W, 2, T_THREE);
 
         // Paddle
@@ -290,7 +287,7 @@ int pong_wall_game(void) {
             draw_rectangle((i32)(i16)ball.x, (i32)(i16)ball.y, BALL_S, BALL_S, T_TWO);
         }
 
-        // Score in alto a destra, solo se non GAMEOVER (right-aligned)
+        // Score, only if not game over
         if (state != GAMEOVER) {
             const i16 s = 3;
             const i16 thick = 2;
@@ -306,7 +303,7 @@ int pong_wall_game(void) {
             draw_digits_7seg(score_x, score_y, s, thick, score_digits, score_n, T_ONE);
         }
 
-        // Overlay IDLE
+
         if (state == IDLE) {
             draw_rectangle(LCD_W - 10, 2, 6, 2, T_THREE); // mini “ready” indicator
         }
@@ -319,11 +316,10 @@ int pong_wall_game(void) {
 }
 
 // ------------------------------------------------------------
-// MAIN DI TEST (se vuoi compilarlo standalone)
-// Nel progetto finale puoi togliere il main e chiamare pong_wall_game() dal tuo hub.
+// main for testing
 
 int main(void) {
     int score = pong_wall_game();
     printf("Score: %d\n", score);
-    return score; // per debug: ritorna score come exit code
+    return score;
 }

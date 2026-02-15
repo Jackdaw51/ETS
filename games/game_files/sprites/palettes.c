@@ -1,3 +1,4 @@
+
 #include "palettes.h"
 
 #define BW (Palette){\

@@ -1,3 +1,4 @@
+
 #include "display/display.h"
 #include "sprites/palettes.h"
 #include "stddef.h"
@@ -78,3 +79,4 @@ int main(){
 
   display_close();
 }
+

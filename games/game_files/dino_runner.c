@@ -11,19 +11,10 @@
 #define LCD_W 160
 #define LCD_H 128
 
-// Start condition
-#define PROX_START_DELTA 8.0f
-
-// Jump gesture (delta frame-to-frame)
-#define PROX_JUMP_DELTA  28.0f
-
-// Duck threshold
-#define PROX_DUCK_TH     750.0f
-
 // Ground
 #define GROUND_Y      (LCD_H - 18)
 
-// Dino position (x fisso)
+// Dino position (x fixed)
 #define DINO_X        22
 
 // Obstacles
@@ -35,10 +26,10 @@
 #define JUMP_COOLDOWN_FR 10
 
 // Walk animation speed (frames per step)
-#define WALK_ANIM_PERIOD 7   // 5..10: più basso = più veloce
+#define WALK_ANIM_PERIOD 7
 
 // ------------------------------------------------------------
-// HITBOX TUNING (FIX gameover fantasma)
+// HITBOX TUNING
 #define HIT_PAD_L  3
 #define HIT_PAD_R  3
 #define HIT_PAD_T  2
@@ -49,19 +40,19 @@
 #define OBS_PAD_T  1
 #define OBS_PAD_B  1
 
-// Debug: disegna rettangoli hitbox (0 = off, 1 = on)
+// Debug: draw rectangles hitbox (0 = off, 1 = on)
 #define DEBUG_HITBOX 0
 
 // ------------------------------------------------------------
-// FIXED POINT Q8.8  (SAFE: niente shift di negativi)
+// FIXED POINT Q8.8  (SAFE: no shift of negatives)
 #define FP_SHIFT 8
 #define FP_ONE   (1 << FP_SHIFT)
 
-// NB: TO_FP con moltiplicazione => evita UB su negativi
+// NB: TO_FP with multiplication => avoid UB on negatives
 #define TO_FP_I32(x)     ((i32)(x) * (i32)FP_ONE)
 #define FP_TO_I16(xfp)   ((i16)((i32)(xfp) / (i32)FP_ONE))  // robusto anche per negativi
 
-// Fisica (valori originali):
+// physics:
 #define GRAVITY_FP   ((i16)77)
 #define JUMP_VY_FP   ((i16)-1843)
 #define VY_MAX_FP    ((i16)2048)
@@ -72,15 +63,15 @@
 #define SPEED_INC_DIV  300
 
 // ------------------------------------------------------------
-// NUVOLE (solo background scrolling)
+// clouds on backgrounds
 #define CLOUD_COUNT          3
 #define CLOUD_Y_MIN          10
 #define CLOUD_Y_MAX          50
-#define CLOUD_RESPAWN_PAD_X  12      // margine extra quando respawna a destra
+#define CLOUD_RESPAWN_PAD_X  12      // extra margin when it respawns
 #define CLOUD_GAP_MIN        40
 #define CLOUD_GAP_MAX        90
-#define CLOUD_PARALLAX_DIV   3       // più alto = più lente (speed/3)
-#define CLOUD_IDLE_STEP_FP   (FP_ONE / 2) // 0.5 px/frame quando sei in IDLE
+#define CLOUD_PARALLAX_DIV   3       // more higher = more slower clouds (speed/3)
+#define CLOUD_IDLE_STEP_FP   (FP_ONE / 2) // 0.5 px/frame when you are in IDLE
 
 typedef enum {
     IDLE = 0,
@@ -97,13 +88,13 @@ typedef enum {
 typedef struct {
     u8  active;
     u8  type;      // ObsType in 1 byte
-    i32 x_fp;      // Q8.8 (i32 necessario)
+    i32 x_fp;      // Q8.8 (i32 necessary)
     u8  y;         // 0..127
-    u8  w, h;      // dimensioni piccole
+    u8  w, h;      // small dimensions
 } Obstacle;
 
 typedef struct {
-    i32 y_fp;      // Q8.8 (i32 per sicurezza overflow)
+    i32 y_fp;      // Q8.8 (i32 for overflow's sicurity)
     i16 vy_fp;     // Q8.8
     u8  on_ground;
     u8  duck;
@@ -117,7 +108,24 @@ typedef struct {
 // ------------------------------------------------------------
 // Helpers
 
-static inline f32 absf(f32 v) { return (v < 0.0f) ? -v : v; }
+// ------------------------------------------------------------
+// Joystick helper
+// PC: WASD/ENTER in HOLD -> continuous input
+// MSP432: uses get_joystick()
+static inline joystick_t joystick_action(void) {
+#ifdef SIMULATION_PC
+    if (IsKeyDown(KEY_ENTER)) return JS_BUTTON;
+    if (IsKeyDown(KEY_W))     return JS_UP;
+    if (IsKeyDown(KEY_A))     return JS_LEFT;
+    if (IsKeyDown(KEY_S))     return JS_DOWN;
+    if (IsKeyDown(KEY_D))     return JS_RIGHT;
+    return JS_NONE;
+#else
+    return get_joystick();
+#endif
+}
+
+
 
 static inline i16 clamp_i16(i16 v, i16 lo, i16 hi) {
     if (v < lo) return lo;
@@ -167,7 +175,7 @@ static u8 rng_chance_percent_u8(u8 pct) {
 }
 
 // ------------------------------------------------------------
-// 7-seg (palette corrente)
+// 7-seg
 
 static void draw_seg_digit(i32 x, i32 y, i32 s, i32 thick, int d, TWOS_COLOURS col) {
     static const u8 mask[10] = {
@@ -233,10 +241,10 @@ static void spawn_obstacle(Obstacle obs[MAX_OBS], u8 duck_h) {
     Obstacle* o = &obs[(u8)idx];
     o->active = 1;
 
-    // scelta tipo: 60% cactus (small/big), 40% bird
+    // choice for obstacle: 70% cactus (small/big), 30% bird
     u8 r = (u8)(rng_u32() % 100u);
 
-    if (r < 60) {
+    if (r < 70) {
         // cactus
         if (rng_chance_percent_u8(55)) {
             o->type = (u8)OBS_SMALL_CACTUS;
@@ -279,7 +287,7 @@ static void despawn_if_offscreen(Obstacle* o) {
 }
 
 // ------------------------------------------------------------
-// Clouds (solo background)
+// Clouds
 
 static void init_clouds(Cloud c[CLOUD_COUNT]) {
     i16 x = 10;
@@ -385,10 +393,6 @@ int dino_runner_game(void) {
     i16 speed_fp = SPEED_START_FP;
     u8  spawn_cd = rng_range_u8(SPAWN_MIN_FR, SPAWN_MAX_FR);
 
-    // Proximity baseline
-    f32 proximity = get_proximity();
-    f32 prox0 = proximity;
-    f32 prox_prev = proximity;
 
     u8 jump_cd = 0;
 
@@ -399,23 +403,26 @@ int dino_runner_game(void) {
     while (!window_should_close()) {
         display_begin();
 
-        // -------- INPUT (float, solo qui)
-        proximity = get_proximity();
-        f32 dprox = absf(proximity - prox_prev);
-        prox_prev = proximity;
+        // -------- INPUT (joystick)
+        joystick_t a = joystick_action();
 
-        u8 jump = (dprox >= PROX_JUMP_DELTA) ? 1u : 0u;
-        u8 duck = (proximity >= PROX_DUCK_TH) ? 1u : 0u;
+        // HOLD behavior:
+        // - UP = jump
+        // - DOWN = duck
+        u8 jump = (a == JS_UP || a == JS_BUTTON) ? 1u : 0u;
+        u8 duck = (a == JS_DOWN) ? 1u : 0u;
+
 
         // -------- UPDATE
         if (state == (u8)IDLE) {
             walk_tick = 0;
             walk_frame = 0;
 
-            // nuvole in idle (lente)
+            // slow clouds in IDLE
             update_clouds(clouds, (i16)CLOUD_IDLE_STEP_FP);
 
-            if (absf(proximity - prox0) >= PROX_START_DELTA || jump) {
+            if (a != JS_NONE || jump) {
+
                 state = (u8)PLAYING;
                 score = 0;
                 speed_fp = SPEED_START_FP;
@@ -428,9 +435,6 @@ int dino_runner_game(void) {
 
                 clear_obstacles(obs);
                 jump_cd = 0;
-
-                // evita jump fantasma al primo frame
-                prox_prev = proximity;
             }
         }
         else if (state == (u8)PLAYING) {
@@ -464,7 +468,7 @@ int dino_runner_game(void) {
                 dino.on_ground = 1;
             }
 
-            // walk anim solo quando corre
+            // walk anim only when it runs
             if (dino.on_ground && !dino.duck) {
                 walk_tick++;
                 if (walk_tick >= (u8)WALK_ANIM_PERIOD) {
@@ -481,7 +485,7 @@ int dino_runner_game(void) {
             if (speed_fp > SPEED_MAX_FP) speed_fp = SPEED_MAX_FP;
             score += 1u;
 
-            // nuvole (parallasse: più lente degli ostacoli)
+            // cloude (slower than obstacles)
             i16 cloud_step_fp = (i16)(speed_fp / (i16)CLOUD_PARALLAX_DIV);
             if (cloud_step_fp < 1) cloud_step_fp = 1;
             update_clouds(clouds, cloud_step_fp);
@@ -553,7 +557,7 @@ int dino_runner_game(void) {
         // -------- DRAW
         clear_screen();
 
-        // draw clouds (prima del terreno)
+        // draw clouds
         for (u8 i = 0; i < CLOUD_COUNT; i++) {
             i16 cx = FP_TO_I16(clouds[i].x_fp);
             if (cx > -40 && cx < 220) { // piccolo culling grezzo
@@ -563,7 +567,7 @@ int dino_runner_game(void) {
 
         draw_rectangle(0, GROUND_Y, LCD_W, 20, T_TWO);
 
-        // scegli texture dino
+        // texture dino
         TextureHandle dino_tex = dino_idle_jump_tex;
         if (state == (u8)IDLE) {
             dino_tex = dino_idle_jump_tex; // state1
@@ -617,7 +621,7 @@ int dino_runner_game(void) {
 }
 
 // ------------------------------------------------------------
-// MAIN
+// main for testing
 int main(void) {
     int score = dino_runner_game();
     printf("Score: %d\n", score);
