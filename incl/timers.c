@@ -1,8 +1,5 @@
 #include "timers.h"
 
-// Timer A3 used in hcsr04.c
-// Timer A2_0_handler defined in hcsr04.c
-// Timer A1_0_handler defined in hcsr04.c
 // Using Timer A0 for general purpose delays
 
 volatile uint8_t ta_done = 0;

@@ -5,22 +5,7 @@
 #include "../games/game_files/sprites/palettes.h"
 // DMA part
 #define CHUNK_SIZE 1024
-// #if defined(__TI_COMPILER_VERSION__)
-// #pragma DATA_ALIGN(dma_buffer1, 4)
-// #elif defined(__IAR_SYSTEMS_ICC__)
-// #pragma data_alignment = 4
-// #elif defined(__GNUC__)
-// __attribute__((aligned(4)))
-// #endif
 uint8_t ping[CHUNK_SIZE];
-
-// #if defined(__TI_COMPILER_VERSION__)
-// #pragma DATA_ALIGN(dma_buffer2, 4)
-// #elif defined(__IAR_SYSTEMS_ICC__)
-// #pragma data_alignment = 4
-// #elif defined(__GNUC__)
-// __attribute__((aligned(4)))
-// #endif
 uint8_t pong[CHUNK_SIZE];
 
 volatile bool dmaTransferDone;
