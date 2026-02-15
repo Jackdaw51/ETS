@@ -67,7 +67,7 @@ int main(void)
         // }
         // LCD_FillColor(0xF800);
         // LCD_FillColor(0xF800);
-        // m_example();
+        m_example();
     }
 }
 void init_red(void)

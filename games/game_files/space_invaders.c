@@ -167,8 +167,8 @@ static void draw_int_7seg(i32 x, i32 y, i32 s, i32 thick, u32 value, TWOS_COLOUR
             value /= 10u;
         }
     }
-
-    for (int i = n - 1; i >= 0; --i) {
+    int i;
+    for (i = n - 1; i >= 0; --i) {
         draw_seg_digit(x, y, s, thick, digits[i], col);
         x += (3*s + s);
     }
@@ -277,8 +277,10 @@ static u16 init_aliens_drop(Alien a[A_ROWS][A_COLS], u8 pattern) {
     if (pattern == 2) x_shift = -2;
 
     u16 alive_count = 0;
-    for (u8 r = 0; r < A_ROWS; r++) {
-        for (u8 c = 0; c < A_COLS; c++) {
+    u8 r;
+    for (r = 0; r < A_ROWS; r++) {
+        u8 c;
+        for (c = 0; c < A_COLS; c++) {
             u8 alive = alien_spawn_alive(pattern, r, c);
             a[r][c].alive = alive;
             a[r][c].kind  = (u8)(r & 1u);
@@ -291,7 +293,8 @@ static u16 init_aliens_drop(Alien a[A_ROWS][A_COLS], u8 pattern) {
 }
 
 static u8 find_shooter_in_col(Alien a[A_ROWS][A_COLS], u8 col, i16 *out_x, i16 *out_y) {
-    for (i8 r = (i8)A_ROWS - 1; r >= 0; --r) {
+    i8 r;
+    for (r = (i8)A_ROWS - 1; r >= 0; --r) {
         if (a[(u8)r][col].alive) {
             *out_x = a[(u8)r][col].x;
             *out_y = a[(u8)r][col].y;
@@ -302,7 +305,8 @@ static u8 find_shooter_in_col(Alien a[A_ROWS][A_COLS], u8 col, i16 *out_x, i16 *
 }
 
 static void clear_player_bullets(Bullet pb[MAX_PB]) {
-    for (u8 i = 0; i < MAX_PB; i++) pb[i].active = 0;
+    u8 i;
+    for (i = 0; i < MAX_PB; i++) pb[i].active = 0;
 }
 
 static void draw_life_icon(i32 x, i32 y) {
@@ -313,8 +317,8 @@ static void draw_life_icon(i32 x, i32 y) {
 static void draw_lives(u8 lives) {
     i32 y = (LIFE_MARGIN_T < 1) ? 1 : LIFE_MARGIN_T;
     i32 x_left = LIFE_MARGIN_L;
-
-    for (u8 i = 0; i < lives; i++) {
+    u8 i;
+    for (i = 0; i < lives; i++) {
         i32 x = x_left + (i32)i * (LIFE_ICON_W + LIFE_ICON_GAP);
         draw_life_icon(x, y);
     }
@@ -330,7 +334,8 @@ static void draw_combo_dots(u8 combo_lvl) {
     i32 x0 = (LCD_W - total_w) / 2;
     i32 y0 = COMBO_DOT_Y;
 
-    for (u8 i = 0; i < dots; i++) {
+    u8 i;
+    for (i = 0; i < dots; i++) {
         i32 x = x0 + (i32)i * (COMBO_DOT_W + COMBO_DOT_GAP);
         draw_rectangle(x, y0, COMBO_DOT_W, COMBO_DOT_H, T_THREE);
     }
@@ -398,15 +403,19 @@ int space_invaders_game(void) {
     static u8     expl_fr[A_ROWS][A_COLS];
 
     clear_player_bullets(pb);
-    for (u8 i = 0; i < MAX_AB; i++) ab[i].active = 0;
+    u8 i;
+    for (i = 0; i < MAX_AB; i++) ab[i].active = 0;
 
     u8 pattern = 0;
     u16 alive_count = init_aliens_drop(aliens, pattern);
 
     // reset explosions
-    for (u8 r = 0; r < A_ROWS; r++)
-        for (u8 c = 0; c < A_COLS; c++)
+    u8 r;
+    for (r = 0; r < A_ROWS; r++){
+        u8 c;
+        for (c = 0; c < A_COLS; c++)
             expl_fr[r][c] = 0;
+    }
 
     u8 wave_entering = 1;
     u8 a_dir = 1;
@@ -438,7 +447,7 @@ int space_invaders_game(void) {
     i32 ufo_expl_y = 0;
     u16 ufo_cd = rng_range_u16(UFO_SPAWN_MIN_FR, UFO_SPAWN_MAX_FR);
 
-    u8 r, c, k, i, bi;
+    u8 c, k, bi;
     while (!window_should_close()) {
         display_begin();
 
@@ -918,16 +927,4 @@ int space_invaders_game(void) {
 
     display_close();
     return (int)score;
-}
-
-// ------------------------------------------------------------
-// main for testing
-int main(void) {
-    int score = space_invaders_game();
-
-#ifdef DEBUG
-    printf("Score: %d\n", score);
-#endif
-
-    return score;
 }

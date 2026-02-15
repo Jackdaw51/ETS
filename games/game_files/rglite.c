@@ -45,7 +45,7 @@ uint8_t rand8_range(uint8_t max) {
     return ((uint16_t)rand8() * (max + 1)) >> 8;
 }
 
-int main(){
+int main_tmp_rglite(){
 	display_init_lcd(); f32 proximity;
 	set_palette(BW_INDEX);
 	set_screen_color(T_TWO);

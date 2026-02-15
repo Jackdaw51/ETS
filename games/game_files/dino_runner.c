@@ -306,7 +306,7 @@ static void init_clouds(Cloud c[CLOUD_COUNT]) {
 static void update_clouds(Cloud c[CLOUD_COUNT], i16 bg_step_fp) {
     // bg_step_fp = how much the background "flows" (Q8.8)
     u8 i;
-    for (u8 i = 0; i < CLOUD_COUNT; i++) {
+    for (i = 0; i < CLOUD_COUNT; i++) {
         c[i].x_fp -= (i32)bg_step_fp;
 
         // if it exits on the left, it respawns on the right with a random gap
@@ -624,12 +624,4 @@ int dino_runner_game(void) {
 
     display_close();
     return (int)score;
-}
-
-// ------------------------------------------------------------
-// main for testing
-int main(void) {
-    int score = dino_runner_game();
-    printf("Score: %d\n", score);
-    return score;
 }

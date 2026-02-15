@@ -16,6 +16,7 @@
 "./incl/esp32.obj"
 "./incl/hcsr04.obj"
 "./incl/joystick.obj"
+"./incl/screen.obj"
 "./incl/timers.obj"
 "../msp432p401r.cmd"
 -llibc.a

@@ -91,7 +91,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="server|incl/screen.c|games/game_files/display/libraylib.a|games/game_files/display/libraylib_m.a|games/game_files/display/libraylib_l.a|games/game_files/display/rl_display.c|games/game_files/sprites/sprite_tool.c|games/game_files/template.c|games/game_files/menu.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="server|games/game_files/display/libraylib.a|games/game_files/display/libraylib_m.a|games/game_files/display/libraylib_l.a|games/game_files/display/rl_display.c|games/game_files/sprites/sprite_tool.c|games/game_files/template.c|games/game_files/menu.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

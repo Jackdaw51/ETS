@@ -1,7 +1,7 @@
 #include "display/display.h"
 #include "stddef.h"
 
-int main(){
+int main_tmp(){
 	display_init_lcd();
   f32 proximity;
 

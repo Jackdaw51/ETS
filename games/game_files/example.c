@@ -99,12 +99,11 @@ load_text("Rowan Li",&rowan_builder);
 
     // DRAWING
     clear_screen();
-
-    for(int i = 0; i < world_blocks_len; i++){
+    int i;
+    for(i = 0; i < world_blocks_len; i++){
       draw_block(world_blocks[i]);
     }
 
-    int i;
     for(i = 0; i < world_blocks_len; i++){
       //draw_block(world_blocks[i]);
     }

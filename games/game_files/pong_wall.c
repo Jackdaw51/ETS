@@ -317,11 +317,4 @@ int pong_wall_game(void) {
     return (int)score;
 }
 
-// ------------------------------------------------------------
-// main for testing
 
-int main(void) {
-    int score = pong_wall_game();
-    printf("Score: %d\n", score);
-    return score;
-}

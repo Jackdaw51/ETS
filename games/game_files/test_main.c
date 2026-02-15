@@ -5,7 +5,7 @@
 #include "menu.h"
 #include "stddef.h"
 
-int main(){
+int main_tmp(){
   display_init_lcd();
   u8 screen = 0;
 
