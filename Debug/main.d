@@ -18,7 +18,6 @@ main.obj: C:/ti/ccs1280/ccs/ccs_base/arm/include/CMSIS/core_cm4.h
 main.obj: C:/ti/ccs1280/ccs/ccs_base/arm/include/CMSIS/cmsis_compiler.h
 main.obj: C:/ti/ccs1280/ccs/ccs_base/arm/include/CMSIS/cmsis_ccs.h
 main.obj: C:/ti/ccs1280/ccs/ccs_base/arm/include/system_msp432p401r.h
-main.obj: ../incl/hcsr04.h
 main.obj: ../incl/joystick.h
 main.obj: ../incl/screen.h
 main.obj: C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/driverlib.h
@@ -55,7 +54,6 @@ main.obj: C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/
 main.obj: C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/sysctl.h
 main.obj: C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/flash.h
 main.obj: ../incl/timers.h
-main.obj: ../incl/light_sensor.h
 main.obj: ../games/game_files/example.h
 main.obj: ../games/game_files/display/display.h
 main.obj: ../games/game_files/display/raylib.h
@@ -64,6 +62,8 @@ main.obj: ../games/game_files/display/types.h
 main.obj: ../games/game_files/sprites/palettes.h
 main.obj: ../games/game_files/sprites/sprites.h
 main.obj: ../incl/joystick.h
+main.obj: ../games/game_files/display/text_lut.h
+main.obj: ../incl/esp32.h
 
 ../main.c:
 
@@ -100,8 +100,6 @@ C:/ti/ccs1280/ccs/ccs_base/arm/include/CMSIS/cmsis_compiler.h:
 C:/ti/ccs1280/ccs/ccs_base/arm/include/CMSIS/cmsis_ccs.h:
 
 C:/ti/ccs1280/ccs/ccs_base/arm/include/system_msp432p401r.h:
-
-../incl/hcsr04.h:
 
 ../incl/joystick.h:
 
@@ -175,8 +173,6 @@ C:/ti/simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/
 
 ../incl/timers.h:
 
-../incl/light_sensor.h:
-
 ../games/game_files/example.h:
 
 ../games/game_files/display/display.h:
@@ -192,4 +188,8 @@ C:/ti/ccs1280/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdarg.h:
 ../games/game_files/sprites/sprites.h:
 
 ../incl/joystick.h:
+
+../games/game_files/display/text_lut.h:
+
+../incl/esp32.h:
 
