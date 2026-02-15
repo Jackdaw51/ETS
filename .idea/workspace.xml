@@ -17,6 +17,12 @@
   <component name="ChangeListManager">
     <list default="true" id="f7eed982-2e4e-44f3-8b93-fc1e3549e1b7" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_exes/dino_runner" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_exes/dino_runner" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_exes/pong_wall" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_exes/pong_wall" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_exes/space_invaders" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_exes/space_invaders" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_files/dino_runner.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/dino_runner.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_files/pong_wall.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/pong_wall.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_files/space_invaders.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/space_invaders.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,20 +54,29 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/display/display.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/display/display.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/display/types.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/display/types.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/example.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/example.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/example.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/example.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/rglite.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/rglite.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/space_invaders.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/space_invaders.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/space_invaders.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/space_invaders.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/space_invaders.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/space_invaders.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/space_invaders.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/space_invaders.c" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/space_invaders.c" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/sprites.c" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/sprites.c" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/sprites.h" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/sprites.h" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
@@ -78,29 +93,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;C/C++ File.template.c.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;max&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/pngs&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "C/C++ File.template.c.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.RadMigrateCodeStyle": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/pngs",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Massimo\Documents\GitHub\ETS\games\game_files\sprites\pngs" />
@@ -119,6 +134,10 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="C/C++ File.template.c" />
+        <item itemvalue="C/C++ File.template.c" />
+        <item itemvalue="C/C++ File.template.c" />
+        <item itemvalue="C/C++ File.template.c" />
         <item itemvalue="C/C++ File.template.c" />
       </list>
     </recent_temporary>

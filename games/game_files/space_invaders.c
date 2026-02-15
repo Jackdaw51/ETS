@@ -438,6 +438,7 @@ int space_invaders_game(void) {
     i32 ufo_expl_y = 0;
     u16 ufo_cd = rng_range_u16(UFO_SPAWN_MIN_FR, UFO_SPAWN_MAX_FR);
 
+    u8 r, c, k, i, bi;
     while (!window_should_close()) {
         display_begin();
 
@@ -466,14 +467,14 @@ int space_invaders_game(void) {
                 combo_hits = 0;
 
                 clear_player_bullets(pb);
-                for (u8 i = 0; i < MAX_AB; i++) ab[i].active = 0;
+                for (i = 0; i < MAX_AB; i++) ab[i].active = 0;
 
                 pattern = (u8)((level - 1u) % 3u);
                 alive_count = init_aliens_drop(aliens, pattern);
                 wave_entering = 1;
 
-                for (u8 r = 0; r < A_ROWS; r++)
-                    for (u8 c = 0; c < A_COLS; c++)
+                for (r = 0; r < A_ROWS; r++)
+                    for (c = 0; c < A_COLS; c++)
                         expl_fr[r][c] = 0;
 
                 a_dir = 1;
@@ -489,8 +490,8 @@ int space_invaders_game(void) {
             }
         } else {
             if (invuln > 0) invuln--;
-            for (u8 r = 0; r < A_ROWS; r++) {
-                for (u8 c = 0; c < A_COLS; c++) {
+            for (r = 0; r < A_ROWS; r++) {
+                for (c = 0; c < A_COLS; c++) {
                     if (expl_fr[r][c] > 0) expl_fr[r][c]--;
                 }
             }
@@ -535,7 +536,7 @@ int space_invaders_game(void) {
                 // -------- AUTO FIRE --------
                 if (auto_fire_cd > 0) auto_fire_cd--;
                 if (auto_fire_cd == 0) {
-                    for (u8 i = 0; i < MAX_PB; i++) {
+                    for (i = 0; i < MAX_PB; i++) {
                         if (!pb[i].active) {
                             pb[i].active = 1;
                             i32 bx = ship_x + (SHIP_W/2) - (PB_W/2);
@@ -553,7 +554,7 @@ int space_invaders_game(void) {
                 }
 
                 // Move player bullets
-                for (u8 i = 0; i < MAX_PB; i++) {
+                for (i = 0; i < MAX_PB; i++) {
                     if (!pb[i].active) continue;
                     pb[i].y_fp += pb[i].vy_fp;
                     if (fp_to_i32(pb[i].y_fp) < -10) pb[i].active = 0;
@@ -564,14 +565,14 @@ int space_invaders_game(void) {
                     level++;
 
                     clear_player_bullets(pb);
-                    for (u8 i = 0; i < MAX_AB; i++) ab[i].active = 0;
+                    for (i = 0; i < MAX_AB; i++) ab[i].active = 0;
 
                     pattern = (u8)((level - 1u) % 3u);
                     alive_count = init_aliens_drop(aliens, pattern);
                     wave_entering = 1;
 
-                    for (u8 r = 0; r < A_ROWS; r++)
-                        for (u8 c = 0; c < A_COLS; c++)
+                    for (r = 0; r < A_ROWS; r++)
+                        for (c = 0; c < A_COLS; c++)
                             expl_fr[r][c] = 0;
 
                     a_dir = 1;
@@ -585,9 +586,9 @@ int space_invaders_game(void) {
                 // ---- WAVE ENTRY ----
                 if (wave_entering) {
                     u8 done = 1;
-                    for (u8 r = 0; r < A_ROWS; r++) {
+                    for (r = 0; r < A_ROWS; r++) {
                         i16 ty = alien_target_y(r);
-                        for (u8 c = 0; c < A_COLS; c++) {
+                        for (c = 0; c < A_COLS; c++) {
                             if (!aliens[r][c].alive) continue;
 
                             i16 ny = (i16)(aliens[r][c].y + (i16)WAVE_ENTRY_STEP_PX);
@@ -605,7 +606,7 @@ int space_invaders_game(void) {
                     i32 ux = fp_to_i32(ufo.x_fp);
                     i32 uy = fp_to_i32(ufo.y_fp);
 
-                    for (u8 bi = 0; bi < MAX_PB; bi++) {
+                    for (bi = 0; bi < MAX_PB; bi++) {
                         if (!pb[bi].active) continue;
 
                         i32 bx = fp_to_i32(pb[bi].x_fp);
@@ -626,14 +627,14 @@ int space_invaders_game(void) {
                 }
 
                 // Player bullets vs aliens
-                for (u8 bi = 0; bi < MAX_PB; bi++) {
+                for (bi = 0; bi < MAX_PB; bi++) {
                     if (!pb[bi].active) continue;
 
                     i32 bx = fp_to_i32(pb[bi].x_fp);
                     i32 by = fp_to_i32(pb[bi].y_fp);
 
-                    for (u8 r = 0; r < A_ROWS && pb[bi].active; r++) {
-                        for (u8 c = 0; c < A_COLS && pb[bi].active; c++) {
+                    for (r = 0; r < A_ROWS && pb[bi].active; r++) {
+                        for (c = 0; c < A_COLS && pb[bi].active; c++) {
                             if (!aliens[r][c].alive) continue;
 
                             if (aabb_i32(bx, by, PB_W, PB_H,
@@ -669,8 +670,8 @@ int space_invaders_game(void) {
                         a_step_cd = a_step_fr;
 
                         u8 hit_edge = 0;
-                        for (u8 r = 0; r < A_ROWS; r++) {
-                            for (u8 c = 0; c < A_COLS; c++) {
+                        for (r = 0; r < A_ROWS; r++) {
+                            for (c = 0; c < A_COLS; c++) {
                                 if (!aliens[r][c].alive) continue;
                                 i32 nx = (i32)aliens[r][c].x + (a_dir ? 1 : -1) * 2;
                                 if (nx < 2 || nx + A_W > (LCD_W - 2)) { hit_edge = 1; break; }
@@ -683,15 +684,15 @@ int space_invaders_game(void) {
                             edge_bounces++;
                             if (edge_bounces >= (u8)EDGE_BOUNCES_BEFORE_DROP) {
                                 edge_bounces = 0;
-                                for (u8 r = 0; r < A_ROWS; r++)
-                                    for (u8 c = 0; c < A_COLS; c++)
+                                for (r = 0; r < A_ROWS; r++)
+                                    for (c = 0; c < A_COLS; c++)
                                         if (aliens[r][c].alive)
                                             aliens[r][c].y = (i16)(aliens[r][c].y + A_DROP);
                             }
                         } else {
                             i16 dx = a_dir ? 2 : -2;
-                            for (u8 r = 0; r < A_ROWS; r++)
-                                for (u8 c = 0; c < A_COLS; c++)
+                            for ( r = 0; r < A_ROWS; r++)
+                                for ( c = 0; c < A_COLS; c++)
                                     if (aliens[r][c].alive)
                                         aliens[r][c].x = (i16)(aliens[r][c].x + dx);
                         }
@@ -701,7 +702,7 @@ int space_invaders_game(void) {
 
                         if (rng_chance_percent_u8((u8)fire_pct)) {
                             i8 slot = -1;
-                            for (u8 i = 0; i < MAX_AB; i++) if (!ab[i].active) { slot = (i8)i; break; }
+                            for (i = 0; i < MAX_AB; i++) if (!ab[i].active) { slot = (i8)i; break; }
 
                             if (slot >= 0) {
                                 u8 col = rng_range_u8(0, A_COLS - 1);
@@ -725,8 +726,8 @@ int space_invaders_game(void) {
                     }
 
                     // GAME OVER when aliens arrive to our ship line
-                    for (u8 r = 0; r < A_ROWS; r++) {
-                        for (u8 c = 0; c < A_COLS; c++) {
+                    for (r = 0; r < A_ROWS; r++) {
+                        for (c = 0; c < A_COLS; c++) {
                             if (!aliens[r][c].alive) continue;
                             if ((i32)aliens[r][c].y + A_H >= SHIP_Y - 1) {
                                 display_end();
@@ -738,7 +739,7 @@ int space_invaders_game(void) {
                 }
 
                 // Alien bullets + ship collision
-                for (u8 i = 0; i < MAX_AB; i++) {
+                for (i = 0; i < MAX_AB; i++) {
                     if (!ab[i].active) continue;
 
                     ab[i].y_fp += ab[i].vy_fp;
@@ -762,7 +763,7 @@ int space_invaders_game(void) {
                         }
 
                         clear_player_bullets(pb);
-                        for (u8 k = 0; k < MAX_AB; k++) ab[k].active = 0;
+                        for (k = 0; k < MAX_AB; k++) ab[k].active = 0;
 
                         ship_x = (LCD_W - SHIP_W) / 2;
                         invuln = (u8)RESPAWN_INVULN_FR;
@@ -802,8 +803,8 @@ int space_invaders_game(void) {
             }
 
             // preview aliens (pattern 0)
-            for (u8 r = 0; r < A_ROWS; r++) {
-                for (u8 c = 0; c < A_COLS; c++) {
+            for (r = 0; r < A_ROWS; r++) {
+                for (c = 0; c < A_COLS; c++) {
                     if (!alien_spawn_alive(0, r, c)) continue;
                     i32 ax = (i32)(A_LEFT + (i32)c * (A_W + A_GAPX));
                     i32 ay = (i32)alien_target_y(r);
@@ -865,7 +866,7 @@ int space_invaders_game(void) {
         }
 
         // Player bullets
-        for (u8 i = 0; i < MAX_PB; i++) {
+        for (i = 0; i < MAX_PB; i++) {
             if (!pb[i].active) continue;
             i32 bx = fp_to_i32(pb[i].x_fp);
             i32 by = fp_to_i32(pb[i].y_fp);
@@ -873,7 +874,7 @@ int space_invaders_game(void) {
         }
 
         // Alien bullets
-        for (u8 i = 0; i < MAX_AB; i++) {
+        for (i = 0; i < MAX_AB; i++) {
             if (!ab[i].active) continue;
             i32 bx = fp_to_i32(ab[i].x_fp);
             i32 by = fp_to_i32(ab[i].y_fp);
@@ -881,8 +882,8 @@ int space_invaders_game(void) {
         }
 
         // Aliens
-        for (u8 r = 0; r < A_ROWS; r++) {
-            for (u8 c = 0; c < A_COLS; c++) {
+        for (r = 0; r < A_ROWS; r++) {
+            for (c = 0; c < A_COLS; c++) {
                 if (!aliens[r][c].alive) continue;
 
                 i32 ax = (i32)aliens[r][c].x;
@@ -899,8 +900,8 @@ int space_invaders_game(void) {
         }
 
         // Explosions above the aliens
-        for (u8 r = 0; r < A_ROWS; r++) {
-            for (u8 c = 0; c < A_COLS; c++) {
+        for (r = 0; r < A_ROWS; r++) {
+            for (c = 0; c < A_COLS; c++) {
                 if (expl_fr[r][c] == 0) continue;
 
                 // alien is dead, but x/y are still valid: we use them to set the center of our explosions

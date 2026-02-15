@@ -110,7 +110,8 @@ static void draw_seg_digit(i16 x, i16 y, i16 s, i16 thick, u8 d, TWOS_COLOURS co
 static void draw_digits_7seg(i16 x, i16 y, i16 s, i16 thick,
                              const u8* digits, u8 n, TWOS_COLOURS col) {
     const i16 step = (i16)(3*s + s); // digit width + gap
-    for (u8 i = 0; i < n; ++i) {
+    u8 i;
+    for (i = 0; i < n; ++i) {
         draw_seg_digit(x, y, s, thick, digits[i], col);
         x = (i16)(x + step);
     }
@@ -137,7 +138,8 @@ static void score_to_digits(u16 v) {
 
     // reverse in score_digits (MSB->LSB)
     score_n = n;
-    for (u8 i = 0; i < n; ++i) {
+    u8 i;
+    for (i = 0; i < n; ++i) {
         score_digits[i] = tmp[(u8)(n - 1 - i)];
     }
 }

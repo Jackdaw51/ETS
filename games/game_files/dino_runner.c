@@ -217,8 +217,8 @@ static void draw_int_7seg(i32 x, i32 y, i32 s, i32 thick, u32 value, TWOS_COLOUR
             value /= 10u;
         }
     }
-
-    for (int i = n - 1; i >= 0; --i) {
+    int i;
+    for (i = n - 1; i >= 0; --i) {
         draw_seg_digit(x, y, s, thick, digits[i], col);
         x += (3*s + s);
     }
@@ -228,12 +228,14 @@ static void draw_int_7seg(i32 x, i32 y, i32 s, i32 thick, u32 value, TWOS_COLOUR
 // Obstacles
 
 static void clear_obstacles(Obstacle obs[MAX_OBS]) {
-    for (u8 i = 0; i < MAX_OBS; i++) obs[i].active = 0;
+    u8 i;
+    for (i = 0; i < MAX_OBS; i++) obs[i].active = 0;
 }
 
 static void spawn_obstacle(Obstacle obs[MAX_OBS], u8 duck_h) {
     i8 idx = -1;
-    for (u8 i = 0; i < MAX_OBS; i++) {
+    u8 i;
+    for (i = 0; i < MAX_OBS; i++) {
         if (!obs[i].active) { idx = (i8)i; break; }
     }
     if (idx < 0) return;
@@ -291,7 +293,8 @@ static void despawn_if_offscreen(Obstacle* o) {
 
 static void init_clouds(Cloud c[CLOUD_COUNT]) {
     i16 x = 10;
-    for (u8 i = 0; i < CLOUD_COUNT; i++) {
+    u8 i;
+    for (i = 0; i < CLOUD_COUNT; i++) {
         u8 y = rng_range_u8((u8)CLOUD_Y_MIN, (u8)CLOUD_Y_MAX);
         u8 gap = rng_range_u8((u8)CLOUD_GAP_MIN, (u8)CLOUD_GAP_MAX);
         c[i].x_fp = TO_FP_I32(x);
@@ -301,15 +304,17 @@ static void init_clouds(Cloud c[CLOUD_COUNT]) {
 }
 
 static void update_clouds(Cloud c[CLOUD_COUNT], i16 bg_step_fp) {
-    // bg_step_fp = quanto “scorre” lo sfondo (Q8.8)
+    // bg_step_fp = how much the background "flows" (Q8.8)
+    u8 i;
     for (u8 i = 0; i < CLOUD_COUNT; i++) {
         c[i].x_fp -= (i32)bg_step_fp;
 
-        // se esce a sinistra, respawna a destra con gap random
+        // if it exits on the left, it respawns on the right with a random gap
         if (c[i].x_fp + TO_FP_I32((i16)cloud_sprite.width) < TO_FP_I32(-2)) {
-            // trova x_max attuale
+            // find actual x_max
             i32 max_x = c[0].x_fp;
-            for (u8 k = 1; k < CLOUD_COUNT; k++) {
+            u8 k;
+            for (k = 1; k < CLOUD_COUNT; k++) {
                 if (c[k].x_fp > max_x) max_x = c[k].x_fp;
             }
 
@@ -400,6 +405,7 @@ int dino_runner_game(void) {
     u8 walk_tick = 0;
     u8 walk_frame = 0;
 
+    u8 i;
     while (!window_should_close()) {
         display_begin();
 
@@ -520,8 +526,7 @@ int dino_runner_game(void) {
 
             if (dino_w_hit > (u8)(HIT_PAD_L + HIT_PAD_R)) dino_w_hit = (u8)(dino_w_hit - (HIT_PAD_L + HIT_PAD_R));
             if (dino_h_hit > (u8)(HIT_PAD_T + HIT_PAD_B)) dino_h_hit = (u8)(dino_h_hit - (HIT_PAD_T + HIT_PAD_B));
-
-            for (u8 i = 0; i < MAX_OBS; i++) {
+            for (i = 0; i < MAX_OBS; i++) {
                 if (!obs[i].active) continue;
 
                 obs[i].x_fp -= (i32)speed_fp;
@@ -558,7 +563,8 @@ int dino_runner_game(void) {
         clear_screen();
 
         // draw clouds
-        for (u8 i = 0; i < CLOUD_COUNT; i++) {
+
+        for (i = 0; i < CLOUD_COUNT; i++) {
             i16 cx = FP_TO_I16(clouds[i].x_fp);
             if (cx > -40 && cx < 220) { // piccolo culling grezzo
                 draw_texture((u8)cx, clouds[i].y, cloud_tex);
@@ -585,7 +591,7 @@ int dino_runner_game(void) {
         }
 
         // draw obstacles as textures
-        for (u8 i = 0; i < MAX_OBS; i++) {
+        for (i = 0; i < MAX_OBS; i++) {
             if (!obs[i].active) continue;
 
             i16 ox = FP_TO_I16(obs[i].x_fp);
