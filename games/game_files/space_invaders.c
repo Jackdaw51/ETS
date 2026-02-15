@@ -1,15 +1,3 @@
-// games/game_files/space_invaders.c
-// Space Invaders (sprites) - VERSIONE "più embedded friendly"
-// Ottimizzazioni fatte rispetto al tuo codice:
-//  - NO float nel gameplay: uso INT e FIXED-POINT (Q8.8) per proiettili + UFO
-//  - ship_x mappato con aritmetica intera (niente divisioni float per frame)
-//  - alive_count mantenuto e aggiornato (niente count_aliens_alive() ogni frame)
-//  - array grossi static (no stack pressure)
-//  - fix bug brace: tick esplosioni era senza graffe (ufo_expl tickava dentro i loop)
-
-// NOTA: get_proximity() probabilmente ritorna float: qui lo casto a int e basta.
-//       Il rendering/texture resta com'è (dipende dal tuo backend), ma la logica è alleggerita.
-
 #include <stdio.h>
 
 #include "display/display.h"
@@ -22,12 +10,8 @@
 #define LCD_W 160
 #define LCD_H 128
 
-// Input (proximity)
-#define PROX_MAX_INT       1023
-#define PROX_START_DELTA   8.0f   // (resta float solo perché la start condition era così; vedi sotto)
-
-// Player movement: aumenta la "corsa" ai bordi
-#define SHIP_RANGE_EXTRA_PX   10   // px extra virtuali a sx/dx
+// Joystick -> ship tuning
+#define SHIP_STEP_PX  3   // pixel per tick
 
 // Auto-fire
 #define AUTO_FIRE_PERIOD_FR  8
@@ -50,7 +34,7 @@
 #define SHIP_H    8
 #define SHIP_Y   (LCD_H - 10)
 
-// Player bullet (velocità base era -4.5f)
+// Player bullet
 #define PB_W 2
 #define PB_H 5
 
@@ -72,7 +56,7 @@
 // Zig-zag
 #define EDGE_BOUNCES_BEFORE_DROP  2
 
-// Alien bullets (velocità base era 2.8f)
+// Alien bullets
 #define MAX_AB 2
 #define AB_W 2
 #define AB_H 5
@@ -115,7 +99,7 @@
 #define UFO_EXP_FRAMES   12
 
 // ------------------------------------------------------------
-// FIXED-POINT (Q8.8) per proiettili/UFO
+// FIXED-POINT (Q8.8) for bullets/UFO
 #define FP_SHIFT 8
 #define FP_ONE   (1 << FP_SHIFT)
 static inline i32 fp_from_i32(i32 v) { return (v << FP_SHIFT); }
@@ -151,7 +135,7 @@ static u8 count_digits_u32(u32 v) {
     return n;
 }
 
-// 7-seg (stile dino_runner)
+// 7-seg
 static void draw_seg_digit(i32 x, i32 y, i32 s, i32 thick, int d, TWOS_COLOURS col) {
     static const u8 mask[10] = {
         0b1111110, 0b0110000, 0b1101101, 0b1111001, 0b0110011,
@@ -197,7 +181,6 @@ static inline i32 clampi32(i32 v, i32 lo, i32 hi) {
     if (v > hi) return hi;
     return v;
 }
-static inline f32 absf(f32 v) { return (v < 0.0f) ? -v : v; }
 
 static u8 aabb_i32(i32 ax, i32 ay, i32 aw, i32 ah,
                    i32 bx, i32 by, i32 bw, i32 bh) {
@@ -227,6 +210,23 @@ static u8 rng_range_u8(u8 lo, u8 hi) {
     u32 span = (u32)(hi - lo) + 1u;
     return (u8)(lo + (u8)(rng_u32() % span));
 }
+// ------------------------------------------------------------
+// Joystick helper
+// PC: WASD/ENTER in HOLD -> continuous input
+// MSP432: uses get_joystick()
+static inline joystick_t joystick_action(void) {
+#ifdef SIMULATION_PC
+    if (IsKeyDown(KEY_ENTER)) return JS_BUTTON;
+    if (IsKeyDown(KEY_W))     return JS_UP;
+    if (IsKeyDown(KEY_A))     return JS_LEFT;
+    if (IsKeyDown(KEY_S))     return JS_DOWN;
+    if (IsKeyDown(KEY_D))     return JS_RIGHT;
+    return JS_NONE;
+#else
+    return get_joystick();
+#endif
+}
+
 
 // ------------------------------------------------------------
 // Data
@@ -255,7 +255,7 @@ static i16 alien_target_y(u8 r) {
     return (i16)(A_TOP + (i16)r * (i16)(A_H + A_GAPY));
 }
 
-// pattern semplice waves
+// pattern for waves
 static u8 alien_spawn_alive(u8 pattern, u8 r, u8 c) {
     if (pattern == 0) return 1;
     if (pattern == 1) {
@@ -267,7 +267,7 @@ static u8 alien_spawn_alive(u8 pattern, u8 r, u8 c) {
     return 1;
 }
 
-// init wave + ritorna alive_count (così evitiamo count_aliens_alive a ogni frame)
+// init wave + returns alive_count (avoids count_aliens_alive for every frame)
 static u16 init_aliens_drop(Alien a[A_ROWS][A_COLS], u8 pattern) {
     i16 total_h = (i16)(A_ROWS * (A_H + A_GAPY));
     i16 entry_offset = (i16)(A_TOP + total_h + WAVE_ENTRY_EXTRA_PAD);
@@ -336,18 +336,6 @@ static void draw_combo_dots(u8 combo_lvl) {
     }
 }
 
-// ------------------------------------------------------------
-// Mapping ship_x con aritmetica intera (niente float)
-// range virtuale più largo, poi clamp allo schermo
-static i32 map_ship_x_i32(i32 prox) {
-    if (prox < 0) prox = 0;
-    if (prox > PROX_MAX_INT) prox = PROX_MAX_INT;
-
-    const i32 span = (LCD_W - SHIP_W) + 2 * SHIP_RANGE_EXTRA_PX;
-    // x = prox * span / 1023 - extra
-    i32 x = (prox * span) / PROX_MAX_INT - SHIP_RANGE_EXTRA_PX;
-    return clampi32(x, 0, (LCD_W - SHIP_W));
-}
 
 // ------------------------------------------------------------
 // EXPLOSION DRAW
@@ -378,7 +366,7 @@ static void draw_explosion_at(i32 ax, i32 ay, u8 pal, u8 timer_left) {
 int space_invaders_game(void) {
     display_init_lcd();
 
-    // UI in BW, sfondo nero
+    // UI in BW, black background
     set_palette(PAL_UI);
     set_screen_color(T_ONE);
 
@@ -400,13 +388,10 @@ int space_invaders_game(void) {
 
     GameState state = IDLE;
 
-    // NB: get_proximity() probabilmente float: cast a int
-    f32 proximity_f = get_proximity();
-    f32 prox0_f = proximity_f;
 
     i32 ship_x = (LCD_W - SHIP_W) / 2;
 
-    // --------- static per non stressare lo stack ---------
+    // --------- static for not stress the stack ---------
     static Bullet pb[MAX_PB];
     static Bullet ab[MAX_AB];
     static Alien  aliens[A_ROWS][A_COLS];
@@ -418,7 +403,7 @@ int space_invaders_game(void) {
     u8 pattern = 0;
     u16 alive_count = init_aliens_drop(aliens, pattern);
 
-    // reset esplosioni
+    // reset explosions
     for (u8 r = 0; r < A_ROWS; r++)
         for (u8 c = 0; c < A_COLS; c++)
             expl_fr[r][c] = 0;
@@ -429,7 +414,7 @@ int space_invaders_game(void) {
     u8 edge_bounces = 0;
 
     u32 score = 0;
-    u32 level = 1; // usato per speed
+    u32 level = 1; // used for speed
 
     u8 auto_fire_cd = AUTO_FIRE_PERIOD_FR;
     u8 wave_pause = 0;
@@ -456,15 +441,20 @@ int space_invaders_game(void) {
     while (!window_should_close()) {
         display_begin();
 
-        // ---------- INPUT ----------
-        proximity_f = get_proximity();
-        i32 prox_i = (i32)proximity_f;
-        ship_x = map_ship_x_i32(prox_i);
+        // ---------- INPUT (joystick) ----------
+        joystick_t action = joystick_action();
+
+        if (action == JS_LEFT)  ship_x -= SHIP_STEP_PX;
+        if (action == JS_RIGHT) ship_x += SHIP_STEP_PX;
+
+        // clamp ship
+        ship_x = clampi32(ship_x, 0, (LCD_W - SHIP_W));
+
 
         // ---------- UPDATE ----------
         if (state == IDLE) {
-            // start condition come prima (soglia su float, ma 1 sola operazione semplice)
-            if (absf(proximity_f - prox0_f) >= PROX_START_DELTA) {
+            // start: any kind of input
+            if (action != JS_NONE) {
                 state = PLAYING;
 
                 score = 0;
@@ -499,8 +489,6 @@ int space_invaders_game(void) {
             }
         } else {
             if (invuln > 0) invuln--;
-
-            // tick esplosioni (FIX: graffe corrette)
             for (u8 r = 0; r < A_ROWS; r++) {
                 for (u8 c = 0; c < A_COLS; c++) {
                     if (expl_fr[r][c] > 0) expl_fr[r][c]--;
@@ -667,12 +655,11 @@ int space_invaders_game(void) {
                     }
                 }
 
-                // movimento/sparo alieni SOLO se wave in posizione
+                // movement/we fire to the aliens only when the wave is in position
                 if (!wave_entering) {
                     i32 base_start = (i32)A_STEP_FR_START - (i32)((level - 1u) * 1u);
                     if (base_start < A_STEP_FR_MIN) base_start = A_STEP_FR_MIN;
 
-                    // prima usavi alive_now = count_aliens_alive; ora uso alive_count
                     i32 fr = base_start - (i32)((50 - (i32)alive_count) / 8);
                     if (fr < A_STEP_FR_MIN) fr = A_STEP_FR_MIN;
                     u8 a_step_fr = (u8)fr;
@@ -737,7 +724,7 @@ int space_invaders_game(void) {
                         }
                     }
 
-                    // GAME OVER se arrivano alla nave
+                    // GAME OVER when aliens arrive to our ship line
                     for (u8 r = 0; r < A_ROWS; r++) {
                         for (u8 c = 0; c < A_COLS; c++) {
                             if (!aliens[r][c].alive) continue;
@@ -789,7 +776,7 @@ int space_invaders_game(void) {
         // ---------- DRAW ----------
         clear_screen();
 
-        // IDLE: schermata iniziale non vuota
+        // IDLE:
         if (state == IDLE) {
             draw_lives(START_LIVES);
 
@@ -806,7 +793,7 @@ int space_invaders_game(void) {
                 draw_int_7seg(score_x, score_y, s, thick, sc, T_THREE);
             }
 
-            // ship segue già il sensore
+            // ship follows the sensor
             {
                 i32 sx = ship_x;
                 if (sx < 0) sx = 0;
@@ -814,7 +801,7 @@ int space_invaders_game(void) {
                 draw_texture((u8)sx, (u8)SHIP_Y, ship_tex);
             }
 
-            // preview alieni (pattern 0)
+            // preview aliens (pattern 0)
             for (u8 r = 0; r < A_ROWS; r++) {
                 for (u8 c = 0; c < A_COLS; c++) {
                     if (!alien_spawn_alive(0, r, c)) continue;
@@ -911,12 +898,12 @@ int space_invaders_game(void) {
             }
         }
 
-        // ESPLOSIONI sopra agli alieni
+        // Explosions above the aliens
         for (u8 r = 0; r < A_ROWS; r++) {
             for (u8 c = 0; c < A_COLS; c++) {
                 if (expl_fr[r][c] == 0) continue;
 
-                // l'alieno è morto, ma x/y restano validi: uso quelli
+                // alien is dead, but x/y are still valid: we use them to set the center of our explosions
                 i32 ax = (i32)aliens[r][c].x;
                 i32 ay = (i32)aliens[r][c].y;
                 u8 pal = (aliens[r][c].kind == 0) ? PAL_ALIEN1 : PAL_ALIEN2;
@@ -933,11 +920,10 @@ int space_invaders_game(void) {
 }
 
 // ------------------------------------------------------------
-// MAIN DI TEST
+// main for testing
 int main(void) {
     int score = space_invaders_game();
 
-    // su embedded reale spesso meglio evitare printf (o metterlo dietro debug)
 #ifdef DEBUG
     printf("Score: %d\n", score);
 #endif

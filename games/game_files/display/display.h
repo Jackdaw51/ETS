@@ -1,12 +1,11 @@
-#pragma once
+#pragma once 
 #include "raylib.h"
 #include <stdint.h>
 #include "types.h"
 #include "../sprites/palettes.h"
-#include "../sprites/sprites.h"
 #include "../../../incl/joystick.h"
-#include "../../../incl/screen.h"
 #include "text_lut.h"
+
 // ------------------------------------------------------------------
 // Opening and Closing the window
 // lcd version simulates the screen size
@@ -51,12 +50,12 @@ void draw_text_v(i32 x, i32 y,i32 extra_spacing, TextBuilder* builder);
 // Note that textures will not change after being loaded,
 // so if you want multiple colored versions you must load multiple
 
-// Set mapping array is intended to be used when loading a sprite with a
+// Set mapping array is intended to be used when loading a sprite with a 
 // different palette from the one it was drawn in
 
 // It chooses which index of the original palette maps to which index of the new palette
 
-// eg
+// eg 
 // Palette 1 BW {Black,DarkGray,White}
 // Palette 2 RGB {R,G,B}
 
@@ -64,7 +63,7 @@ void draw_text_v(i32 x, i32 y,i32 extra_spacing, TextBuilder* builder);
 // DarkGray (1) to R (0)
 // Black (0) to B (2)
 // White (2) to G (1)
-// I can do set_mapping_array(2,0,1)
+// I can do set_mapping_array(2,0,1) 
 void set_mapping_array(u8* map);
 
 // It helps to #define palette indexes in the palettes.h file so you don't have to remember them
@@ -74,7 +73,7 @@ TextureHandle load_texture_from_sprite_p(u8 height, u8 width, const u8* sprite, 
 void draw_texture(u8 x, u8 y, TextureHandle texture_index);
 
 // ------------------------------------------------------------------
-// function to get the value of the proximity sensor
+// function to get the value of the proximity sensor  
 f32 get_proximity(void);
 joystick_t get_joystick(void);
 
@@ -86,3 +85,5 @@ u16 get_render_ticks(void);
 
 void decrement_physics_ticks(void);
 void decrement_render_ticks(void);
+
+
