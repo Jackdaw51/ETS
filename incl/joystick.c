@@ -8,13 +8,7 @@ static uint16_t resultsBuffer[2];
 
 joystick_t read_joystick()
 {
-    // Start conversion
-
-    // Wait for conversion to complete
-    ADC14_toggleConversionTrigger();
-    while (!conversion_complete)
-        __WFI(); // Wait for interrupt
-    conversion_complete = 0;
+    
     ADC14_toggleConversionTrigger();
     while (!conversion_complete)
         __WFI(); // Wait for interrupt
@@ -48,9 +42,9 @@ joystick_t read_joystick()
     else
     {
         if (y < 6000)
-            return JS_DOWN;
-        else if (y > 10000)
             return JS_UP;
+        else if (y > 10000)
+            return JS_DOWN;
     }
     return JS_NONE;
 }
@@ -77,33 +71,26 @@ void adc_init_js(void)
     GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P4, GPIO_PIN4, GPIO_TERTIARY_MODULE_FUNCTION);
 
     /* Initializing ADC (ADCOSC/64/8) */
+    /* 25 Mhz / 64 / 8 = 48.828 kHz */
     ADC14_enableModule();
     ADC14_initModule(ADC_CLOCKSOURCE_ADCOSC, ADC_PREDIVIDER_64, ADC_DIVIDER_8, 0);
 
-    /* Configuring ADC Memory (ADC_MEM0 - ADC_MEM1 (A15, A9)  with repeat)
-     * with internal 2.5v reference */
-    ADC14_configureMultiSequenceMode(ADC_MEM0, ADC_MEM1, true);
+    ADC14_configureMultiSequenceMode(ADC_MEM0, ADC_MEM1, false);
+
+    
     ADC14_configureConversionMemory(ADC_MEM0,
                                     ADC_VREFPOS_AVCC_VREFNEG_VSS,
                                     ADC_INPUT_A15, ADC_NONDIFFERENTIAL_INPUTS);
-
     ADC14_configureConversionMemory(ADC_MEM1,
                                     ADC_VREFPOS_AVCC_VREFNEG_VSS,
                                     ADC_INPUT_A9, ADC_NONDIFFERENTIAL_INPUTS);
 
-    /* Enabling the interrupt when a conversion on channel 1 (end of sequence)
-     *  is complete and enabling conversions */
-    ADC14_enableInterrupt(ADC_INT0);
     ADC14_enableInterrupt(ADC_INT1);
 
-    /* Enabling Interrupts */
     Interrupt_enableInterrupt(INT_ADC14);
     Interrupt_enableMaster();
 
-    /* Setting up the sample timer to automatically step through the sequence
-     * convert.
-     */
-    ADC14_enableSampleTimer(ADC_MANUAL_ITERATION);
+    ADC14_enableSampleTimer(ADC_AUTOMATIC_ITERATION);
 
     /* Triggering the start of the sample */
     ADC14_enableConversion();

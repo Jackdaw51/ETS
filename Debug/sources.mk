@@ -112,4 +112,8 @@ PDE_DEPS__QUOTED :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 . \
+games/game_files \
+games/game_files/display \
+games/game_files/sprites \
+incl \
 

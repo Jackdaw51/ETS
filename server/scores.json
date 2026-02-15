@@ -1,0 +1,28 @@
+{
+  "tetris": [
+    {
+      "player": "Alice",
+      "score": 1200
+    },
+    {
+      "player": "Bob",
+      "score": 950
+    }
+  ],
+  "pong": [
+    {
+      "player": "Charlie",
+      "score": 42
+    },
+    {
+      "player": "Diana",
+      "score": 88
+    }
+  ],
+  "snake": [
+    {
+      "player": "Eve",
+      "score": 300
+    }
+  ]
+}
