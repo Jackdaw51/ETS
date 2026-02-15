@@ -1,8 +1,8 @@
-# -------- Toolchain --------
+# Compiler and flags
 CC      := gcc
 CFLAGS  := -std=c11 -Wall -Wextra -O2
 
-# -------- Your sources --------
+# -------- User-configurable --------
 SRC     ?= game_files/example.c
 
 OUT := $(basename $(notdir $(SRC)))
@@ -12,33 +12,48 @@ OUTDIR  := game_exes
 T_PLATFORM ?= game_files/display/rl_display.c
 SPRITES := game_files/sprites/sprites.c
 PALETTES := game_files/sprites/palettes.c
+TEXTLUT := game_files/display/text_lut.c
 
+LINKS ?= 
+
+# Include paths
 INCLUDES := -I.
 
-# -------- Raylib from MSYS2 (UCRT64) --------
-# Change this if your msys2 is in a different folder
-RAYLIB_ROOT := C:/msys64/ucrt64
-RAYLIB_INC  := -I$(RAYLIB_ROOT)/include
-RAYLIB_LIB  := -L$(RAYLIB_ROOT)/lib -lraylib
+# Dynamic library file
 
-# Windows system libs needed by raylib
-SYS_LIBS := -lopengl32 -lgdi32 -lwinmm
+LIB := game_files/display/libraylib_m.a
 
-# Output
+# -------- OS detection --------
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Linux)
+		LIBS = -lm -lpthread -ldl -lrt -lX11
+		LIB = game_files/display/libraylib_l.a
+endif
+
+ifeq ($(UNAME_S),Darwin)
+    LIBS := \
+            -framework OpenGL \
+            -framework Cocoa \
+            -framework IOKit \
+            -framework CoreVideo
+		
+		OUT := $(OUT)_m
+endif
+
+# Full target path
 TARGET := $(OUTDIR)/$(OUT)
 
-# -------- Build rules --------
-all: $(TARGET)
+.PHONY: FORCE
 
-$(TARGET): $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES)
+# -------- Build rules --------
+
+$(TARGET): FORCE $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES)
 	mkdir -p $(OUTDIR)
-	$(CC) $(CFLAGS) $(INCLUDES) $(SRC) $(T_PLATFORM) $(SPRITES) $(PALETTES) -o $(TARGET) $(LIB) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) $(SRC) $(LINKS) $(TEXTLUT) $(EXG1) $(T_PLATFORM) $(SPRITES) $(PALETTES) -o $(TARGET) $(LIB) $(LIBS)
 
 play: $(TARGET)
-	./$(TARGET)
+	./$(OUTDIR)/$(OUT)
 
-clean:
-	@cmd /C if exist "$(OUTDIR)" rmdir /S /Q "$(OUTDIR)"
 
-.PHONY: all clean
 

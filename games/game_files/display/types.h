@@ -1,3 +1,4 @@
+
 #pragma once
 #include <stdint.h>
 
@@ -38,4 +39,3 @@ typedef enum TWOS_COLOURS {
 	T_THREE = 2,
 	T_TRANSPARENT = 3,
 } TWOS_COLOURS;
-

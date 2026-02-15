@@ -1,4 +1,12 @@
 eclipse.preferences.version=1
+encoding//Debug/games/game_files/display/subdir_rules.mk=UTF-8
+encoding//Debug/games/game_files/display/subdir_vars.mk=UTF-8
+encoding//Debug/games/game_files/sprites/subdir_rules.mk=UTF-8
+encoding//Debug/games/game_files/sprites/subdir_vars.mk=UTF-8
+encoding//Debug/games/game_files/subdir_rules.mk=UTF-8
+encoding//Debug/games/game_files/subdir_vars.mk=UTF-8
+encoding//Debug/incl/subdir_rules.mk=UTF-8
+encoding//Debug/incl/subdir_vars.mk=UTF-8
 encoding//Debug/makefile=UTF-8
 encoding//Debug/objects.mk=UTF-8
 encoding//Debug/sources.mk=UTF-8

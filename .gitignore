@@ -1,0 +1,17 @@
+/Debug/
+.cproject
+.ccsproject
+.launches/ETS.launch
+Debug/ccsObjs.opt
+Debug/main.d
+Debug/main.obj
+Debug/makefile
+Debug/objects.mk
+Debug/sources.mk
+Debug/startup_msp432p401r_ccs.obj
+Debug/subdir_rules.mk
+Debug/system_msp432p401r.obj
+games/game_exes/example
+.ccsproject
+.cproject
+/Debug
