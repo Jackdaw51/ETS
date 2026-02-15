@@ -19,7 +19,8 @@ void start_snake(){
   u8 snake_y[MAP_SIZE];
   u8 snake_tail_pos = 0;
   u8 snake_length = 3; // Create starting snake
-  for (u8 i = 0; i < snake_length; i++){
+  u8 i;
+  for (i = 0; i < snake_length; i++){
     snake_x[i] = MAP_WIDTH/4 - 1 + i; // The snake is built in reverse wrt the array
     snake_y[i] = MAP_HEIGHT/2;
   }
@@ -174,7 +175,8 @@ void start_snake(){
 }
 
 boolean check_crush(u8* snake_x, u8* snake_y, u8 snake_length, u8 new_head_x, u8 new_head_y) {
-    for (u8 i=0; i < snake_length-1; i++) {
+    u8 i;
+    for (i=0; i < snake_length-1; i++) {
         if (snake_x[i] == new_head_x && snake_y[i] == new_head_y) {
             return true;
         }
@@ -199,7 +201,8 @@ boolean new_food(u8* food_x, u8* food_y, u8* snake_x, u8* snake_y, u8 snake_leng
     *food_x = rand() % MAP_WIDTH; // !!!PROBABLY SHOULD CHANGE THE RAND FUNCTION
     *food_y = rand() % MAP_HEIGHT;
     valid_position = true;
-    for (u8 i = 0; i < snake_length; i++) {
+    u8 i;
+    for (i = 0; i < snake_length; i++) {
       if (snake_x[i] == *food_x && snake_y[i] == *food_y) {
         valid_position = false;
         break;
@@ -212,7 +215,8 @@ boolean new_food(u8* food_x, u8* food_y, u8* snake_x, u8* snake_y, u8 snake_leng
 
 void draw_snake(u8* snake_x, u8* snake_y, u8 snake_tail_pos, u8 snake_length, TextureHandle* snake_texture) {
   // Draw the snake based on its segments' positions
-  for (u8 i = 0; i < snake_length; i++) {
+  u8 i;
+  for (i = 0; i < snake_length; i++) {
     TextureHandle segment_texture;
     // Calculate current, next, and previous segment positions in circular buffer
     u8 current_pos = (snake_tail_pos + i) % MAP_SIZE;
