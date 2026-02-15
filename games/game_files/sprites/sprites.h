@@ -184,6 +184,3 @@ extern const uint8_t lower_y[];
 
 extern const Sprite lower_z_sprite;
 extern const uint8_t lower_z[];
-
-extern const Sprite apple_sprite;
-extern const uint8_t apple[];

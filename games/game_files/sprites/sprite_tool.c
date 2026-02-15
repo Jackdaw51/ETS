@@ -96,18 +96,15 @@ int main(int argc, char** argv){
   sprintf(header_output[header_out_len++],"extern const uint8_t %s[];\n",output_name);
   sprintf(impl_output[impl_out_len++],"const uint8_t %s[] = {\n",output_name);
 
+  
   int unfound_counter = 0;
   for(int pal = 0; pal < PALETTE_ARR_LEN; pal++){
     char (*scratch_space)[MAX_SPRITE_LINE_LEN] = malloc(sizeof(char)*MAX_SPRITE_LINES*MAX_SPRITE_LINE_LEN);
     int scratch_space_len = 0;
-
-    int unfound_counter = 0;
       
     unsigned char *allowed_p = PaletteArray[pal].colors;
     int counter = 0;
     unsigned char temp_space = 255;
-	printf("Height: %d, width: %d\n", height, width);
-	fflush(stdout);
 
     for(int row_ptr = 0; row_ptr < height; row_ptr++){
       for(int col_ptr = 0; col_ptr < width; col_ptr++){
@@ -116,8 +113,6 @@ int main(int argc, char** argv){
         unsigned char g = pixel[1];
         unsigned char b = pixel[2];
         unsigned char a = pixel[3];
-		printf("Pixel %d,%d - RGBA: %d,%d,%d,%d\n", col_ptr, row_ptr, r, g, b, a);
-		fflush(stdout);
 
         boolean allowed = FALSE;
         unsigned char index = 0;
@@ -142,8 +137,6 @@ int main(int argc, char** argv){
           }
           goto next_palette;
         }
-		printf("Unfound counter: %d - Valid palette: %d\n", unfound_counter, pal);
-		fflush(stdout);
 
         unsigned char shifted_index = (3-index) << ((3-counter)*2);
         temp_space = temp_space & (shifted_index^255);

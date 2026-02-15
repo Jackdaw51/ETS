@@ -1626,7 +1626,3 @@ const uint8_t lower_z[] = {
 };
 const Sprite lower_z_sprite = {20,10,lower_z};
 
-const uint8_t apple[] = {
-};
-const Sprite apple_sprite = {8,8,apple};
-
