@@ -13,14 +13,21 @@ ORDERED_OBJS += \
 "./main.obj" \
 "./startup_msp432p401r_ccs.obj" \
 "./system_msp432p401r.obj" \
-"./games/game_files/display/fb_display.obj" \
+"./games/game_files/dino_runner.obj" \
 "./games/game_files/example.obj" \
+"./games/game_files/pong_wall.obj" \
+"./games/game_files/rglite.obj" \
+"./games/game_files/snake.obj" \
+"./games/game_files/space_invaders.obj" \
+"./games/game_files/test_main.obj" \
+"./games/game_files/display/fb_display.obj" \
+"./games/game_files/display/pixel_mask_lut.obj" \
+"./games/game_files/display/text_lut.obj" \
 "./games/game_files/sprites/palettes.obj" \
 "./games/game_files/sprites/sprites.obj" \
+"./incl/esp32.obj" \
 "./incl/hcsr04.obj" \
 "./incl/joystick.obj" \
-"./incl/light_sensor.obj" \
-"./incl/screen.obj" \
 "./incl/timers.obj" \
 "../msp432p401r.cmd" \
 $(GEN_CMDS__FLAG) \
@@ -35,13 +42,13 @@ RMDIR := RMDIR /S/Q
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir_vars.mk
--include games/game_files/display/subdir_vars.mk
 -include games/game_files/subdir_vars.mk
+-include games/game_files/display/subdir_vars.mk
 -include games/game_files/sprites/subdir_vars.mk
 -include incl/subdir_vars.mk
 -include subdir_rules.mk
--include games/game_files/display/subdir_rules.mk
 -include games/game_files/subdir_rules.mk
+-include games/game_files/display/subdir_rules.mk
 -include games/game_files/sprites/subdir_rules.mk
 -include incl/subdir_rules.mk
 -include objects.mk
@@ -161,8 +168,8 @@ ETS.out: $(OBJS) $(CMD_SRCS) $(A_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" "games\game_files\display\fb_display.obj" "games\game_files\example.obj" "games\game_files\sprites\palettes.obj" "games\game_files\sprites\sprites.obj" "incl\hcsr04.obj" "incl\joystick.obj" "incl\light_sensor.obj" "incl\screen.obj" "incl\timers.obj" 
-	-$(RM) "main.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" "games\game_files\display\fb_display.d" "games\game_files\example.d" "games\game_files\sprites\palettes.d" "games\game_files\sprites\sprites.d" "incl\hcsr04.d" "incl\joystick.d" "incl\light_sensor.d" "incl\screen.d" "incl\timers.d" 
+	-$(RM) "main.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" "games\game_files\dino_runner.obj" "games\game_files\example.obj" "games\game_files\pong_wall.obj" "games\game_files\rglite.obj" "games\game_files\snake.obj" "games\game_files\space_invaders.obj" "games\game_files\test_main.obj" "games\game_files\display\fb_display.obj" "games\game_files\display\pixel_mask_lut.obj" "games\game_files\display\text_lut.obj" "games\game_files\sprites\palettes.obj" "games\game_files\sprites\sprites.obj" "incl\esp32.obj" "incl\hcsr04.obj" "incl\joystick.obj" "incl\timers.obj" 
+	-$(RM) "main.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" "games\game_files\dino_runner.d" "games\game_files\example.d" "games\game_files\pong_wall.d" "games\game_files\rglite.d" "games\game_files\snake.d" "games\game_files\space_invaders.d" "games\game_files\test_main.d" "games\game_files\display\fb_display.d" "games\game_files\display\pixel_mask_lut.d" "games\game_files\display\text_lut.d" "games\game_files\sprites\palettes.d" "games\game_files\sprites\sprites.d" "incl\esp32.d" "incl\hcsr04.d" "incl\joystick.d" "incl\timers.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
