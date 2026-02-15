@@ -10,7 +10,8 @@
 #define MAP_SIZE (MAP_WIDTH * MAP_HEIGHT)
 
 
-void start_snake(){
+int start_snake(int *max_length){
+  *max_length = MAP_SIZE;
   joystick_t joystick;
   State game_state = PLAYING;
   Quad_Direction direction = Q_RIGHT; // By default it moves to the right
@@ -147,9 +148,11 @@ void start_snake(){
         break;
 
       case LOST:
+        return snake_length - 3; // -3 due to it being initial length.
         break;
         
       case WIN:
+        return snake_length - 3;
         break;
 
     }
@@ -161,7 +164,7 @@ void start_snake(){
     draw_snake(snake_x, snake_y, snake_tail_pos, snake_length, snake_texture);
     if (game_state == PLAYING) {
       // Draw the food at new position
-      if (rand() % 10 == 0) { // !!!PROBABLY SHOULD CHANGE THE RAND FUNCTION
+      if (rand8() % 10 == 0) {
         // 10% chance of being a rat
         draw_food(food_x, food_y, rat_texture);
       } else {
@@ -169,7 +172,7 @@ void start_snake(){
       }
     }
 
-    sleep(1); // Control game speed
+    sleep(1); // Control game speed !!REMOVE
     display_end();
   }
 }
@@ -198,8 +201,8 @@ boolean new_food(u8* food_x, u8* food_y, u8* snake_x, u8* snake_y, u8 snake_leng
   // Keep generating positions until a valid one is found
   boolean valid_position = false;
   while (!valid_position) {
-    *food_x = rand() % MAP_WIDTH; // !!!PROBABLY SHOULD CHANGE THE RAND FUNCTION
-    *food_y = rand() % MAP_HEIGHT;
+    *food_x = rand8() % MAP_WIDTH;
+    *food_y = rand8() % MAP_HEIGHT;
     valid_position = true;
     u8 i;
     for (i = 0; i < snake_length; i++) {
@@ -303,4 +306,11 @@ void draw_snake(u8* snake_x, u8* snake_y, u8 snake_tail_pos, u8 snake_length, Te
 
 void draw_food(u8 food_x, u8 food_y, TextureHandle food_texture) {
   draw_texture(food_x*8, food_y*8, food_texture);
+}
+
+u8 rand8(void) {
+    rng ^= rng << 3;
+    rng ^= rng >> 5;
+    rng ^= rng << 1;
+    return rng;
 }
