@@ -70,11 +70,13 @@
         28,  104, 0,   255,\
         133, 243, 255, 255\
     }\
-}\#define SNAKE_PALETTE (Palette){\
+}\
+
+#define SNAKE_PALETTE (Palette){\
 	.colors = {\
 		0, 0, 0, 255,\
-		16, 81, 33, 255,\
-		25, 117, 49, 255,\
+		19, 79, 37, 255,\
+		23, 116, 51, 255,\
 	}\
 }\
 
@@ -89,8 +91,8 @@
 #define FIBONACCI_RAT_PALETTE (Palette){\
 	.colors = {\
 		0, 0, 0, 255,\
-		132, 134, 132, 255,\
-		247, 130, 255, 255,\
+		135, 135, 135, 255,\
+		249, 131, 251, 255,\
 	}\
 }\
 
@@ -105,8 +107,8 @@
 #define APPLE_PALETTE (Palette){\
 	.colors = {\
 		0, 0, 0, 255,\
-		182, 16, 16, 255,\
-		16, 81, 33, 255,\
+		185, 15, 15, 255,\
+		19, 79, 37, 255,\
 	}\
 }\
 
@@ -203,13 +205,13 @@ const Palette PaletteArray[MAX_PALETTES] = {
 	BW,
 	RETRO_RBY,
 	OLIVE_GREEN,
+    SNAKE_PALETTE,
+	FIBONACCI_RAT_PALETTE,
+	APPLE_PALETTE,
 	PONG_CUSTOM_PALETTE,
 	DINO_CUSTOM_PALETTE,
 	SPACESHIP_PALETTE,
 	ALIEN_1_PALETTE,
 	ALIEN_2_PALETTE,
-	UFO_PALETTE,
-	SNAKE_PALETTE,
-	FIBONACCI_RAT_PALETTE,
-	APPLE_PALETTE
+	UFO_PALETTE
 };
