@@ -1856,3 +1856,195 @@ const uint8_t lower_z[] = {
 };
 const Sprite lower_z_sprite = {20,10,lower_z};
 
+const uint8_t apple[] = {
+0,0,
+2,128,
+5,80,
+21,84,
+21,84,
+21,84,
+5,80,
+0,0,
+};
+const Sprite apple_sprite = {8,8,apple};
+
+const uint8_t rat[] = {
+0,0,
+1,84,
+36,84,
+21,88,
+10,136,
+32,8,
+10,160,
+0,0,
+};
+const Sprite rat_sprite = {8,8,rat};
+
+const uint8_t sn_horizontal[] = {
+0,0,
+85,85,
+170,170,
+106,165,
+165,106,
+170,170,
+85,85,
+0,0,
+};
+const Sprite sn_horizontal_sprite = {8,8,sn_horizontal};
+
+const uint8_t sn_vertical[] = {
+25,164,
+25,164,
+26,164,
+26,100,
+26,100,
+26,100,
+26,164,
+25,164,
+};
+const Sprite sn_vertical_sprite = {8,8,sn_vertical};
+
+const uint8_t sn_upleft[] = {
+0,0,
+85,80,
+170,164,
+105,164,
+170,100,
+170,100,
+106,164,
+25,164,
+};
+const Sprite sn_upleft_sprite = {8,8,sn_upleft};
+
+const uint8_t sn_upright[] = {
+0,0,
+5,85,
+26,170,
+26,165,
+26,106,
+26,106,
+26,169,
+25,164,
+};
+const Sprite sn_upright_sprite = {8,8,sn_upright};
+
+const uint8_t sn_downleft[] = {
+25,164,
+105,164,
+170,164,
+106,100,
+165,164,
+170,164,
+85,80,
+0,0,
+};
+const Sprite sn_downleft_sprite = {8,8,sn_downleft};
+
+const uint8_t sn_downright[] = {
+25,164,
+25,169,
+26,170,
+25,165,
+26,106,
+26,170,
+5,85,
+0,0,
+};
+const Sprite sn_downright_sprite = {8,8,sn_downright};
+
+const uint8_t sn_head_up[] = {
+0,0,
+1,64,
+6,144,
+26,100,
+18,68,
+26,100,
+26,164,
+25,164,
+};
+const Sprite sn_head_up_sprite = {8,8,sn_head_up};
+
+const uint8_t sn_head_down[] = {
+25,164,
+25,164,
+26,164,
+18,68,
+26,100,
+6,144,
+1,64,
+0,0,
+};
+const Sprite sn_head_down_sprite = {8,8,sn_head_down};
+
+const uint8_t sn_head_left[] = {
+0,0,
+1,85,
+6,42,
+26,165,
+25,106,
+6,42,
+1,85,
+0,0,
+};
+const Sprite sn_head_left_sprite = {8,8,sn_head_left};
+
+const uint8_t sn_head_right[] = {
+0,0,
+85,64,
+168,144,
+106,164,
+165,100,
+168,144,
+85,64,
+0,0,
+};
+const Sprite sn_head_right_sprite = {8,8,sn_head_right};
+
+const uint8_t sn_tail_up[] = {
+0,0,
+1,64,
+6,144,
+6,144,
+26,100,
+26,100,
+26,164,
+25,164,
+};
+const Sprite sn_tail_up_sprite = {8,8,sn_tail_up};
+
+const uint8_t sn_tail_down[] = {
+25,164,
+25,164,
+26,164,
+26,100,
+6,144,
+6,144,
+1,64,
+0,0,
+};
+const Sprite sn_tail_down_sprite = {8,8,sn_tail_down};
+
+const uint8_t sn_tail_left[] = {
+0,0,
+0,85,
+5,170,
+26,165,
+26,106,
+5,170,
+0,85,
+0,0,
+};
+const Sprite sn_tail_left_sprite = {8,8,sn_tail_left};
+
+const uint8_t sn_tail_right[] = {
+0,0,
+85,0,
+170,80,
+106,164,
+165,164,
+170,80,
+85,0,
+0,0,
+};
+const Sprite sn_tail_right_sprite = {8,8,sn_tail_right};
+
