@@ -25,7 +25,8 @@ int main(){
 		break;
 	  case 4:
 		//start_snake();
-		test_snake();
+		int max_length;
+		int result = start_snake(&max_length);
 		break;
 	}
   }
