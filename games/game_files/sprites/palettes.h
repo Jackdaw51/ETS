@@ -1,3 +1,4 @@
+
 #pragma once
 #include <stdint.h>
 
@@ -27,3 +28,4 @@ typedef struct {
 
 extern const Palette565 PaletteArray565[MAX_PALETTES];
 extern const Palette PaletteArray[MAX_PALETTES];
+
