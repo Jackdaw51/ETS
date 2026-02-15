@@ -1,4 +1,5 @@
 #include "display.h"
+#include "pixel_mask_lut.h"
 
 #define FRAME_WIDTH 160
 #define FRAME_HEIGHT 128
@@ -48,6 +49,9 @@ static TWOS_COLOURS screen_color = T_ONE;
 static u8 base_palette_index = BW_INDEX;
 static FbTexture texture_array[MAX_TEXTURES] = {};
 static u8 texture_array_index = 0;
+
+static u8 h_space_spacing = 6;
+static u8 v_space_spacing = 8;
 
 // how to set a pixel in the frame buffer
 // access the pixel
@@ -255,10 +259,67 @@ void draw_rectangle_outline_p(i32 x, i32 y, i32 width, i32 height,u8 thickness,T
 
 // buf handles length must be as long as string
 void set_space_len(u8 len){};
-void load_text(const char *text,TextBuilder* builder){};
-void load_text_p(const char *text,TextBuilder* builder,u8 p){};
-void draw_text_h(i32 x, i32 y,i32 extra_spacing, TextBuilder* builder){};
-void draw_text_v(i32 x, i32 y,i32 extra_spacing, TextBuilder* builder){};
+
+void load_text(const char *text, TextBuilder* builder){
+	const char *c = text;
+	u8 counter = 0;
+	while(*c != '\0'){
+		u8 index = (u8)*c;
+
+		// map to 0-31
+		if(index == ' '){
+			builder->handles[counter++] = (BuilderElement){ .type = SPACE };
+			c++;
+			continue;
+		} else if(index >= 'A' && index <= 'Z'){
+			index = index - (u8)'A';
+		} else if (index >= 'a' && index <= 'z'){
+			index = index - (u8)'a' + 26; // lowercase letters come after cap
+		} else {
+			return;
+		}
+
+		Sprite* s = text_lookup_table[index];
+		builder->handles[counter++] = (BuilderElement){.type = LETTER ,.handle = load_texture_from_sprite(s->height,s->width, s->data)};
+
+		c++;
+	}
+};
+
+void load_text_p(const char *text,TextBuilder* builder,u8 p){
+    u8 old_base_palette_index = base_palette_index;
+    set_palette(p);
+
+    load_text(text,builder);
+
+    base_palette_index = old_base_palette_index;
+};
+void draw_text_h(i32 x, i32 y,i32 extra_spacing, TextBuilder* builder){
+	u8 x_new = x;
+	for(int i = 0; i < builder->len;i++){
+		BuilderElement el = builder->handles[i];
+		if(el.type == SPACE){
+			x_new += h_space_spacing;
+		} else if(el.type == LETTER){
+			draw_texture(x_new,y,el.handle);
+			x_new += 8+extra_spacing;
+		}
+	};
+}
+
+void draw_text_v(i32 x, i32 y,i32 extra_spacing, TextBuilder* builder){
+   	// loop over handles and draw them with the spacing
+	u8 y_new = y;
+	for(int i = 0; i < builder->len;i++){
+		BuilderElement el = builder->handles[i];
+		if(el.type == SPACE){
+			y_new += v_space_spacing;
+		} else if(el.type == LETTER){
+			draw_texture(x,y_new,el.handle);
+			y_new += 8+extra_spacing;
+		}
+	};
+};
 
 // ------------------------------------------------------------------
 // Texture drawing functions
@@ -292,37 +353,47 @@ void draw_texture(u8 x, u8 y, TextureHandle texture_index){
         int n_y = y+i;
 		for(j = 0; j < cols; j++){
 			u8 batch = s->data[i*cols+j];
+			int n_x = x+j*4;
+			u8* frame_ptr = (u8*)GET_FRAME_PTR(n_x, y);
 
-            u8 p1 = ((3 << 6) & batch) >> 6;
-            u8 p2 = ((3 << 4) & batch) >> 4;
-            u8 p3 = ((3 << 2) & batch) >> 2;
-            u8 p4 = (3 & batch);
+			u8 mask = byte_to_mask_lut[batch];
 
-            int n_x1 = x+j*4;
-            int n_x2 = x+j*4+1;
-            int n_x3 = x+j*4+2;
-            int n_x4 = x+j*4+3;
+			batch &= mask;
+			*frame_ptr &= ~mask;
+			*frame_ptr |= batch;
+			// take this batch and get the mask -> update pointer
 
+        //    u8 p1 = ((3 << 6) & batch) >> 6;
+        //    u8 p2 = ((3 << 4) & batch) >> 4;
+        //    u8 p3 = ((3 << 2) & batch) >> 2;
+        //    u8 p4 = (3 & batch);
 
-			if(p1 != T_TRANSPARENT){
-                SET_FRAME_ELEMENT(n_x1,n_y,p1);
-                SET_PALETTE_ELEMENT(n_x1,n_y,base_palette_index);
-            };
+        //    int n_x1 = x+j*4;
+        //    int n_x2 = x+j*4+1;
+        //    int n_x3 = x+j*4+2;
+        //    int n_x4 = x+j*4+3;
 
-            if(p2 != T_TRANSPARENT){
-                SET_FRAME_ELEMENT(n_x2,n_y,p2);
-                SET_PALETTE_ELEMENT(n_x2,n_y,base_palette_index);
-            };
+        //    u8* frame_ptr = GET_FRAME_PTR(n_x1, n_y);
 
-            if(p3 != T_TRANSPARENT) {
-                SET_FRAME_ELEMENT(n_x3,n_y,p3);
-                SET_PALETTE_ELEMENT(n_x3,n_y,base_palette_index);
-            };
+		//	if(p1 != T_TRANSPARENT){
+        //        SET_FRAME_ELEMENT(n_x1,n_y,p1);
+        //        SET_PALETTE_ELEMENT(n_x1,n_y,base_palette_index);
+        //    };
 
-            if(p4 != T_TRANSPARENT){
-                SET_FRAME_ELEMENT(n_x4,n_y,p4);
-                SET_PALETTE_ELEMENT(n_x4,n_y,base_palette_index);
-            };
+        //    if(p2 != T_TRANSPARENT){
+        //        SET_FRAME_ELEMENT(n_x2,n_y,p2);
+        //        SET_PALETTE_ELEMENT(n_x2,n_y,base_palette_index);
+        //    };
+
+        //    if(p3 != T_TRANSPARENT) {
+        //        SET_FRAME_ELEMENT(n_x3,n_y,p3);
+        //        SET_PALETTE_ELEMENT(n_x3,n_y,base_palette_index);
+        //    };
+
+        //    if(p4 != T_TRANSPARENT){
+        //        SET_FRAME_ELEMENT(n_x4,n_y,p4);
+        //        SET_PALETTE_ELEMENT(n_x4,n_y,base_palette_index);
+        //    };
 		}
 
 		if(padding){
