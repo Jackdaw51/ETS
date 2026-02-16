@@ -1,5 +1,5 @@
 {
-  "tetris": [
+  "Tetris": [
     {
       "player": "Alice",
       "score": 1200
@@ -9,20 +9,34 @@
       "score": 950
     }
   ],
-  "pong": [
-    {
-      "player": "Charlie",
-      "score": 42
-    },
+  "Pong": [
     {
       "player": "Diana",
       "score": 88
+    },
+    {
+      "player": "Charlie",
+      "score": 42
     }
   ],
-  "snake": [
+  "Snake": [
     {
       "player": "Eve",
       "score": 300
+    }
+  ],
+  "tetris": [
+    {
+      "player": "Alice",
+      "score": 1234
+    },
+    {
+      "player": "Alice",
+      "score": 1234
+    },
+    {
+      "player": "Alice",
+      "score": 1234
     }
   ]
 }

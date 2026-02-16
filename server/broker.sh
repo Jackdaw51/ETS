@@ -2,7 +2,7 @@
 ## sudo apt install mosquitto mosquitto-clients
 
 # Run the MQTT broker
-mosquitto
+mosquitto -c mosquitto.conf
 
 # Broker's task is to receive messages from the sender
 # and route them to the receiver(s).

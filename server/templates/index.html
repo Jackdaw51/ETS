@@ -19,41 +19,50 @@
 
   <script>
     async function updateScores() {
-      const res = await fetch("http://localhost:5000/scores");
-      const data = await res.json();
+        try {
+            const res = await fetch("/scores");
+            const data = await res.json();
+            
+            // LOG THE DATA: Press F12 in your browser to see this!
+            console.log("Data received from server:", data);
 
-      const container = document.getElementById("games");
-      container.innerHTML = "";
+            const container = document.getElementById("games");
+            let html = "";
 
-      for (const game in data) {
-        if (data[game].length === 0) continue; // skip empty
-        
-        const title = document.createElement("h2");
-        title.textContent = `Game: ${game}`;
-        container.appendChild(title);
+            // Object.entries handles the dictionary format safely
+            const games = Object.entries(data);
 
-        const table = document.createElement("table");
-        table.innerHTML = `
-          <tr>
-            <th>Player</th>
-            <th>Score</th>
-          </tr>
-        `;
+            if (games.length === 0) {
+                container.innerHTML = "<h2>No scores found in JSON file.</h2>";
+                return;
+            }
 
-        data[game].forEach(entry => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${entry.player}</td>
-            <td>${entry.score}</td>
-          `;
-          table.appendChild(row);
-        });
+            games.forEach(([gameName, players]) => {
+                html += `<h2>Game: ${gameName}</h2>`;
+                html += `<table border="1">
+                            <thead>
+                                <tr><th>Player</th><th>Score</th></tr>
+                            </thead>
+                            <tbody>`;
+                
+                players.forEach(p => {
+                    html += `<tr>
+                                <td>${p.player || 'Unknown'}</td>
+                                <td>${p.score ?? 0}</td>
+                             </tr>`;
+                });
 
-        container.appendChild(table);
-      }
+                html += `</tbody></table>`;
+            });
+
+            container.innerHTML = html;
+        } catch (error) {
+            console.error("JavaScript Error:", error);
+        }
     }
 
+    updateScores();
     setInterval(updateScores, 1000);
-  </script>
+</script>
 </body>
 </html>

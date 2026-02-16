@@ -14,7 +14,8 @@ import os
 app = Flask(__name__)
 
 # JSON file to persist scores
-SCORES_FILE = "scores.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SCORES_FILE = os.path.join(BASE_DIR, "scores.json")
 
 # For each game there is a list of scores
 scores_by_game = defaultdict(list)
@@ -44,19 +45,35 @@ def save_scores():
 
 # MQTT callbacks
 def on_connect(client, userdata, flags, rc):
-    client.subscribe("fpga/score")
+    client.subscribe("esp32/score")
 
 # MQTT callback when receiving a message
 def on_message(client, userdata, msg):
     try:
-        data = json.loads(msg.payload.decode())
+        topic = msg.topic
+        payload = msg.payload.decode()
+        data = json.loads(payload)
 
-        game = data.get("game", "unknown")
-        player = data.get("player", "unknown")
-        score = data.get("score", 0)
+        # Handle Score Messages
+        if topic == "esp32/score":
+            game = data.get("game", "unknown")
+            player = data.get("player", "unknown")
+            score = data.get("score", 0)
+            scores_by_game[game].append({"player": player, "score": score})
+            save_scores()
+            print(f"Score recorded for {player}")
 
-        scores_by_game[game].append({"player": player, "score": score})
-        save_scores()  # This sorts and writes to JSON
+        # Handle Connection ACK Request
+        elif topic == "esp32/status":
+            if data.get("type") == "connection_request":
+                device_id = data.get("device_id", "unknown")
+                print(f"Connection request received from {device_id}")
+                
+                # Send the ACK back
+                ack_payload = json.dumps({"status": "ACK", "message": "Connected to Python Server"})
+                client.publish("esp32/ack", ack_payload)
+                print(f"Sent ACK to esp32/ack")
+
     except Exception as e:
         print("Error processing MQTT message:", e)
 
@@ -77,7 +94,8 @@ def index():
 ## API endpoint to get scores by game
 @app.route("/scores")
 def get_scores():
-    return jsonify(scores_by_game)
+    #print(f"Current memory state: {dict(scores_by_game)}")
+    return jsonify(dict(scores_by_game))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
