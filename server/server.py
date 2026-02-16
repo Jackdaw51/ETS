@@ -45,7 +45,7 @@ def save_scores():
 
 # MQTT callbacks
 def on_connect(client, userdata, flags, rc):
-    client.subscribe("fpga/score")
+    client.subscribe("esp32/score")
 
 # MQTT callback when receiving a message
 def on_message(client, userdata, msg):
@@ -55,7 +55,7 @@ def on_message(client, userdata, msg):
         data = json.loads(payload)
 
         # Handle Score Messages
-        if topic == "fpga/score":
+        if topic == "esp32/score":
             game = data.get("game", "unknown")
             player = data.get("player", "unknown")
             score = data.get("score", 0)
