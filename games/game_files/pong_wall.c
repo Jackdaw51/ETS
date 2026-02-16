@@ -1,8 +1,4 @@
-#include <stdio.h>
-
-#include "display/display.h"
-#include "sprites/palettes.h"
-#include "stddef.h"
+#include "pong_wall_game.h"
 
 // ------------------------------------------------------------
 // LCD size

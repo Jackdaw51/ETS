@@ -2,12 +2,12 @@
 #include "stddef.h"
 #include "snake.h"
 #include <stdio.h>
-#include <unistd.h> // For sleep function only
 
 
 #define MAP_WIDTH 20 // Size of the game area in blocks
 #define MAP_HEIGHT 16
 #define MAP_SIZE (MAP_WIDTH * MAP_HEIGHT)
+u8 rng = 1;
 
 
 int start_snake(int *max_length){

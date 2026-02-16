@@ -67,7 +67,11 @@ int main(void)
         // }
         // LCD_FillColor(0xF800);
         // LCD_FillColor(0xF800);
-        m_example();
+        //pong_wall_game();
+        //space_invaders_game();
+        //m_example();
+        transmitString("{game: tetris, player: Alice, score: 1234}");
+        sleep_ms(1000);
     }
 }
 void init_red(void)

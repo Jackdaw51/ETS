@@ -3,7 +3,7 @@
 // Using Timer A0 for general purpose delays
 
 volatile uint8_t ta_done = 0;
-extern volatile uint32_t game_tick;
+volatile uint32_t game_tick = 0;    
 
 void restart_game_tick()
 {

@@ -12,7 +12,8 @@ void m_example(){
 }
 
 void start_example(){
-  f32 proximity;
+  f32 proximity = 0.0f;
+  f32 useless_proximity;
   f32 proximity_old;
 	i32 sprite_y = 0;
 	i32 old_sprite_y = 0;
@@ -74,7 +75,15 @@ load_text("Rowan Li",&rowan_builder);
     display_begin();
 
     // INPUT
-		proximity = get_proximity();
+	useless_proximity = get_proximity();
+	joystick_t input = get_joystick();
+
+	if(input == JS_UP){
+	    proximity -= 10;
+	}
+	if(input == JS_DOWN){
+	    proximity += 10;
+	}
 
     if(counter2 == 3){
       counter = (counter==0 ? 1 : 0);

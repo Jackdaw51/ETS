@@ -296,7 +296,8 @@ void load_text_p(const char *text,TextBuilder* builder,u8 p){
 };
 void draw_text_h(i32 x, i32 y,i32 extra_spacing, TextBuilder* builder){
 	u8 x_new = x;
-	for(int i = 0; i < builder->len;i++){
+	int i;
+	for(i = 0; i < builder->len;i++){
 		BuilderElement el = builder->handles[i];
 		if(el.type == SPACE){
 			x_new += h_space_spacing;
@@ -310,7 +311,8 @@ void draw_text_h(i32 x, i32 y,i32 extra_spacing, TextBuilder* builder){
 void draw_text_v(i32 x, i32 y,i32 extra_spacing, TextBuilder* builder){
    	// loop over handles and draw them with the spacing
 	u8 y_new = y;
-	for(int i = 0; i < builder->len;i++){
+	int i;
+	for(i = 0; i < builder->len;i++){
 		BuilderElement el = builder->handles[i];
 		if(el.type == SPACE){
 			y_new += v_space_spacing;
@@ -341,6 +343,7 @@ void draw_texture(u8 x, u8 y, TextureHandle texture_index){
 	Sprite *s = &t.s;
 
 	u8 old_base_palette_index = base_palette_index;
+	u8 fat_palette_index = (old_base_palette_index << 6 | old_base_palette_index << 4 | old_base_palette_index << 2 | old_base_palette_index);
     set_palette(t.p_index);
 
 	u8 padding = s->width % 4;
@@ -354,46 +357,52 @@ void draw_texture(u8 x, u8 y, TextureHandle texture_index){
 		for(j = 0; j < cols; j++){
 			u8 batch = s->data[i*cols+j];
 			int n_x = x+j*4;
-			u8* frame_ptr = (u8*)GET_FRAME_PTR(n_x, y);
+			//u8* frame_ptr = (u8*)GET_FRAME_PTR(n_x, n_y);
+            //u8* palette_ptr = (u8*)GET_PALETTE_PTR(n_x, n_y);
 
 			u8 mask = byte_to_mask_lut[batch];
 
-			batch &= mask;
-			*frame_ptr &= ~mask;
-			*frame_ptr |= batch;
+			//batch &= mask;
+			//fat_palette_index &= mask;
+
+
+			//*frame_ptr &= ~mask;
+			//*frame_ptr |= batch;
+
+			//*palette_ptr
 			// take this batch and get the mask -> update pointer
 
-        //    u8 p1 = ((3 << 6) & batch) >> 6;
-        //    u8 p2 = ((3 << 4) & batch) >> 4;
-        //    u8 p3 = ((3 << 2) & batch) >> 2;
-        //    u8 p4 = (3 & batch);
+           u8 p1 = ((3 << 6) & batch) >> 6;
+           u8 p2 = ((3 << 4) & batch) >> 4;
+           u8 p3 = ((3 << 2) & batch) >> 2;
+           u8 p4 = (3 & batch);
 
-        //    int n_x1 = x+j*4;
-        //    int n_x2 = x+j*4+1;
-        //    int n_x3 = x+j*4+2;
-        //    int n_x4 = x+j*4+3;
+           int n_x1 = x+j*4;
+           int n_x2 = x+j*4+1;
+           int n_x3 = x+j*4+2;
+           int n_x4 = x+j*4+3;
 
-        //    u8* frame_ptr = GET_FRAME_PTR(n_x1, n_y);
+           u8* frame_ptr = GET_FRAME_PTR(n_x1, n_y);
 
-		//	if(p1 != T_TRANSPARENT){
-        //        SET_FRAME_ELEMENT(n_x1,n_y,p1);
-        //        SET_PALETTE_ELEMENT(n_x1,n_y,base_palette_index);
-        //    };
+			if(p1 != T_TRANSPARENT){
+               SET_FRAME_ELEMENT(n_x1,n_y,p1);
+               SET_PALETTE_ELEMENT(n_x1,n_y,base_palette_index);
+           };
 
-        //    if(p2 != T_TRANSPARENT){
-        //        SET_FRAME_ELEMENT(n_x2,n_y,p2);
-        //        SET_PALETTE_ELEMENT(n_x2,n_y,base_palette_index);
-        //    };
+           if(p2 != T_TRANSPARENT){
+               SET_FRAME_ELEMENT(n_x2,n_y,p2);
+               SET_PALETTE_ELEMENT(n_x2,n_y,base_palette_index);
+           };
 
-        //    if(p3 != T_TRANSPARENT) {
-        //        SET_FRAME_ELEMENT(n_x3,n_y,p3);
-        //        SET_PALETTE_ELEMENT(n_x3,n_y,base_palette_index);
-        //    };
+           if(p3 != T_TRANSPARENT) {
+               SET_FRAME_ELEMENT(n_x3,n_y,p3);
+               SET_PALETTE_ELEMENT(n_x3,n_y,base_palette_index);
+           };
 
-        //    if(p4 != T_TRANSPARENT){
-        //        SET_FRAME_ELEMENT(n_x4,n_y,p4);
-        //        SET_PALETTE_ELEMENT(n_x4,n_y,base_palette_index);
-        //    };
+           if(p4 != T_TRANSPARENT){
+               SET_FRAME_ELEMENT(n_x4,n_y,p4);
+               SET_PALETTE_ELEMENT(n_x4,n_y,base_palette_index);
+           };
 		}
 
 		if(padding){

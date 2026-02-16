@@ -1,9 +1,4 @@
-#include <stdio.h>
-
-#include "display/display.h"
-#include "display/types.h"
-#include "sprites/palettes.h"
-#include "sprites/sprites.h"
+#include "space_invaders.h"
 
 // ------------------------------------------------------------
 // LCD size
