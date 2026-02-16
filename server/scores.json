@@ -24,19 +24,5 @@
       "player": "Eve",
       "score": 300
     }
-  ],
-  "tetris": [
-    {
-      "player": "Alice",
-      "score": 1234
-    },
-    {
-      "player": "Alice",
-      "score": 1234
-    },
-    {
-      "player": "Alice",
-      "score": 1234
-    }
   ]
 }
