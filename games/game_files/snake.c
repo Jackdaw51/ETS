@@ -9,6 +9,19 @@
 #define MAP_SIZE (MAP_WIDTH * MAP_HEIGHT)
 u8 rng = 1;
 
+static inline joystick_t joystick_action(void) {
+  #ifdef SIMULATION_PC
+    if (IsKeyDown(KEY_ENTER)) return JS_BUTTON;
+    if (IsKeyDown(KEY_W))     return JS_UP;
+    if (IsKeyDown(KEY_A))     return JS_LEFT;
+    if (IsKeyDown(KEY_S))     return JS_DOWN;
+    if (IsKeyDown(KEY_D))     return JS_RIGHT;
+    return JS_NONE;
+  #else
+    return get_joystick();
+  #endif
+}
+
 
 int start_snake(int *max_length){
   *max_length = MAP_SIZE;
@@ -28,6 +41,7 @@ int start_snake(int *max_length){
 
   u8 food_x = 3*(MAP_WIDTH/4);
   u8 food_y = MAP_HEIGHT/2;
+  boolean food_type = false; // false for the apple, true for the mouse
 
   
   set_palette(SNAKE_INDEX);
@@ -65,19 +79,27 @@ int start_snake(int *max_length){
 		switch (game_state) {
       case PLAYING:
         // Input comes from here
-        joystick = get_joystick();
+        joystick = joystick_action();
         switch(joystick) {
           case JS_UP:
-            direction = Q_UP;
+            if (direction != Q_DOWN) {
+              direction = Q_UP;
+            }
             break;
           case JS_DOWN:
-            direction = Q_DOWN;
+            if (direction != Q_UP) {
+              direction = Q_DOWN;
+            }
             break;
           case JS_LEFT:
-            direction = Q_LEFT;
+            if (direction != Q_RIGHT) {
+              direction = Q_LEFT;
+            }
             break;
           case JS_RIGHT:
-            direction = Q_RIGHT;
+            if (direction != Q_LEFT) {
+              direction = Q_RIGHT;
+            }
             break;
           default:
             break;
@@ -85,7 +107,7 @@ int start_snake(int *max_length){
 
         // Physics and state changes go here
         u8 current_head = (snake_tail_pos + snake_length - 1) % MAP_SIZE;
-        u8 new_head = (current_head +1) % MAP_SIZE;
+        u8 new_head = (current_head + 1) % MAP_SIZE;
 
         // Based on joystick input, check if the snake can move
         // in that direction and apply the movement if possible
@@ -134,15 +156,14 @@ int start_snake(int *max_length){
         if (has_eaten(snake_x[new_head], snake_y[new_head], food_x, food_y)) {
           snake_length++;
           // Move food to new position, if possible
-          if (!new_food(&food_x, &food_y, &snake_x[snake_tail_pos], &snake_y[snake_tail_pos], snake_length)) {
+          if (!new_food(&food_x, &food_y, &food_type, &snake_x[snake_tail_pos], &snake_y[snake_tail_pos], snake_length)) {
             // No space left, player has won
             game_state = WIN;
           }
-        } else {
+        } else if (game_state == PLAYING) {
           // Move tail forward, effectively removing last segment
           snake_tail_pos = (snake_tail_pos + 1) % MAP_SIZE;
         }
-
         
 
         break;
@@ -164,7 +185,7 @@ int start_snake(int *max_length){
     draw_snake(snake_x, snake_y, snake_tail_pos, snake_length, snake_texture);
     if (game_state == PLAYING) {
       // Draw the food at new position
-      if (rand8() % 10 == 0) {
+      if (food_type) {
         // 10% chance of being a rat
         draw_food(food_x, food_y, rat_texture);
       } else {
@@ -192,7 +213,7 @@ boolean has_eaten(u8 head_x, u8 head_y, u8 food_x, u8 food_y) {
   return (head_x == food_x && head_y == food_y);
 }
 
-boolean new_food(u8* food_x, u8* food_y, u8* snake_x, u8* snake_y, u8 snake_length) {
+boolean new_food(u8* food_x, u8* food_y, boolean* food_type, u8* snake_x, u8* snake_y, u8 snake_length) {
   // Generate a new position for the food that is not on the snake
   if (snake_length >= MAP_SIZE) {
     return false; // No space left, won the game
@@ -211,6 +232,12 @@ boolean new_food(u8* food_x, u8* food_y, u8* snake_x, u8* snake_y, u8 snake_leng
         break;
       }
     }
+  }
+
+  if (rand8() % 10 == 0) {
+    food_type = true;
+  } else {
+    food_type = false;
   }
 
   return true;
