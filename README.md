@@ -1,139 +1,255 @@
-# Embedded together strong
+# Embedded Arcade Project — MSP432 + LCD + ESP32
 
+This repository contains the final project developed for the *Embedded Systems for the Internet of Things* course.
 
-## Simulation Tools
+The project targets the **TI MSP-EXP432P401R LaunchPad (MSP432P401R)** and runs a set of arcade-style mini-games on a **160×128 SPI LCD**. User input is provided through an **analog joystick** sampled via **ADC14 interrupts**. The display refresh is optimized using **SPI + DMA** with **ping-pong buffering** for higher frame rates. The system tick is generated using **hardware timers**, with calibrated delays used where required (e.g., LCD reset timing).
 
-In the games folder you will find tools for:
+An **ESP32** module is connected via **UART** to support command-based communication and optional online features (see the `server/` folder if enabled in your setup). A PC-side setup may also be available to run and test the same codebase without the physical board, depending on the provided display backend.
 
-- Compiling the game code
-- Drawing onto a window (default size equal to the one we will have physically)
-- Transforming pixel art into code
+---
 
-Note : When you use the simulation graphics lib the slider value goes from [0,1023]
+## 1) Requirements (What is needed to run the project)
 
-By default it starts at 0 (top)
-But if you need to change it for testing purposes it is the variable "slider_value" in 
-the <rl_display.c> file
+### Hardware Requirements
+- **Development board:** Texas Instruments **MSP-EXP432P401R LaunchPad**
+- **MCU:** **MSP432P401R** (ARM Cortex-M4F)
+- **Display:** **LCD 160×128**
+  - Rendering su framebuffer in RAM a **2 bpp** (`frame_buffer[5120]`) + buffer palette per-pixel a **4 bit** (`palette_buffer[10240]`)
+  - Il refresh dello schermo viene effettuato a fine frame con `DMA_send_frame(frame_buffer, palette_buffer)` (trasferimento via DMA nel driver LCD)
+  - Buffer DMA di staging da **1024 byte** (`dma_buffer[1024]`) usato dal percorso di trasferimento
+- **Input:** **Joystick analogico + pulsante**
+  - Lettura X/Y con **ADC14** in modalità multi-sequenza (MEM0..MEM1) e completamento via **interrupt**
+  - Attesa “low-power” finché non arriva l’interrupt (`__WFI()`)
+  - Pin usati:
+    - X-axis: **P6.0**
+    - Y-axis: **P4.4**
+    - Button: **P4.1** (input con pull-up)
+- **LED:** LED integrato sulla board (debug/status)
 
+> Nota: l’interfaccia per la proximity è presente (`get_proximity()`), ma nel file mostrato la funzione è una **stub** (incremento artificiale) con una chiamata reale commentata (`trigger_hcsr04()`), quindi nel README la descriveremo come “supporto/progettato per” se non mi mandi il driver reale.
 
-### Windows "users" !
+---
 
-So we don't have to deal with windows build system x.x you should use wsl when compiling the project. If you do not have it already follow these steps
+### Software Requirements
 
+#### MCU (build/flash)
+- **TI Code Composer Studio (CCS):** **v12.8.0**
+- Toolchain integrata in CCS (setup del corso)
+- Collegamento USB della LaunchPad (programmazione/debug)
 
-```powershell
+#### Server (optional, online scoreboard)
+- **Python 3.x**
+- Pacchetti:
+  - `flask`
+  - `paho-mqtt`
+- MQTT broker locale:
+  - `mosquitto`
+  - `mosquitto-clients`
 
-# Install wsl ubuntu
+--- 
 
-wsl --install -d Ubuntu
+## 2) Project Layout
 
-# open wsl
-
-wsl
+```text
+.
+├── games/                 # Embedded application (games + display + sprites)
+│   ├── game_files/        # Main source code
+│   │   ├── display/       # Display abstraction + MCU LCD backend (SPI/DMA) + utilities
+│   │   ├── sprites/       # Sprite runtime + palettes + asset conversion tools + PNG sources
+│   │   └── *.c/*.h        # Games (Dino, Pong, Snake, Space Invaders) + menu + entry points
+│   └── game_exes/         # built executables
+│
+├── server/                # Optional scoreboard server (MQTT + Flask) + web UI templates
+│   └── templates/         # HTML templates for Flask
+│
+├── incl/                  # Project-wide shared headers/includes
+├── targetConfigs/         # Code Composer Studio target configs (flash/debug)
+│
+├── Debug/                 # Generated build output (IDE)
+└── .idea/ .vscode/ ...    # IDE/editor settings (not required)
 
 ```
+--- 
 
-After this you will have a bash terminal
+## 3) How to build, burn (flash) and run
 
+### 3.1 Build & Flash on the MCU (Code Composer Studio)
+
+This project follows the standard embedded workflow: the **host system** (your PC running CCS) builds the firmware image, then the image is **downloaded to the target** (MSP432 LaunchPad) through the on-board programmer/debugger. The same connection can also be used for debugging.
+
+#### Prerequisites
+- Install **TI Code Composer Studio (CCS) v12.8.0**
+- Connect the **MSP-EXP432P401R LaunchPad** to the PC via USB
+
+#### Steps (CCS)
+1. Open **CCS**.
+2. Import/open the project workspace.
+3. Select the correct target configuration from `targetConfigs/` (flash/debug).
+4. Build the project (**Project → Build Project**).
+5. Flash & run:
+  - **Debug**: start a debug session (CCS programs the MCU and runs the firmware).
+  - **Run** (if configured): flash and start execution without stepping.
+
+> Notes:
+> - Firmware is stored in the MCU **Flash**, while runtime data is stored in **SRAM**.
+> - The on-board LED is available for quick sanity checks (GPIO).
+
+---
+
+### 3.2 Run the Scoreboard Server (MQTT + Flask)
+
+The `server/` folder contains a Python server that:
+- subscribes to MQTT score messages (topic `esp32/score`),
+- stores scores persistently in `scores.json`,
+- serves a small web page and an API endpoint for scores.
+
+#### IoT Score Reporting (MSP432 → ESP32 → MQTT → Python Server)
+At the end of each match, the **MSP432** sends a structured packet to the **ESP32** over **UART**.  
+The ESP32 then publishes data using **MQTT** to a **Mosquitto broker** running on the PC.  
+A **Flask-based Python server** subscribes to MQTT topics and records scores, exposing them via a web UI and a JSON API.
+
+MQTT topics:
+- `esp32/score` — match scores (includes player name, score value, and game identifier/type)
+- *(optional / if enabled)* `esp32/status` — connection/status messages (handshake)
+- *(optional / if enabled)* `esp32/ack` — server acknowledgement
+
+#### Install dependencies (Linux/WSL example)
 ```bash
+pip install paho-mqtt flask
+sudo apt install mosquitto mosquitto-clients
 
-# update your wsl package manager
-sudo apt update
-
-# install the build system and dependencies
-sudo apt install -y \
-  build-essential \
-  libx11-dev \
-  libxrandr-dev \
-  libxi-dev \
-  libxinerama-dev \
-  libxcursor-dev \
-  libgl1-mesa-dev \
-  libglu1-mesa-dev \
-  libasound2-dev \
-  libpulse-dev \
-  libudev-dev \
-  libdrm-dev
-
-
-# cd to the games folder of ETS and run this to compile and run
-make play
-
-# Note that after this you can just write "wsl" in the vscode terminal and you're good to go!
 ```
-
-### Compiling Code
-
-In the folder there is a makefile which is setup to be crossplatform.
-It is used as so
-
+Start the local MQTT broker
 ```bash
-# This will compile the example.c file
-
-make
-
-# This will compile a chosen file 
-# (note that it needs the full path so /game_files/FILENAME)
-
-make SRC=<FILENAME> 
-
-# Adding play will make the executable run after compiling 
-
-make play SRC=<FILENAME>
+cd server
+chmod +x broker.sh
+./broker.sh
 ```
 
-### Drawing
-
-A template.c file is included in the game_files/ folder, note that certain functions must be called in order because of the dependency on the raylib library. So try to stick to the template.  The template also represents the typical game loop of Input -> Physics -> Drawing.
-
-
-The drawing functions accept the enum TWOS_COLORS which represent the index of the palette.
-**THE COORDINATE SYSTEM HAS THE POINT (0,0) IN THE TOP LEFT. THIS MEANS ADDING TO X GOES RIGHT, AND ADDING TO Y GOES DOWN!**
-
-
-### Sprites/Textures
-
-One of the drawing functions is for textures. 
-The way to use this is:
-
-```c
-// This must be outside of the game loop (outside of the while)
-TextureHandle handle = load_texture_from_sprite(sprite.height,sprite.width,sprite.data);
-
-while(...){
-// This is inside the game loop
-
-    draw_texture(x,y,handle);
-
-}
-```
-
-#### Generating Sprites
-
-- Sprites must contain only 3 specific colors
-- You Must specify the 3 colors by defining a Palette and adding it to the PaletteArray (See the palette.c and palette.h files)
-- The size must also be maximum 160x128 (the whole screen)
-
-1. Get a png of a sprite using any pixel art app/site. 
-I used https://www.piskelapp.com/p/create/sprite/ while testing.
-
-2. Transform the png into code by using the sprite_tool in the sprites folder
-
-
-
+Run the Python server
 ```bash
+cd server
+python3 server.py
+```
 
-# To generate the sprite variable
-./sprite_tool pngs/<PNGNAME> <SPRITE_VARIABLE_NAME>
+If you are using a Python virtual environment (useful e.g. on WSL):
+```bash
+cd server
+python3 -m venv venv
+source venv/bin/activate
+pip install paho-mqtt flask
+python3 server.py
+```
+Endpoints
 
-# You can delete sprites from code to clean up by using sprite_remover.py
-python sprite_remover.py <SPRITE_VARIABLE_NAME>
+- Web UI: http://localhost:5000/
 
-# or 
-python3 sprite_remover.py <SPRITE_VARIABLE_NAME>
+- Scores (JSON): http://localhost:5000/scores
+---
+## 4) User Guide
+
+### 4.1 Controls (MCU)
+
+The project is designed to run on the target MCU board. Input is provided through an **analog joystick**.
+
+- **Move (Up/Down/Left/Right):** used to navigate menus and to control the games (depending on the game).
+- **Joystick press:** used as **SELECT / CONFIRM** (menu selection and in-menu confirmations).
+
+---
+
+### 4.2 Start the project (Menu)
+
+At startup the firmware shows a **menu** on the LCD.
+
+1. Use the joystick directions to navigate between games.
+2. Press the joystick to **select** and start the highlighted game.
+
+After any game ends, the project enters the **score publishing flow** (see below) and then returns to the menu.
+
+---
+
+### 4.3 End of game: Online score publishing flow
+
+At the end of a match, the user is asked whether they want to **publish the score online**.
+
+- If **No**: the project returns directly to the **menu**.
+- If **Yes**:
+  1. the user is asked to enter a **player name**,
+  2. the project sends the score to the server together with the **game identifier/type**,
+  3. the project returns to the **menu**.
+
+On the server side, scores are **grouped by game** (each game has its own leaderboard/list).
+
+---
+
+### 4.4 Games
+
+#### Dino Runner
+**Goal:** survive as long as possible by avoiding obstacles.  
+**Gameplay:** the character runs automatically; the player reacts to obstacles.
+
+Typical controls:
+- **Jump / Avoid**: joystick up
+- **Duck / Lower**: joystick down
+
+Game Over:
+- collision with an obstacle.
+
+> After game over, the **online score publishing flow** is shown, then the project returns to the menu.
+---
+
+#### Pong Wall
+**Goal:** keep the ball in play by moving the paddle.  
+**Gameplay:** you control a paddle and bounce the ball back.
+
+Typical controls:
+- **Move paddle**: joystick left/right 
+Game Over:
+- the ball passes the paddle.
+
+> After game over, the **online score publishing flow** is shown, then the project returns to the menu.
+---
+
+#### Snake
+**Goal:** grow the snake by collecting items while avoiding collisions.  
+**Gameplay:** the snake moves continuously; the player changes direction.
+
+Controls:
+- **Change direction**: joystick up/down/left/right
+
+Game Over:
+- collision with walls and/or the snake body (depending on rules).
+
+> After the game ends (win or lose), the **online score publishing flow** is shown, then the project returns to the menu.
+---
+
+#### Space Invaders
+**Goal:** destroy all aliens and avoid being hit.  
+**Gameplay:** move horizontally and shoot enemies.
+
+Typical controls:
+- **Move**: joystick left/right
+
+Game Over:
+- player is hit or enemies reach the player area.
+
+> After game over, the **online score publishing flow** is shown, then the project returns to the menu.
+---
+
+
+## 5) Youtube presentation video
 
 ```
 
-3. Use the sprite in your code, easy! :)
+```
 
+---
 
+## 6) Team Members and Contributions
+
+| Member            | Contributions (main tasks/features) | Main files/folders                             |
+|-------------------|--------------|------------------------------------------------|
+| Malchiodi Massimo | games        | dino_runner.c , pong_wall.c , space_invaders.c |
+| Francesco Bogni   |              |                                                |
+| Rowan Li          |              |                                                |
+| Leonardo Sandrini |              |                                                |
