@@ -1,17 +1,20 @@
 # REQUISITES:
 ## 1. pip install paho-mqtt flask
-## 2. sudo apt install mosquitto mosquitto-clients
-## 3. ./server/broker.sh
+## 2. pip install flask-socketio eventlet
+## 3. sudo apt install mosquitto mosquitto-clients
+## 4. ./server/broker.sh
 # If running through python virtual environment (needed for WSL testing):
-## 4. source venv/bin/activate
+## 5. source venv/bin/activate
 
 import json
 from flask import Flask, jsonify, render_template
 import paho.mqtt.client as mqtt
 from collections import defaultdict
+from flask_socketio import SocketIO
 import os
 
 app = Flask(__name__)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # JSON file to persist scores
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -30,6 +33,7 @@ if os.path.exists(SCORES_FILE):
         print(f"Loaded previous scores from {SCORES_FILE}")
     except Exception as e:
         print("Error loading scores.json:", e)
+
 
 # Function to save and sort scores to JSON file
 def save_scores():
@@ -61,7 +65,11 @@ def on_message(client, userdata, msg):
             score = data.get("score", 0)
             scores_by_game[game].append({"player": player, "score": score})
             save_scores()
+
+            socketio.emit("scores_updated", dict(scores_by_game)) # Update the web interface
+
             print(f"Score recorded for {player}")
+
 
         # Handle Connection ACK Request
         elif topic == "esp32/status":
@@ -98,4 +106,5 @@ def get_scores():
     return jsonify(dict(scores_by_game))
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", port=5000)
+

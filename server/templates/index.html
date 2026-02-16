@@ -3,66 +3,114 @@
 <head>
   <title>FPGA Game Scores</title>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    h2 {
+      margin-top: 40px;
+    }
+
     table {
+      width: 100%;
       border-collapse: collapse;
-      margin-bottom: 20px;
+      background: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
     }
-    th, td {
-      border: 1px solid black;
-      padding: 5px 10px;
+
+    th {
+      background-color: #2c3e50;
+      color: white;
+      padding: 12px;
     }
+
+    td {
+      padding: 10px;
+      text-align: center;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:hover {
+      background-color: #d6eaff;
+  }
   </style>
 </head>
 <body>
   <h1>Live Game Scores</h1>
   <div id="games"></div>
 
+  <!-- Load socket.io library-->
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+  <!-- Backend -->
   <script>
+    const socket = io();
+
+    socket.on("scores_updated", function(data) {
+      console.log("Live update received:", data);
+      renderScores(data);
+    });
+
     async function updateScores() {
-        try {
-            const res = await fetch("/scores");
-            const data = await res.json();
-            
-            // LOG THE DATA: Press F12 in your browser to see this!
-            console.log("Data received from server:", data);
-
-            const container = document.getElementById("games");
-            let html = "";
-
-            // Object.entries handles the dictionary format safely
-            const games = Object.entries(data);
-
-            if (games.length === 0) {
-                container.innerHTML = "<h2>No scores found in JSON file.</h2>";
-                return;
-            }
-
-            games.forEach(([gameName, players]) => {
-                html += `<h2>Game: ${gameName}</h2>`;
-                html += `<table border="1">
-                            <thead>
-                                <tr><th>Player</th><th>Score</th></tr>
-                            </thead>
-                            <tbody>`;
-                
-                players.forEach(p => {
-                    html += `<tr>
-                                <td>${p.player || 'Unknown'}</td>
-                                <td>${p.score ?? 0}</td>
-                             </tr>`;
-                });
-
-                html += `</tbody></table>`;
-            });
-
-            container.innerHTML = html;
-        } catch (error) {
-            console.error("JavaScript Error:", error);
-        }
+      const res = await fetch("/scores");
+      const data = await res.json();
+      renderScores(data);
     }
 
-    updateScores();
-    setInterval(updateScores, 1000);
-</script>
+    function renderScores(data) {
+      const container = document.getElementById("games");
+      let html = "";
+
+      const games = Object.entries(data);
+
+      if (games.length === 0) {
+        container.innerHTML = "<h2>No scores found.</h2>";
+        return;
+      }
+
+      games.forEach(([gameName, players]) => {
+        html += `<h2>Game: ${gameName}</h2>`;
+        html += `
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+          <tbody>
+        `;
+
+        players.forEach((p, index) => {
+          html += `
+            <tr>
+              <td>${index + 1}</td>
+              <td>${p.player}</td>
+              <td>${p.score}</td>
+            </tr>
+          `;
+        });
+
+        html += "</tbody></table>";
+      });
+
+      container.innerHTML = html;
+    }
+
+    updateScores();  // important: load old scores
+  </script>
+
 </body>
 </html>
