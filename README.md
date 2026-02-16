@@ -13,20 +13,33 @@ An **ESP32** module is connected via **UART** to support command-based communica
 ### Hardware Requirements
 - **Development board:** Texas Instruments **MSP-EXP432P401R LaunchPad**
 - **MCU:** **MSP432P401R** (ARM Cortex-M4F)
-- **Display:** **LCD 160×128**
-  - Rendering su framebuffer in RAM a **2 bpp** (`frame_buffer[5120]`) + buffer palette per-pixel a **4 bit** (`palette_buffer[10240]`)
-  - Il refresh dello schermo viene effettuato a fine frame con `DMA_send_frame(frame_buffer, palette_buffer)` (trasferimento via DMA nel driver LCD)
-  - Buffer DMA di staging da **1024 byte** (`dma_buffer[1024]`) usato dal percorso di trasferimento
-- **Input:** **Joystick analogico + pulsante**
-  - Lettura X/Y con **ADC14** in modalità multi-sequenza (MEM0..MEM1) e completamento via **interrupt**
-  - Attesa “low-power” finché non arriva l’interrupt (`__WFI()`)
-  - Pin usati:
+
+- **Display:** **160×128 LCD**
+  - Rendering uses an in-RAM **2 bpp** framebuffer (`frame_buffer[5120]`) plus a per-pixel **4-bit** palette buffer (`palette_buffer[10240]`)
+  - At the end of each frame, the display backend triggers a transfer via `DMA_send_frame(frame_buffer, palette_buffer)` (DMA-based LCD update path)
+  - A **1024-byte** DMA staging buffer is allocated (`dma_buffer[1024]`)
+
+- **Input:** **Analog joystick + button**
+  - X/Y sampling through **ADC14** in multi-sequence mode (MEM0..MEM1) with completion via **interrupt**
+  - Low-power wait until conversion completes (`__WFI()`)
+  - Pins:
     - X-axis: **P6.0**
     - Y-axis: **P4.4**
-    - Button: **P4.1** (input con pull-up)
-- **LED:** LED integrato sulla board (debug/status)
+    - Button: **P4.1** (input with pull-up)
 
-> Nota: l’interfaccia per la proximity è presente (`get_proximity()`), ma nel file mostrato la funzione è una **stub** (incremento artificiale) con una chiamata reale commentata (`trigger_hcsr04()`), quindi nel README la descriveremo come “supporto/progettato per” se non mi mandi il driver reale.
+- **Connectivity:** **ESP32** via **UART (eUSCI_A2)**
+  - UART pins: **P3.2 (RX)**, **P3.3 (TX)**
+  - Baud rate: **115200** (SMCLK @ 24 MHz)
+  - Interrupt-driven RX; newline-terminated (`\n`) messages buffered in a 128-byte RX buffer
+
+- **LED:** On-board LED (debug/status)
+
+#### MCU peripherals used
+- **ADC14 (interrupt):** analog joystick sampling (P6.0, P4.4)
+- **UART (eUSCI_A2, RX interrupt):** communication with ESP32 @ 115200 baud (P3.2 RX, P3.3 TX)
+- **DMA:** used by the LCD update path (frame transfer)
+
+> Note: a proximity sensor interface exists (`get_proximity()`), but in the shown file it is currently a **stub** (artificial increment) and the real call is commented out (`trigger_hcsr04()`). For this reason, the README describes proximity as “supported/designed for” unless the real driver is included.
 
 ---
 
@@ -34,19 +47,18 @@ An **ESP32** module is connected via **UART** to support command-based communica
 
 #### MCU (build/flash)
 - **TI Code Composer Studio (CCS):** **v12.8.0**
-- Toolchain integrata in CCS (setup del corso)
-- Collegamento USB della LaunchPad (programmazione/debug)
+- CCS integrated toolchain (course setup)
+- USB connection to the LaunchPad for programming/debugging
 
-#### Server (optional, online scoreboard)
+#### Server (online scoreboard)
 - **Python 3.x**
-- Pacchetti:
+- Python packages:
   - `flask`
   - `paho-mqtt`
-- MQTT broker locale:
+- Local MQTT broker:
   - `mosquitto`
   - `mosquitto-clients`
 
---- 
 
 ## 2) Project Layout
 
