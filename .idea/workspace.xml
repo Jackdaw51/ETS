@@ -5,6 +5,8 @@
   </component>
   <component name="BackendCodeEditorMiscSettings">
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
+    <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
   </component>
   <component name="CMakeProjectFlavorService">
     <option name="flavorId" value="CMakePlainProjectFlavor" />
@@ -16,13 +18,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f7eed982-2e4e-44f3-8b93-fc1e3549e1b7" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_exes/dino_runner" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_exes/dino_runner" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_exes/pong_wall" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_exes/pong_wall" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_exes/space_invaders" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_exes/space_invaders" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_files/dino_runner.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/dino_runner.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_files/pong_wall.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/pong_wall.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/games/game_files/space_invaders.c" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_files/space_invaders.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_exes/dino_runner" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/games/game_exes/space_invaders" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,7 +48,7 @@
     </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="max" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -78,6 +78,9 @@
     <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.h" root0="SKIP_HIGHLIGHTING" />
   </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="SWkv3GG3" />
+  </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -103,9 +106,10 @@
     "RunOnceActivity.cidr.known.project.marker": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "max",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/pngs",
     "node.js.detected.package.eslint": "true",
@@ -151,10 +155,22 @@
       <updated>1770720594109</updated>
       <workItem from="1770720595241" duration="541000" />
       <workItem from="1770721786033" duration="39435000" />
+      <workItem from="1771268832460" duration="104000" />
+      <workItem from="1771268952296" duration="3316000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/incl/hcsr04.c</url>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

@@ -1,0 +1,58 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"BackendCodeEditorMiscSettings\">\r\n    <option name=\"/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue\" value=\"true\" type=\"bool\" />\r\n  </component>\r\n  <component name=\"CMakeProjectFlavorService\">\r\n    <option name=\"flavorId\" value=\"CMakePlainProjectFlavor\" />\r\n  </component>\r\n  <component name=\"CMakeSettings\">\r\n    <configurations>\r\n      <configuration PROFILE_NAME=\"Debug\" ENABLED=\"true\" CONFIG_NAME=\"Debug\" />\r\n    </configurations>\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"f7eed982-2e4e-44f3-8b93-fc1e3549e1b7\" name=\"Changes\" comment=\"\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"ClangdSettings\">\r\n    <option name=\"formatViaClangd\" value=\"false\" />\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <favorite-branches>\r\n      <branch-storage>\r\n        <map>\r\n          <entry type=\"LOCAL\">\r\n            <value>\r\n              <list>\r\n                <branch-info repo=\"$PROJECT_DIR$\" source=\"max\" />\r\n              </list>\r\n            </value>\r\n          </entry>\r\n        </map>\r\n      </branch-storage>\r\n    </favorite-branches>\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"max\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"HighlightingSettingsPerFile\">\r\n    <setting file=\"mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c\" root0=\"SKIP_HIGHLIGHTING\" />\r\n    <setting file=\"mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c\" root0=\"SKIP_HIGHLIGHTING\" />\r\n    <setting file=\"mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c\" root0=\"SKIP_HIGHLIGHTING\" />\r\n    <setting file=\"mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c\" root0=\"SKIP_HIGHLIGHTING\" />\r\n    <setting file=\"mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c\" root0=\"SKIP_HIGHLIGHTING\" />\r\n    <setting file=\"mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.c\" root0=\"SKIP_HIGHLIGHTING\" />\r\n    <setting file=\"mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.h\" root0=\"SKIP_HIGHLIGHTING\" />\r\n    <setting file=\"mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.h\" root0=\"SKIP_HIGHLIGHTING\" />\r\n    <setting file=\"mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.h\" root0=\"SKIP_HIGHLIGHTING\" />\r\n    <setting file=\"mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/palettes.h\" root0=\"SKIP_HIGHLIGHTING\" />\r\n    <setting file=\"mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/sprites.c\" root0=\"SKIP_HIGHLIGHTING\" />\r\n    <setting file=\"mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/sprites.c\" root0=\"SKIP_HIGHLIGHTING\" />\r\n    <setting file=\"mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/sprites.h\" root0=\"SKIP_HIGHLIGHTING\" />\r\n    <setting file=\"mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/sprites.h\" root0=\"SKIP_HIGHLIGHTING\" />\r\n  </component>\r\n  <component name=\"ProblemsViewState\">\r\n    <option name=\"selectedTabId\" value=\"CurrentFile\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;customColor&quot;: &quot;&quot;,\r\n  &quot;associatedIndex&quot;: 6\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"39TWZ86aAAlcyFcZBVIXmjMFy0b\" />\r\n  <component name=\"ProjectStatusUIService\">{\r\n  &quot;uiKindId&quot;: &quot;Widget&quot;\r\n}</component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;C/C++ File.template.c.executor&quot;: &quot;Run&quot;,\r\n    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,\r\n    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,\r\n    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;max&quot;,\r\n    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/pngs&quot;,\r\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\r\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\Massimo\\Documents\\GitHub\\ETS\\games\\game_files\\sprites\\pngs\" />\r\n    </key>\r\n    <key name=\"MoveFile.RECENT_KEYS\">\r\n      <recent name=\"C:\\Users\\Massimo\\Documents\\GitHub\\ETS\\games\\game_files\\sprites\\pngs\" />\r\n      <recent name=\"C:\\Users\\Massimo\\Documents\\GitHub\\ETS\\games\\game_files\\sprites\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\">\r\n    <configuration name=\"template.c\" type=\"CppFileRunConfiguration\" factoryName=\"CppFileRunConfiguration\" temporary=\"true\" REDIRECT_INPUT=\"false\" ELEVATE=\"false\" USE_EXTERNAL_CONSOLE=\"false\" EMULATE_TERMINAL=\"false\" PASS_PARENT_ENVS_2=\"true\" PROJECT_NAME=\"ETS\" TARGET_NAME=\"template.c\" CONFIG_NAME=\"template.c\">\r\n      <option name=\"sourceFile\" value=\"games\\game_files\\template.c\" />\r\n      <method v=\"2\">\r\n        <option name=\"com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"C/C++ File.template.c\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"f7eed982-2e4e-44f3-8b93-fc1e3549e1b7\" name=\"Changes\" comment=\"\" />\r\n      <created>1770720594109</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1770720594109</updated>\r\n      <workItem from=\"1770720595241\" duration=\"541000\" />\r\n      <workItem from=\"1770721786033\" duration=\"39435000\" />\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision b11ad9aefad2cd85ab9a391118a3dcb30328a1b4)
++++ b/.idea/workspace.xml	(date 1771264875706)
+@@ -5,6 +5,8 @@
+   </component>
+   <component name="BackendCodeEditorMiscSettings">
+     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
++    <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
++    <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
+   </component>
+   <component name="CMakeProjectFlavorService">
+     <option name="flavorId" value="CMakePlainProjectFlavor" />
+@@ -16,7 +18,11 @@
+   </component>
+   <component name="ChangeListManager">
+     <list default="true" id="f7eed982-2e4e-44f3-8b93-fc1e3549e1b7" name="Changes" comment="">
++      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/games/game_exes/dino_runner" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/games/game_exes/pong_wall" beforeDir="false" afterPath="$PROJECT_DIR$/games/game_exes/pong_wall" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/games/game_exes/space_invaders" beforeDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -42,7 +48,7 @@
+     </favorite-branches>
+     <option name="RECENT_BRANCH_BY_REPOSITORY">
+       <map>
+-        <entry key="$PROJECT_DIR$" value="max" />
++        <entry key="$PROJECT_DIR$" value="main" />
+       </map>
+     </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+@@ -63,6 +69,9 @@
+     <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/sprites.h" root0="SKIP_HIGHLIGHTING" />
+     <setting file="mock://C:/Users/Massimo/Documents/GitHub/ETS/games/game_files/sprites/sprites.h" root0="SKIP_HIGHLIGHTING" />
+   </component>
++  <component name="MacroExpansionManager">
++    <option name="directoryName" value="WSibYJPN" />
++  </component>
+   <component name="ProblemsViewState">
+     <option name="selectedTabId" value="CurrentFile" />
+   </component>
+@@ -119,6 +128,7 @@
+     </configuration>
+     <recent_temporary>
+       <list>
++        <item itemvalue="C/C++ File.template.c" />
+         <item itemvalue="C/C++ File.template.c" />
+       </list>
+     </recent_temporary>
