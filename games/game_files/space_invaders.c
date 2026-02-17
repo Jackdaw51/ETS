@@ -887,7 +887,7 @@ int space_invaders_game(void) {
             i32 bx = fp_to_i32(pb[i].x_fp);
             i32 by = fp_to_i32(pb[i].y_fp);
 
-            if (!rect_on_screen(bx, by, PB_W, PB_H)) continue;
+            if (!rect_on_screen(bx, by, PB_W+1, PB_H+1)) continue;
 
             draw_rectangle(bx, by, PB_W, PB_H, T_THREE);
         }
@@ -902,7 +902,7 @@ int space_invaders_game(void) {
             i32 bx = fp_to_i32(ab[i].x_fp);
             i32 by = fp_to_i32(ab[i].y_fp);
 
-            if (!rect_on_screen(bx, by, AB_W, AB_H)) continue;
+            if (!rect_on_screen(bx, by, AB_W+1, AB_H+1)) continue;
             draw_rectangle(bx, by, AB_W, AB_H, T_THREE);
         }
 
