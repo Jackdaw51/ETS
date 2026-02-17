@@ -1,4 +1,4 @@
-# Embedded Arcade Project — MSP432 + LCD + ESP32
+# Embedded Arcade Project: IoT Game Boy
 
 This repository contains the final project developed for the *Embedded Systems for the Internet of Things* course.
 
