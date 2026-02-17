@@ -571,8 +571,9 @@ int space_invaders_game(void) {
 
                     pb[i].y_fp += pb[i].vy_fp;
                     i32 by = fp_to_i32(pb[i].y_fp);
-                    if (by + PB_H <= 0) pb[i].active = 0;
+                    if (by < 0) pb[i].active = 0;
                 }
+
 
 
                 // ---- wave clear? ----
