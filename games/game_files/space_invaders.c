@@ -186,6 +186,14 @@ static u8 aabb_i32(i32 ax, i32 ay, i32 aw, i32 ah,
     return (ar >= bl) && (al <= br) && (ab >= bt) && (at <= bb);
 }
 
+static inline u8 rect_on_screen(i32 x, i32 y, i32 w, i32 h) {
+    if (w <= 0 || h <= 0) return 0;
+    if (x >= LCD_W || y >= LCD_H) return 0;
+    if (x + w <= 0 || y + h <= 0) return 0;
+    return 1;
+}
+
+
 // RNG (LCG)
 static u32 rng_state = 2463534242u;
 static u32 rng_u32(void) {
@@ -872,18 +880,27 @@ int space_invaders_game(void) {
         // Player bullets
         for (i = 0; i < MAX_PB; i++) {
             if (!pb[i].active) continue;
+
             i32 bx = fp_to_i32(pb[i].x_fp);
             i32 by = fp_to_i32(pb[i].y_fp);
+
+            if (!rect_on_screen(bx, by, PB_W, PB_H)) continue;
             draw_rectangle(bx, by, PB_W, PB_H, T_THREE);
         }
 
+
+        // Alien bullets
         // Alien bullets
         for (i = 0; i < MAX_AB; i++) {
             if (!ab[i].active) continue;
+
             i32 bx = fp_to_i32(ab[i].x_fp);
             i32 by = fp_to_i32(ab[i].y_fp);
+
+            if (!rect_on_screen(bx, by, AB_W, AB_H)) continue;
             draw_rectangle(bx, by, AB_W, AB_H, T_THREE);
         }
+
 
         // Aliens
         for (r = 0; r < A_ROWS; r++) {
@@ -893,15 +910,13 @@ int space_invaders_game(void) {
                 i32 ax = (i32)aliens[r][c].x;
                 i32 ay = (i32)aliens[r][c].y;
 
-                if (ay >= 0) {
-                    TextureHandle texp = (aliens[r][c].kind == 0) ? alien1_tex : alien2_tex;
-                    if (ax >= 0 && ax <= 255 && ay <= 255) draw_texture((u8)ax, (u8)ay, texp);
-                } else {
-                    u8 pal = (aliens[r][c].kind == 0) ? PAL_ALIEN1 : PAL_ALIEN2;
-                    draw_rectangle_p(ax, ay, A_W, A_H, T_THREE, pal);
-                }
+                if (!rect_on_screen(ax, ay, A_W, A_H)) continue;
+
+                TextureHandle texp = (aliens[r][c].kind == 0) ? alien1_tex : alien2_tex;
+                draw_texture((u8)ax, (u8)ay, texp);
             }
         }
+
 
         // Explosions above the aliens
         for (r = 0; r < A_ROWS; r++) {
@@ -912,6 +927,8 @@ int space_invaders_game(void) {
                 i32 ax = (i32)aliens[r][c].x;
                 i32 ay = (i32)aliens[r][c].y;
                 u8 pal = (aliens[r][c].kind == 0) ? PAL_ALIEN1 : PAL_ALIEN2;
+
+                if (!rect_on_screen(ax - EXP_MAX_R, ay - EXP_MAX_R, A_W + 2*EXP_MAX_R, A_H + 2*EXP_MAX_R)) continue;
 
                 draw_explosion_at(ax, ay, pal, expl_fr[r][c]);
             }
