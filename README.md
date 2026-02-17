@@ -15,29 +15,9 @@ An **ESP32** module is connected via **UART** to support command-based communica
 - **MCU:** **MSP432P401R** (ARM Cortex-M4F)
 
 - **Display:** **160×128 LCD**
-  - Rendering uses an in-RAM **2 bpp** framebuffer (`frame_buffer[5120]`) plus a per-pixel **4-bit** palette buffer (`palette_buffer[10240]`)
-  - At the end of each frame, the display backend triggers a transfer via `DMA_send_frame(frame_buffer, palette_buffer)` (DMA-based LCD update path)
-  - A **1024-byte** DMA staging buffer is allocated (`dma_buffer[1024]`)
-
 - **Input:** **Analog joystick + button**
-  - X/Y sampling through **ADC14** in multi-sequence mode (MEM0..MEM1) with completion via **interrupt**
-  - Low-power wait until conversion completes (`__WFI()`)
-  - Pins:
-    - X-axis: **P6.0**
-    - Y-axis: **P4.4**
-    - Button: **P4.1** (input with pull-up)
-
-- **Connectivity:** **ESP32** via **UART (eUSCI_A2)**
-  - UART pins: **P3.2 (RX)**, **P3.3 (TX)**
-  - Baud rate: **115200** (SMCLK @ 24 MHz)
-  - Interrupt-driven RX; newline-terminated (`\n`) messages buffered in a 128-byte RX buffer
-
-- **LED:** On-board LED (debug/status)
-
-#### MCU peripherals used
-- **ADC14 (interrupt):** analog joystick sampling (P6.0, P4.4)
-- **UART (eUSCI_A2, RX interrupt):** communication with ESP32 @ 115200 baud (P3.2 RX, P3.3 TX)
-- **DMA:** used by the LCD update path (frame transfer)
+- **Connectivity:** **ESP32**
+- **Jumper wires**
 
 > Note: a proximity sensor interface exists (`get_proximity()`), but in the shown file it is currently a **stub** (artificial increment) and the real call is commented out (`trigger_hcsr04()`). For this reason, the README describes proximity as “supported/designed for” unless the real driver is included.
 
@@ -58,7 +38,6 @@ An **ESP32** module is connected via **UART** to support command-based communica
 5. Click ARM Linker and File Search Path
 5.1 Add "simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/ccs/msp432p4xx_driverlib.lib" to "Include library file..." window
 
-
 #### Server (online scoreboard)
 - **Python 3.x**
 - Python packages:
@@ -67,7 +46,7 @@ An **ESP32** module is connected via **UART** to support command-based communica
 - Local MQTT broker:
   - `mosquitto`
   - `mosquitto-clients`
-
+Compile and burn the code found in incl/.arduino_esp_code.txt using **arduino IDE** on the ESP32
 
 ## 2) Project Layout
 
@@ -90,6 +69,25 @@ An **ESP32** module is connected via **UART** to support command-based communica
 └── .idea/ .vscode/ ...    # IDE/editor settings (not required)
 
 ```
+- **Display:** **160×128 LCD**
+  - Rendering uses an in-RAM **2 bpp** framebuffer (`frame_buffer[5120]`) plus a per-pixel **4-bit** palette buffer (`palette_buffer[10240]`)
+  - At the end of each frame, the display backend triggers a transfer via `DMA_send_frame(frame_buffer, palette_buffer)` (DMA-based LCD update path)
+  - A **1024-byte** DMA staging buffer is allocated (`dma_buffer[1024]`)
+- **Input:** **Analog joystick + button**
+  - X/Y sampling through **ADC14** in multi-sequence mode (MEM0..MEM1) with completion via **interrupt**
+  - Low-power wait until conversion completes (`__WFI()`)
+  - Pins:
+    - X-axis: **P6.0**
+    - Y-axis: **P4.4**
+    - Button: **P4.1** (input with pull-up)
+- **Connectivity:** **ESP32** via **UART (eUSCI_A2)**
+  - UART pins: **P3.2 (RX)**, **P3.3 (TX)**
+  - Baud rate: **115200** (SMCLK @ 24 MHz)
+  - Interrupt-driven RX; newline-terminated (`\n`) messages buffered in a 128-byte RX buffer
+#### MCU peripherals used
+- **ADC14 (interrupt):** analog joystick sampling (P6.0, P4.4)
+- **UART (eUSCI_A2, RX interrupt):** communication with ESP32 @ 115200 baud (P3.2 RX, P3.3 TX)
+- **DMA:** used by the LCD update path (frame transfer)
 --- 
 
 ## 3) How to build, burn (flash) and run
@@ -162,11 +160,15 @@ pip install paho-mqtt flask
 pip install flask-socketio eventlet
 python3 server.py
 ```
+Compile and burn the code found in incl/.arduino_esp_code.txt using arduino IDE on the ESP32 changing the
+- ssid
+- password
+- mqtt_server
+based on your needing
+
 Endpoints
 
 - Web UI: http://localhost:5000/
-
-- Scores (JSON): http://localhost:5000/scores
 ---
 ## 4) User Guide
 
@@ -258,20 +260,17 @@ Game Over:
 > After game over, the **online score publishing flow** is shown, then the project returns to the menu.
 ---
 
-
 ## 5) Youtube presentation video
+[https://www.youtube.com/watch?v=UiJPijVZSsw](https://www.youtube.com/watch?v=UiJPijVZSsw)
 
-```
+## 6) Google slide presentation
+[https://docs.google.com/presentation/d/1siLldpIUteBmbFG3dPx7DHre80ek7ybReXg_TtViSuA/edit?usp=sharing](https://docs.google.com/presentation/d/1siLldpIUteBmbFG3dPx7DHre80ek7ybReXg_TtViSuA/edit?usp=sharing)
 
-```
-
----
-
-## 6) Team Members and Contributions
+## 7)Team Members and Contributions
 
 | Member            | Contributions (main tasks/features) | Main files/folders                             |
 |-------------------|-------------------------------------|------------------------------------------------|
 | Malchiodi Massimo | Games                               | dino_runner.c , pong_wall.c , space_invaders.c |
-| Francesco Bogni   |                                     |                                                |
-| Rowan Li Tangalin |                                     |                                                |
+| Francesco Bogni   | Hardware                            | incl/*                                         |
+| Rowan Li Tangalin | graphics, simulation and tools      | display/ , games/, sprites/                    |
 | Leonardo Sandrini | Snake and IoT                       | snake.c , server.py , index.html               |
