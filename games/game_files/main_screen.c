@@ -18,17 +18,20 @@ void game_loop(){
 	  }
 	  case 1:{
 	  	score = pong_wall_game();
+		game_index = 0;
 		screen = 4;
 		break;
 	  }
 
 	  case 2:{
 	  	score = dino_runner_game();
+		game_index = 1;
 		screen = 4;
 		break;
 	  }
 	  case 3: {
 		score = start_snake(&max_length);
+		game_index = 2;
 		screen = 4;
 		break;
 	  }
