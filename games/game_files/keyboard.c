@@ -169,6 +169,8 @@ void keyboard(char* buffer){
           choice_y--;
         }
         break;
+      case JS_NONE:
+        break;  
       case JS_BUTTON:
         if(choice_y == rows-1 && choice_x == 2){
           name_ptr--;

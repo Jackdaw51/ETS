@@ -70,10 +70,11 @@ main.obj: C:/ti/ccs1280/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stdio.h
 main.obj: C:/ti/ccs1280/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stddef.h
 main.obj: ../games/game_files/keyboard.h
 main.obj: ../games/game_files/ask_upload.h
+main.obj: ../games/game_files/thanks_for_playing.h
+main.obj: ../games/game_files/space_invaders.h
 main.obj: ../games/game_files/pong_wall_game.h
 main.obj: ../games/game_files/example.h
 main.obj: ../games/game_files/menu.h
-main.obj: ../games/game_files/space_invaders.h
 
 ../main.c:
 
@@ -215,11 +216,13 @@ C:/ti/ccs1280/ccs/tools/compiler/ti-cgt-arm_20.2.7.LTS/include/stddef.h:
 
 ../games/game_files/ask_upload.h:
 
+../games/game_files/thanks_for_playing.h:
+
+../games/game_files/space_invaders.h:
+
 ../games/game_files/pong_wall_game.h:
 
 ../games/game_files/example.h:
 
 ../games/game_files/menu.h:
-
-../games/game_files/space_invaders.h:
 

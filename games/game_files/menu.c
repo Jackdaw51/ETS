@@ -3,13 +3,13 @@
 #include "display/display.h"
 #include "stddef.h"
 
-#define NUMBER_OF_GAMES 3
+#define NUMBER_OF_GAMES 4
 
 #define STEPS_PER_WHILE 2
 #define WHILE_PER_AN_CHANGE 8
 
 u8 menu(){
-	char* example_game_names[NUMBER_OF_GAMES] = {"Pong","Dino","Snake"};
+	char* example_game_names[NUMBER_OF_GAMES] = {"Pong","Dino","Snake","Invaders"};
 	TextBuilder game_title_builders[NUMBER_OF_GAMES];
 
 	u8 chosen = 0;
@@ -51,6 +51,8 @@ u8 menu(){
 		game_title_builders[0] = (TextBuilder){ .handles = (BuilderElement[4]){}, .len = 4};
 		game_title_builders[1] = (TextBuilder){ .handles = (BuilderElement[4]){}, .len = 4};
 		game_title_builders[2] = (TextBuilder){ .handles = (BuilderElement[5]){}, .len = 5};
+		game_title_builders[3] = (TextBuilder){ .handles = (BuilderElement[8]){}, .len = 8};
+
 
 		TextBuilder menu_text_builder = (TextBuilder){ .handles = (BuilderElement[4]){}, .len = 4};
 		int i;

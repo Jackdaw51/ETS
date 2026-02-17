@@ -1,6 +1,6 @@
 #include "main_screen.h"
 
-char* game_names[3] = {"Pong","Dino","Snake"};
+char* game_names[4] = {"Pong","Dino","Snake","Invaders"};
 
 void game_loop(){
   display_init_lcd();
@@ -19,33 +19,40 @@ void game_loop(){
 	  case 1:{
 	  	score = pong_wall_game();
 		game_index = 0;
-		screen = 4;
+		screen = 5;
 		break;
 	  }
 
 	  case 2:{
 	  	score = dino_runner_game();
 		game_index = 1;
-		screen = 4;
+		screen = 5;
 		break;
 	  }
 	  case 3: {
 		score = start_snake(&max_length);
 		game_index = 2;
-		screen = 4;
+		screen = 5;
 		break;
 	  }
 	  case 4: {
+		score = space_invaders_game();
+		game_index = 3;
+		screen = 5;
+		break;
+	  }
+	  case 5: {
 		int result = ask_upload();
 		if(result == 0){
-			screen = 5;
-		} else {
 			screen = 6;
+		} else {
+			screen = 7;
 		}
 		break;
 	  } 
-	  case 5: {
+	  case 6: {
 		char name[13] = {0};
+		sleep_ms(20);
 		keyboard(name);
 		char* game_name = game_names[game_index];
 
@@ -61,10 +68,10 @@ void game_loop(){
     	);
 
 		transmitString(json_string);
-		screen = 6;
+		screen = 7;
 		break;
 	  }
-	  case 6: {
+	  case 7: {
 		thanks();
 		screen = 0;
 		break;

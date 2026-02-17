@@ -29,7 +29,7 @@ int start_snake(int *max_length){
   joystick_t joystick;
   State game_state = PLAYING;
   Quad_Direction direction = Q_RIGHT; // By default it moves to the right
-  boolean should_move = false;
+  u8 should_move = 0;
 
   u8 snake_x[MAP_SIZE]; // Work as circular buffers
   u8 snake_y[MAP_SIZE];
@@ -107,7 +107,7 @@ int start_snake(int *max_length){
             break;
         }
 
-        if (should_move) {
+        if (should_move%10 == 0) { // Move every 10 ticks, effectively controlling speed
           // Physics and state changes go here
           u8 current_head = (snake_tail_pos + snake_length - 1) % MAP_SIZE;
           u8 new_head = (current_head + 1) % MAP_SIZE;
@@ -168,7 +168,7 @@ int start_snake(int *max_length){
             snake_tail_pos = (snake_tail_pos + 1) % MAP_SIZE;
           }
         }
-        should_move = !should_move;
+        //should_move = !should_move;
         
 
         break;
@@ -198,8 +198,8 @@ int start_snake(int *max_length){
       }
     }
 
-    
-    sleep_ms(250);
+    should_move++;
+    //sleep_ms(250);
     display_end();
   }
 }
@@ -240,7 +240,7 @@ boolean new_food(u8* food_x, u8* food_y, boolean* food_type, u8* snake_x, u8* sn
     }
   }
 
-  if (rand8() % 10 == 0) {
+  if (rand8() % 7 == 0) {
     food_type = true;
   } else {
     food_type = false;

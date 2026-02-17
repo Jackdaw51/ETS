@@ -953,16 +953,16 @@ int space_invaders_game(void) {
 
 // ------------------------------------------------------------
 // MAIN DI TEST
-int main(void) {
-    int score = space_invaders_game();
+// int main(void) {
+//     int score = space_invaders_game();
 
 
-    // su embedded reale spesso meglio evitare printf (o metterlo dietro debug)
-#ifdef DEBUG
-    printf("Score: %d\n", score);
-#endif
+//     // su embedded reale spesso meglio evitare printf (o metterlo dietro debug)
+// #ifdef DEBUG
+//     printf("Score: %d\n", score);
+// #endif
 
 
-    return score;
-}
+//     return score;
+// }
 

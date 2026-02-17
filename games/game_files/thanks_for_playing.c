@@ -44,13 +44,14 @@ int thanks(){
             draw_text_h_centertp(80,50,0,&title2_builder);
             draw_text_h_centertp(80,70,0,&title3_builder);
 
-            sleep_ms(2000);
 
             // sleep and return
 
-            break;
 
         display_end();
+        sleep_ms(2000);
+                    break;
+
     }
 
     display_close();

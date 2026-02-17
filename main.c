@@ -49,9 +49,12 @@ int main(void)
     init_esp32_communication();
     screen_init();
     
-    joystick_t a;
-
     game_loop();
+    //joystick_t a;
+    
+    //while(1){
+    //    space_invaders_game();
+    //}
 }
 void init_red(void)
 {
