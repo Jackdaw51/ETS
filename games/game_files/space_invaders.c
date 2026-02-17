@@ -568,9 +568,12 @@ int space_invaders_game(void) {
                 // Move player bullets
                 for (i = 0; i < MAX_PB; i++) {
                     if (!pb[i].active) continue;
+
                     pb[i].y_fp += pb[i].vy_fp;
-                    if (fp_to_i32(pb[i].y_fp) < -10) pb[i].active = 0;
+                    i32 by = fp_to_i32(pb[i].y_fp);
+                    if (by + PB_H <= 0) pb[i].active = 0;
                 }
+
 
                 // ---- wave clear? ----
                 if (alive_count == 0) {
@@ -885,8 +888,10 @@ int space_invaders_game(void) {
             i32 by = fp_to_i32(pb[i].y_fp);
 
             if (!rect_on_screen(bx, by, PB_W, PB_H)) continue;
+
             draw_rectangle(bx, by, PB_W, PB_H, T_THREE);
         }
+
 
 
         // Alien bullets
