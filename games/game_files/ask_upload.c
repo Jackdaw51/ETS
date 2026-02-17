@@ -26,7 +26,7 @@ int ask_upload(){
 
     set_palette(BW_INDEX);
 
-    joystick_t old_input;
+    joystick_t old_input = JS_NONE;
     u8 choice = 0;
 
     while(!window_should_close()){

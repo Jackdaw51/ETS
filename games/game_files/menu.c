@@ -60,7 +60,7 @@ u8 menu(){
 		load_text_p("Menu",&menu_text_builder,RETRO_RBY_INDEX);
 		set_screen_color(T_TWO);
 
-		joystick_t old_action = JS_LEFT;
+		joystick_t old_action = JS_NONE;
 
 		while(!window_should_close() && !close){
 			get_proximity();

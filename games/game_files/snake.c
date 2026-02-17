@@ -29,7 +29,7 @@ int start_snake(int *max_length){
   joystick_t joystick;
   State game_state = PLAYING;
   Quad_Direction direction = Q_RIGHT; // By default it moves to the right
-  Quad_Direction new_direction;
+  boolean should_move = false;
 
   u8 snake_x[MAP_SIZE]; // Work as circular buffers
   u8 snake_y[MAP_SIZE];
@@ -85,87 +85,90 @@ int start_snake(int *max_length){
         switch(joystick) {
           case JS_UP:
             if (direction != Q_DOWN) {
-              new_direction = Q_UP;
+              direction = Q_UP;
             }
             break;
           case JS_DOWN:
             if (direction != Q_UP) {
-              new_direction = Q_DOWN;
+              direction = Q_DOWN;
             }
             break;
           case JS_LEFT:
             if (direction != Q_RIGHT) {
-              new_direction = Q_LEFT;
+              direction = Q_LEFT;
             }
             break;
           case JS_RIGHT:
             if (direction != Q_LEFT) {
-              new_direction = Q_RIGHT;
+              direction = Q_RIGHT;
             }
             break;
           default:
             break;
         }
 
-        // Physics and state changes go here
-        u8 current_head = (snake_tail_pos + snake_length - 1) % MAP_SIZE;
-        u8 new_head = (current_head + 1) % MAP_SIZE;
+        if (should_move) {
+          // Physics and state changes go here
+          u8 current_head = (snake_tail_pos + snake_length - 1) % MAP_SIZE;
+          u8 new_head = (current_head + 1) % MAP_SIZE;
 
-        // Based on joystick input, check if the snake can move
-        // in that direction and apply the movement if possible
-        if (direction == Q_UP &&
-          snake_y[current_head] > 0 &&
-          !check_crush(&snake_x[snake_tail_pos], &snake_y[snake_tail_pos],
-            snake_length, snake_x[current_head], snake_y[current_head] - 1)
-        ) {
-          // Moves up
-          snake_x[new_head] = snake_x[current_head];
-          snake_y[new_head] = snake_y[current_head] - 1;
+          // Based on joystick input, check if the snake can move
+          // in that direction and apply the movement if possible
+          if (direction == Q_UP &&
+            snake_y[current_head] > 0 &&
+            !check_crush(&snake_x[snake_tail_pos], &snake_y[snake_tail_pos],
+              snake_length, snake_x[current_head], snake_y[current_head] - 1)
+          ) {
+            // Moves up
+            snake_x[new_head] = snake_x[current_head];
+            snake_y[new_head] = snake_y[current_head] - 1;
 
-        } else if (direction == Q_DOWN &&
-          snake_y[current_head % MAP_SIZE] < MAP_HEIGHT - 1 &&
-          !check_crush(&snake_x[snake_tail_pos], &snake_y[snake_tail_pos],
-            snake_length, snake_x[current_head % MAP_SIZE], snake_y[current_head % MAP_SIZE] + 1)
-        ) {
-          // Moves down
-          snake_x[new_head] = snake_x[current_head];
-          snake_y[new_head] = snake_y[current_head] + 1;
+          } else if (direction == Q_DOWN &&
+            snake_y[current_head % MAP_SIZE] < MAP_HEIGHT - 1 &&
+            !check_crush(&snake_x[snake_tail_pos], &snake_y[snake_tail_pos],
+              snake_length, snake_x[current_head % MAP_SIZE], snake_y[current_head % MAP_SIZE] + 1)
+          ) {
+            // Moves down
+            snake_x[new_head] = snake_x[current_head];
+            snake_y[new_head] = snake_y[current_head] + 1;
 
-        } else if (direction == Q_LEFT &&
-          snake_x[current_head % MAP_SIZE] > 0 &&
-          !check_crush(&snake_x[snake_tail_pos], &snake_y[snake_tail_pos], snake_length,
-            snake_x[current_head % MAP_SIZE] - 1, snake_y[current_head % MAP_SIZE])
-        ) {
-          // Moves left
-          snake_x[new_head] = snake_x[current_head] - 1;
-          snake_y[new_head] = snake_y[current_head];
-          
-        } else if (direction == Q_RIGHT &&
-          snake_x[current_head % MAP_SIZE] < MAP_WIDTH - 1 &&
-          !check_crush(&snake_x[snake_tail_pos], &snake_y[snake_tail_pos],
-            snake_length, snake_x[current_head % MAP_SIZE] + 1, snake_y[current_head % MAP_SIZE])
-        ) {
-          // Moves right
-          snake_x[new_head] = snake_x[current_head] + 1;
-          snake_y[new_head] = snake_y[current_head];
+          } else if (direction == Q_LEFT &&
+            snake_x[current_head % MAP_SIZE] > 0 &&
+            !check_crush(&snake_x[snake_tail_pos], &snake_y[snake_tail_pos], snake_length,
+              snake_x[current_head % MAP_SIZE] - 1, snake_y[current_head % MAP_SIZE])
+          ) {
+            // Moves left
+            snake_x[new_head] = snake_x[current_head] - 1;
+            snake_y[new_head] = snake_y[current_head];
+            
+          } else if (direction == Q_RIGHT &&
+            snake_x[current_head % MAP_SIZE] < MAP_WIDTH - 1 &&
+            !check_crush(&snake_x[snake_tail_pos], &snake_y[snake_tail_pos],
+              snake_length, snake_x[current_head % MAP_SIZE] + 1, snake_y[current_head % MAP_SIZE])
+          ) {
+            // Moves right
+            snake_x[new_head] = snake_x[current_head] + 1;
+            snake_y[new_head] = snake_y[current_head];
 
-        } else {
-            // Crushed into a wall, game over
-            game_state = LOST;
-        }
-
-        // If it has eaten food, increase length, otherwise move start forward
-        if (has_eaten(snake_x[new_head], snake_y[new_head], food_x, food_y)) {
-          snake_length++;
-          // Move food to new position, if possible
-          if (!new_food(&food_x, &food_y, &food_type, &snake_x[snake_tail_pos], &snake_y[snake_tail_pos], snake_length)) {
-            // No space left, player has won
-            game_state = WIN;
+          } else {
+              // Crushed into a wall, game over
+              game_state = LOST;
           }
-        } else if (game_state == PLAYING) {
-          // Move tail forward, effectively removing last segment
-          snake_tail_pos = (snake_tail_pos + 1) % MAP_SIZE;
+
+          // If it has eaten food, increase length, otherwise move start forward
+          if (has_eaten(snake_x[new_head], snake_y[new_head], food_x, food_y)) {
+            snake_length++;
+            // Move food to new position, if possible
+            if (!new_food(&food_x, &food_y, &food_type, &snake_x[snake_tail_pos], &snake_y[snake_tail_pos], snake_length)) {
+              // No space left, player has won
+              game_state = WIN;
+            }
+          } else if (game_state == PLAYING) {
+            // Move tail forward, effectively removing last segment
+            snake_tail_pos = (snake_tail_pos + 1) % MAP_SIZE;
+          }
         }
+        should_move = !should_move;
         
 
         break;
@@ -195,8 +198,8 @@ int start_snake(int *max_length){
       }
     }
 
-    direction = new_direction;
-    sleep_ms(500);
+    
+    sleep_ms(250);
     display_end();
   }
 }

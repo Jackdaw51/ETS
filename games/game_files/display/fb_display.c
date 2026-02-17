@@ -122,6 +122,8 @@ void clear_screen(void){
                             | base_palette_index << 20 | base_palette_index << 24 | base_palette_index << 28);
 
 
+    // clear_screen() snippet
+    // Each byte represents 4 pixel and we need to fill all bytes with the same value 
     for(i = 0; i < FRAME_WIDTH*FRAME_HEIGHT/(PIXEL_PER_BYTE*4); i++){
         f_fptr[i] = extended_pixel;
     }
