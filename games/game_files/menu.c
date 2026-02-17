@@ -5,8 +5,8 @@
 
 #define NUMBER_OF_GAMES 3
 
-#define STEPS_PER_WHILE 5
-#define WHILE_PER_AN_CHANGE 5
+#define STEPS_PER_WHILE 2
+#define WHILE_PER_AN_CHANGE 8
 
 u8 menu(){
 	char* example_game_names[NUMBER_OF_GAMES] = {"PONG","DINO","SNAKE"};
@@ -14,8 +14,6 @@ u8 menu(){
 
 	u8 chosen = 0;
 	u8 close = 0;
-
-	
 
 	TextureHandle wdf1_texture_handle = load_texture_from_sprite_p(wdf1_sprite.height,wdf1_sprite.width,wdf1_sprite.data,OLIVE_GREEN_INDEX);
   	TextureHandle wdf2_texture_handle = load_texture_from_sprite_p(wdf2_sprite.height,wdf2_sprite.width,wdf2_sprite.data,OLIVE_GREEN_INDEX);
@@ -29,14 +27,14 @@ u8 menu(){
 	TextureHandle wuf1_texture_handle2 = load_texture_from_sprite_p(wuf1_sprite.height,wuf1_sprite.width,wuf1_sprite.data,RETRO_RBY_INDEX);
 	TextureHandle wuf2_texture_handle2 = load_texture_from_sprite_p(wuf2_sprite.height,wuf2_sprite.width,wuf2_sprite.data,RETRO_RBY_INDEX);
 
-	TextureHandle animation_pack[2][2] = {{wuf1_texture_handle,wuf2_texture_handle},{wdf1_texture_handle,wdf2_texture_handle}};
-    TextureHandle animation_pack2[2][2] = {{wuf1_texture_handle2,wuf2_texture_handle2},{wdf1_texture_handle2,wdf2_texture_handle2}};
+	TextureHandle animation_pack[2][2] = {{wdf1_texture_handle,wdf2_texture_handle},{wuf1_texture_handle,wuf2_texture_handle}};
+    TextureHandle animation_pack2[2][2] = {{wdf1_texture_handle2,wdf2_texture_handle2},{wuf1_texture_handle2,wuf2_texture_handle2}};
 
 	u8 x1 = 0;
-	u8 x2 = 150-wdf1_sprite.width;
+	u8 x2 = 160-wdf1_sprite.width;
 
 	u8 y1 = 0;
-	u8 y2 = 120 -wdf1_sprite.height;
+	u8 y2 = 120-wdf1_sprite.height;
 
 	u8 direction1 = 0;
 	u8 direction2 = 1;
@@ -104,11 +102,11 @@ u8 menu(){
 				direction2 = 1;
 			}
 
-			if(y1 - wdf1_sprite.height < 0 && direction1 == 1){
+			if(y1 - STEPS_PER_WHILE < 0 && direction1 == 1){
 				direction1 = 0;
 			}
 			
-			if(y2 - wdf1_sprite.height < 0 && direction2 == 1){
+			if(y2 - STEPS_PER_WHILE < 0 && direction2 == 1){
 				direction2 = 0;
 			}
 
@@ -122,7 +120,7 @@ u8 menu(){
 
 			draw_text_h_center(80,20,0,&menu_text_builder);
 			draw_text_h_center(80,50,0,&game_title_builders[game_choice_index]);
-			draw_texture(x1,y1,animation_pack[direction1][an1]);
+			//draw_texture(x1,y1,animation_pack[direction1][an1]);
 			draw_texture(x2,y2,animation_pack2[direction2][an2]);
 
 			display_end();
