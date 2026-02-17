@@ -45,7 +45,8 @@ void game_loop(){
 		break;
 	  } 
 	  case 5: {
-		char* name = keyboard();
+		char name[13] = {0};
+		keyboard(name);
 		char* game_name = game_names[game_index];
 
 		char json_string[256] = {0};

@@ -1,0 +1,109 @@
+#include <WiFi.h>
+#include <PubSubClient.h> // Include the MQTT library
+
+// 1. Network Credentials
+const char* ssid = "Honor 9 Lite"; // <-- CHANGE this based on your wifi
+const char* password = "BaiBaiBai"; // <-- Change this based on your password
+
+// 2. MQTT Broker Settings
+const char* mqtt_server = "192.168.43.114"; // <--- CHANGE THIS to your Broker/PC IP
+// const char* mqtt_server = "test.mosquitto.org";
+const int mqtt_port = 1883;
+const char* mqtt_topic = "esp32/score";
+
+// 3. Hardware UART2 Settings
+#define RXD2 16
+#define TXD2 17
+#define LED_PIN 2
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+
+void setup() {
+  // Serial 0 is for your Computer (USB debug)
+  Serial.begin(115200);
+  pinMode(LED_PIN, OUTPUT);
+  
+  // Serial 2 is for the MSP432 (115200 Baud, 8-N-1)
+  Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
+
+  // Connect to Wi-Fi
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+
+    delay(500);
+
+    Serial.print(".");
+
+  }
+
+  Serial.println("\nWiFi Connected!");
+
+  digitalWrite(LED_PIN, HIGH);
+  // Configure MQTT
+  client.setServer(mqtt_server, mqtt_port);
+}
+
+void loop() {
+  // Ensure MQTT is connected. If not, reconnect.
+  
+  if (!client.connected()) {
+    reconnect();
+  }
+  client.loop(); // Keep the MQTT client active
+  
+  //Listen for data coming FROM the MSP432
+  if (Serial2.available()) {
+    String mspData = Serial2.readStringUntil('\n');
+    mspData.trim(); // Remove whitespace/newlines
+
+    Serial.println("MSP432 Trigger Received: " + mspData);
+
+    // Send via MQTT
+    if (client.publish(mqtt_topic, mspData.c_str())) {
+      Serial.println("MQTT Sent: " + mspData);
+      
+      // Flash LED to indicate success
+      digitalWrite(LED_PIN, LOW); // Off (depending on board logic)
+      delay(100);
+      digitalWrite(LED_PIN, HIGH); // On
+    } else {
+      Serial.println("MQTT Failed to send");
+    }
+  }
+}
+
+// --- Helper Functions ---
+
+void setup_wifi() {
+  delay(10);
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nWiFi Connected!");
+  digitalWrite(LED_PIN, HIGH); // Turn LED on to show WiFi is good
+}
+
+void reconnect() {
+  // Loop until we're reconnected
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    // Attempt to connect with a unique Client ID
+    if (client.connect("ESP32_Bridge_Client")) {
+      Serial.println("connected");
+    } else {  
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      delay(5000);
+    }
+  }
+}

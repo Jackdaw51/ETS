@@ -2,6 +2,7 @@
 #include "stddef.h"
 #include "snake.h"
 #include <stdio.h>
+#include "../../incl/timers.h"
 
 
 #define MAP_WIDTH 20 // Size of the game area in blocks
@@ -192,6 +193,7 @@ int start_snake(int *max_length){
         draw_food(food_x, food_y, food_texture);
       }
     }
+    sleep_ms(500);
     display_end();
   }
 }

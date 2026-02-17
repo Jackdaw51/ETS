@@ -3,4 +3,4 @@
 #include "sprites/sprites.h"
 #include "sprites/palettes.h"
 
-char* keyboard();
+void keyboard(char* buffer);

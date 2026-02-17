@@ -1,4 +1,5 @@
 #include "thanks_for_playing.h"
+#include "../../incl/timers.h"
 
 void draw_text_h_centertp(u8 x,u8 y,u8 extra_spacing,TextBuilder* builder){
 		u8 offset_x = 5 * builder->len;
@@ -43,10 +44,11 @@ int thanks(){
             draw_text_h_centertp(80,50,0,&title2_builder);
             draw_text_h_centertp(80,70,0,&title3_builder);
 
+            sleep_ms(2000);
 
             // sleep and return
 
-            //break;
+            break;
 
         display_end();
     }

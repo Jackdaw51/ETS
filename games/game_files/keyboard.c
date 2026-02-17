@@ -58,7 +58,7 @@ void draw_text_h_centers(u8 x,u8 y,u8 extra_spacing,TextBuilder* builder){
 		draw_text_h(x-offset_x,y-offset_y,extra_spacing,builder);
 };
 
-char* keyboard(){
+void keyboard(char* buffer){
 	display_init_lcd();
   f32 proximity;
   set_palette(RETRO_RBY_INDEX);
@@ -176,7 +176,10 @@ char* keyboard(){
           name_builder.len = name_ptr;
           load_text_p(name,&name_builder,RETRO_RBY_INDEX);
         } else if(choice_y == rows-1 && choice_x == 3){
-          return name;
+          for(i = 0; i < name_ptr; i++){
+            buffer[i] = name[i];
+          }
+          return;
         } else if(name_ptr < 12){
           u8 index = choice_x + choice_y*6;
           name[name_ptr] = letter_as_char[index];
