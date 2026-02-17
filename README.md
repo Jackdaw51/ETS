@@ -49,6 +49,15 @@ An **ESP32** module is connected via **UART** to support command-based communica
 - **TI Code Composer Studio (CCS):** **v12.8.0**
 - CCS integrated toolchain (course setup)
 - USB connection to the LaunchPad for programming/debugging
+- Install driverlib. To do that:
+1. Download the simplelink_msp432p4_sdk_3_40_01_02.zip file from TI official website. 
+2. Open CSS and left click on Project Folder to select Properties
+3. Select CSS Build
+4. Click ARM Compiler and then Include Options
+4.1 Add "simplelink_msp432p4_sdk_3_40_01_02/source" directory to "Add dir to #include search path" window.  
+5. Click ARM Linker and File Search Path
+5.1 Add "simplelink_msp432p4_sdk_3_40_01_02/source/ti/devices/msp432p4xx/driverlib/ccs/msp432p4xx_driverlib.lib" to "Include library file..." window
+
 
 #### Server (online scoreboard)
 - **Python 3.x**
