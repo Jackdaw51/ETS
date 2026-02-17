@@ -6,6 +6,9 @@
 # If running through python virtual environment (needed for WSL testing):
 ## 5. source venv/bin/activate
 
+import eventlet
+eventlet.monkey_patch() # Fix thread problem with server update
+
 import json
 from flask import Flask, jsonify, render_template
 import paho.mqtt.client as mqtt
