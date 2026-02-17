@@ -825,7 +825,9 @@ int space_invaders_game(void) {
                     i32 ax = (i32)(A_LEFT + (i32)c * (A_W + A_GAPX));
                     i32 ay = (i32)alien_target_y(r);
                     TextureHandle texp = ((r & 1u) == 0u) ? alien1_tex : alien2_tex;
-                    if (ax >= 0 && ax <= 255 && ay >= 0 && ay <= 255) draw_texture((u8)ax, (u8)ay, texp);
+                    if (ax >= 0 && ay >= 0 && ax + A_W <= LCD_W && ay + A_H <= LCD_H)
+                        draw_texture((u8)ax, (u8)ay, texp);
+
                 }
             }
 
@@ -916,7 +918,9 @@ int space_invaders_game(void) {
                 i32 ax = (i32)aliens[r][c].x;
                 i32 ay = (i32)aliens[r][c].y;
 
-                if (!rect_on_screen(ax, ay, A_W, A_H)) continue;
+                if (ax < 0 || ay < 0) continue;
+                if (ax + A_W > LCD_W) continue;
+                if (ay + A_H > LCD_H) continue;
 
                 TextureHandle texp = (aliens[r][c].kind == 0) ? alien1_tex : alien2_tex;
                 draw_texture((u8)ax, (u8)ay, texp);
@@ -946,3 +950,19 @@ int space_invaders_game(void) {
     display_close();
     return (int)score;
 }
+
+// ------------------------------------------------------------
+// MAIN DI TEST
+int main(void) {
+    int score = space_invaders_game();
+
+
+    // su embedded reale spesso meglio evitare printf (o metterlo dietro debug)
+#ifdef DEBUG
+    printf("Score: %d\n", score);
+#endif
+
+
+    return score;
+}
+
