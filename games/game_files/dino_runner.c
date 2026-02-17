@@ -633,11 +633,3 @@ int dino_runner_game(void) {
     display_close();
     return (int)score;
 }
-
-// ------------------------------------------------------------
-// MAIN
-int main(void) {
-    int score = dino_runner_game();
-    printf("Score: %d\n", score);
-    return score;
-}
