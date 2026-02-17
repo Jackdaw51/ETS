@@ -2,6 +2,10 @@
   "Tetris": [
     {
       "player": "Alice",
+      "score": 1234
+    },
+    {
+      "player": "Alice",
       "score": 1200
     },
     {
@@ -17,12 +21,32 @@
     {
       "player": "Charlie",
       "score": 42
+    },
+    {
+      "player": "abcd",
+      "score": 4
     }
   ],
   "Snake": [
     {
       "player": "Eve",
       "score": 300
+    },
+    {
+      "player": "abc",
+      "score": 5
+    },
+    {
+      "player": "abcde",
+      "score": 2
+    },
+    {
+      "player": "aac",
+      "score": 1
+    },
+    {
+      "player": "aaa",
+      "score": 1
     }
   ]
 }
