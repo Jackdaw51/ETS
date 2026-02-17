@@ -146,6 +146,12 @@ static u8 aabb_i16_u8(i16 ax, i16 ay, u8 aw, u8 ah,
     return (ar >= bl) && (al <= br) && (ab >= bt) && (at <= bb);
 }
 
+static inline void draw_texture_safe(i32 x, i32 y, TextureHandle t) {
+    if (x < 0 || x >= LCD_W) return;
+    if (y < 0 || y >= LCD_H) return;
+    draw_texture((u8)x, (u8)y, t);
+}
+
 // ------------------------------------------------------------
 // RNG
 
@@ -560,10 +566,12 @@ int dino_runner_game(void) {
 
         for (i = 0; i < CLOUD_COUNT; i++) {
             i16 cx = FP_TO_I16(clouds[i].x_fp);
-            if (cx > -40 && cx < 220) { // piccolo culling grezzo
-                draw_texture((u8)cx, clouds[i].y, cloud_tex);
+
+            if (cx >= 0 && cx < LCD_W) {
+                draw_texture_safe(cx, (i32)clouds[i].y, cloud_tex);
             }
         }
+
 
         draw_rectangle(0, GROUND_Y, LCD_W, 20, T_TWO);
 
@@ -584,19 +592,19 @@ int dino_runner_game(void) {
             draw_texture((u8)DINO_X, (u8)dy, dino_tex);
         }
 
-        // draw obstacles as textures
         for (i = 0; i < MAX_OBS; i++) {
             if (!obs[i].active) continue;
 
             i16 ox = FP_TO_I16(obs[i].x_fp);
-            u8  oy = obs[i].y;
+            i32 oy = (i32)obs[i].y;
 
             TextureHandle t = small_cactus_tex;
             if (obs[i].type == (u8)OBS_BIG_CACTUS) t = big_cactus_tex;
             else if (obs[i].type == (u8)OBS_BIRD)  t = bird_tex;
 
-            draw_texture((u8)ox, oy, t);
+            draw_texture_safe((i32)ox, oy, t);
         }
+
 
         // score
         if (state == (u8)PLAYING) {
@@ -618,4 +626,12 @@ int dino_runner_game(void) {
 
     display_close();
     return (int)score;
+}
+
+// ------------------------------------------------------------
+// MAIN
+int main(void) {
+    int score = dino_runner_game();
+    printf("Score: %d\n", score);
+    return score;
 }
