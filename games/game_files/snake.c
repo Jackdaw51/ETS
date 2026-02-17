@@ -29,6 +29,7 @@ int start_snake(int *max_length){
   joystick_t joystick;
   State game_state = PLAYING;
   Quad_Direction direction = Q_RIGHT; // By default it moves to the right
+  Quad_Direction new_direction;
 
   u8 snake_x[MAP_SIZE]; // Work as circular buffers
   u8 snake_y[MAP_SIZE];
@@ -84,22 +85,22 @@ int start_snake(int *max_length){
         switch(joystick) {
           case JS_UP:
             if (direction != Q_DOWN) {
-              direction = Q_UP;
+              new_direction = Q_UP;
             }
             break;
           case JS_DOWN:
             if (direction != Q_UP) {
-              direction = Q_DOWN;
+              new_direction = Q_DOWN;
             }
             break;
           case JS_LEFT:
             if (direction != Q_RIGHT) {
-              direction = Q_LEFT;
+              new_direction = Q_LEFT;
             }
             break;
           case JS_RIGHT:
             if (direction != Q_LEFT) {
-              direction = Q_RIGHT;
+              new_direction = Q_RIGHT;
             }
             break;
           default:
@@ -193,6 +194,8 @@ int start_snake(int *max_length){
         draw_food(food_x, food_y, food_texture);
       }
     }
+
+    direction = new_direction;
     sleep_ms(500);
     display_end();
   }
