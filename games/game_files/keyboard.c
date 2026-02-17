@@ -133,7 +133,7 @@ void keyboard(char* buffer){
   load_text("name",&name_builder);
 
   set_palette(BW_INDEX);
-  joystick_t old_input;
+  joystick_t old_input = JS_NONE;
 
   while(!window_should_close()){
     display_begin();

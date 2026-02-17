@@ -9,7 +9,7 @@
 #define WHILE_PER_AN_CHANGE 8
 
 u8 menu(){
-	char* example_game_names[NUMBER_OF_GAMES] = {"PONG","DINO","SNAKE"};
+	char* example_game_names[NUMBER_OF_GAMES] = {"Pong","Dino","Snake"};
 	TextBuilder game_title_builders[NUMBER_OF_GAMES];
 
 	u8 chosen = 0;
@@ -55,9 +55,9 @@ u8 menu(){
 		TextBuilder menu_text_builder = (TextBuilder){ .handles = (BuilderElement[4]){}, .len = 4};
 		int i;
 		for(i = 0; i < NUMBER_OF_GAMES; i++){
-			load_text_p(example_game_names[i],&game_title_builders[i],RETRO_RBY_INDEX);
+			load_text_p(example_game_names[i],&game_title_builders[i],BW_INDEX);
 		}
-		load_text("Menu",&menu_text_builder);
+		load_text_p("Menu",&menu_text_builder,RETRO_RBY_INDEX);
 		set_screen_color(T_TWO);
 
 		joystick_t old_action = JS_LEFT;
@@ -118,8 +118,8 @@ u8 menu(){
 			old_action = action;
 			clear_screen();
 
-			draw_text_h_center(80,20,0,&menu_text_builder);
-			draw_text_h_center(80,50,0,&game_title_builders[game_choice_index]);
+			draw_text_h_center(60,30,1,&menu_text_builder);
+			draw_text_h_center(60,65,1,&game_title_builders[game_choice_index]);
 			//draw_texture(x1,y1,animation_pack[direction1][an1]);
 			draw_texture(x2,y2,animation_pack2[direction2][an2]);
 
