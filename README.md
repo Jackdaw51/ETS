@@ -123,11 +123,11 @@ A **Flask-based Python server** subscribes to MQTT topics and records scores, ex
 MQTT topics:
 - `esp32/score` — match scores (includes player name, score value, and game identifier/type)
 - *(optional / if enabled)* `esp32/status` — connection/status messages (handshake)
-- *(optional / if enabled)* `esp32/ack` — server acknowledgement
 
 #### Install dependencies (Linux/WSL example)
 ```bash
 pip install paho-mqtt flask
+pip install flask-socketio eventlet
 sudo apt install mosquitto mosquitto-clients
 
 ```
@@ -150,6 +150,7 @@ cd server
 python3 -m venv venv
 source venv/bin/activate
 pip install paho-mqtt flask
+pip install flask-socketio eventlet
 python3 server.py
 ```
 Endpoints
@@ -260,8 +261,8 @@ Game Over:
 ## 6) Team Members and Contributions
 
 | Member            | Contributions (main tasks/features) | Main files/folders                             |
-|-------------------|--------------|------------------------------------------------|
-| Malchiodi Massimo | games        | dino_runner.c , pong_wall.c , space_invaders.c |
-| Francesco Bogni   |              |                                                |
-| Rowan Li          |              |                                                |
-| Leonardo Sandrini |              |                                                |
+|-------------------|-------------------------------------|------------------------------------------------|
+| Malchiodi Massimo | Games                               | dino_runner.c , pong_wall.c , space_invaders.c |
+| Francesco Bogni   |                                     |                                                |
+| Rowan Li Tangalin |                                     |                                                |
+| Leonardo Sandrini | Snake and IoT                       | snake.c , server.py , index.html               |
