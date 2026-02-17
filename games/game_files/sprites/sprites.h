@@ -264,3 +264,13 @@ extern const uint8_t sn_tail_left[];
 
 extern const Sprite sn_tail_right_sprite;
 extern const uint8_t sn_tail_right[];
+
+
+
+
+
+extern const Sprite canc_sprite;
+extern const uint8_t canc[];
+
+extern const Sprite tick_sprite;
+extern const uint8_t tick[];

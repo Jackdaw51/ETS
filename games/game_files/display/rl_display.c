@@ -10,7 +10,7 @@
 
 #define UI_WIDTH SLIDER_WIDTH 
 
-#define MAX_TEXTURES 100
+#define MAX_TEXTURES 1000
 
 static i32 window_width = 160;
 static i32 window_height = 128;
@@ -315,9 +315,8 @@ void draw_text_v(i32 x, i32 y,i32 extra_spacing, TextBuilder* builder){
 void load_text(const char *text, TextBuilder* builder){
 	const char *c = text;
 	u8 counter = 0;
-	while(*c != '\0'){
+	while(*c != '\0' && counter < builder->len){
 		u8 index = (u8)*c;
-		
 		// map to 0-31
 		if(index == ' '){
 			builder->handles[counter++] = (BuilderElement){ .type = SPACE };
@@ -342,7 +341,7 @@ void load_text(const char *text, TextBuilder* builder){
 void load_text_p(const char *text,TextBuilder* builder,u8 p){
 	const char *c = text;
 	u8 counter = 0;
-	while(*c != '\0'){
+	while(*c != '\0' && counter < builder->len){
 		u8 index = (u8)*c;
 		
 		if(index == ' '){
@@ -356,7 +355,7 @@ void load_text_p(const char *text,TextBuilder* builder,u8 p){
 		}
 
 		if(index >= 'a' && index <= 'z'){
-			index = index - (u8)'a' + 31; // lowercase letters come after cap
+			index = index - (u8)'a' + 26; // lowercase letters come after cap
 		}
 
 		Sprite* s = text_lookup_table[index];

@@ -3,73 +3,127 @@
 #include "display/display.h"
 #include "stddef.h"
 
-#define NUMBER_OF_GAMES 4
+#define NUMBER_OF_GAMES 3
+
+#define STEPS_PER_WHILE 5
+#define WHILE_PER_AN_CHANGE 5
 
 u8 menu(){
-	char* example_game_names[NUMBER_OF_GAMES] = {"COD","LEGEND OF ZELDA", "ROWAN", "SNAKE"};
+	char* example_game_names[NUMBER_OF_GAMES] = {"PONG","DINO","SNAKE"};
 	TextBuilder game_title_builders[NUMBER_OF_GAMES];
 
 	u8 chosen = 0;
+	u8 close = 0;
 
-	while(!chosen){
+	
+
+	TextureHandle wdf1_texture_handle = load_texture_from_sprite_p(wdf1_sprite.height,wdf1_sprite.width,wdf1_sprite.data,OLIVE_GREEN_INDEX);
+  	TextureHandle wdf2_texture_handle = load_texture_from_sprite_p(wdf2_sprite.height,wdf2_sprite.width,wdf2_sprite.data,OLIVE_GREEN_INDEX);
+  	TextureHandle wuf1_texture_handle = load_texture_from_sprite_p(wuf1_sprite.height,wuf1_sprite.width,wuf1_sprite.data,OLIVE_GREEN_INDEX);
+  	TextureHandle wuf2_texture_handle = load_texture_from_sprite_p(wuf2_sprite.height,wuf2_sprite.width,wuf2_sprite.data,OLIVE_GREEN_INDEX);
+
+  // Using a specified palette
+
+	TextureHandle wdf1_texture_handle2 = load_texture_from_sprite_p(wdf1_sprite.height,wdf1_sprite.width,wdf1_sprite.data,RETRO_RBY_INDEX);
+	TextureHandle wdf2_texture_handle2 = load_texture_from_sprite_p(wdf2_sprite.height,wdf2_sprite.width,wdf2_sprite.data,RETRO_RBY_INDEX);
+	TextureHandle wuf1_texture_handle2 = load_texture_from_sprite_p(wuf1_sprite.height,wuf1_sprite.width,wuf1_sprite.data,RETRO_RBY_INDEX);
+	TextureHandle wuf2_texture_handle2 = load_texture_from_sprite_p(wuf2_sprite.height,wuf2_sprite.width,wuf2_sprite.data,RETRO_RBY_INDEX);
+
+	TextureHandle animation_pack[2][2] = {{wuf1_texture_handle,wuf2_texture_handle},{wdf1_texture_handle,wdf2_texture_handle}};
+    TextureHandle animation_pack2[2][2] = {{wuf1_texture_handle2,wuf2_texture_handle2},{wdf1_texture_handle2,wdf2_texture_handle2}};
+
+	u8 x1 = 0;
+	u8 x2 = 150-wdf1_sprite.width;
+
+	u8 y1 = 0;
+	u8 y2 = 120 -wdf1_sprite.height;
+
+	u8 direction1 = 0;
+	u8 direction2 = 1;
+
+	u8 an1 = 0;
+	u8 an2 = 1;
+
+	u8 c = 0;
+
+	while(!close){
 		u8 game_choice_index = 0;
 		u8 game_choice_index_old = 0;
 
-		game_title_builders[0] = (TextBuilder){ .handles = (BuilderElement[3]){}, .len = 3};
-		game_title_builders[1] = (TextBuilder){ .handles = (BuilderElement[15]){}, .len = 15};
+		game_title_builders[0] = (TextBuilder){ .handles = (BuilderElement[4]){}, .len = 4};
+		game_title_builders[1] = (TextBuilder){ .handles = (BuilderElement[4]){}, .len = 4};
 		game_title_builders[2] = (TextBuilder){ .handles = (BuilderElement[5]){}, .len = 5};
-		game_title_builders[3] = (TextBuilder){ .handles = (BuilderElement[5]){}, .len = 5};
 
 		TextBuilder menu_text_builder = (TextBuilder){ .handles = (BuilderElement[4]){}, .len = 4};
-
-		for(int i = 0; i < NUMBER_OF_GAMES; i++){
+		int i;
+		for(i = 0; i < NUMBER_OF_GAMES; i++){
 			load_text_p(example_game_names[i],&game_title_builders[i],RETRO_RBY_INDEX);
 		}
 		load_text("Menu",&menu_text_builder);
 		set_screen_color(T_TWO);
 
-		while(!window_should_close() && !chosen){
+		joystick_t old_action = JS_LEFT;
+
+		while(!window_should_close() && !close){
 			get_proximity();
 			display_begin();
 			// Input comes from here
 			// input can be up down left or right
 			
 			joystick_t action = get_joystick();
-
-			if(action == JS_BUTTON){
-				switch(game_choice_index){
-					case 0:
-						break;
-					case 1:
-						break;
-					case 2:
-						// Start Rowan
-						chosen = 2;
-						break;
-					case 3:
-						// Start snake
-						chosen = 3;
-						break;
-				};
-				printf("You chose: %s\n",example_game_names[game_choice_index]);
-				fflush(stdout);
-			} else if(action == JS_UP){
-				if(game_choice_index == 0){
-					game_choice_index = NUMBER_OF_GAMES-1;
-				} else {
-					game_choice_index--;
-				}
-			} else if(action == JS_DOWN){
-				if(game_choice_index == NUMBER_OF_GAMES-1){
-					game_choice_index = 0;
-				} else {
-					game_choice_index++;
+			if(action != old_action){
+				if(action == JS_BUTTON){
+					chosen = game_choice_index;
+					close = !close;
+				} else if(action == JS_UP){
+					if(game_choice_index == 0){
+						game_choice_index = NUMBER_OF_GAMES-1;
+					} else {
+						game_choice_index--;
+					}
+				} else if(action == JS_DOWN){
+					if(game_choice_index == NUMBER_OF_GAMES-1){
+						game_choice_index = 0;
+					} else {
+						game_choice_index++;
+					}
 				}
 			}
+
+			c++;
+			if(c%WHILE_PER_AN_CHANGE == 0){
+				an1 = !an1;
+				an2 = !an2;
+			}
+
+			if(y1 + wdf1_sprite.height > 120 && direction1 == 0){
+				direction1 = 1;
+			}
+
+			if(y2 + wdf1_sprite.height > 120 && direction2 == 0){
+				direction2 = 1;
+			}
+
+			if(y1 - wdf1_sprite.height < 0 && direction1 == 1){
+				direction1 = 0;
+			}
+			
+			if(y2 - wdf1_sprite.height < 0 && direction2 == 1){
+				direction2 = 0;
+			}
+
+			y1 += STEPS_PER_WHILE*(direction1 == 0 ? 1 : -1);
+			y2 += STEPS_PER_WHILE*(direction2 == 0 ? 1 : -1);
+
+
+			
+			old_action = action;
 			clear_screen();
 
 			draw_text_h_center(80,20,0,&menu_text_builder);
 			draw_text_h_center(80,50,0,&game_title_builders[game_choice_index]);
+			draw_texture(x1,y1,animation_pack[direction1][an1]);
+			draw_texture(x2,y2,animation_pack2[direction2][an2]);
 
 			display_end();
 		}

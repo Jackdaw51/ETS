@@ -2,15 +2,69 @@
 #include "display/display.h"
 #include "display/types.h"
 #include "sprites/sprites.h"
+#include <stdio.h>
 
 typedef enum {
-    UPPER,
     LOWER,
+    UPPER,
 } Case;
 
-int main(){
+#define LETTER_X_OFFSET 10
+#define LETTER_Y_OFFSET 7
+
+#define NAME_SPACE_HEIGHT 20
+
+void draw_letters(u8 choice_x,u8 choice_y,u8 rows, TextureHandle lc_letters[][6]){
+  int i;
+  int j;
+  
+  u8 total_letters = 28;
+  u8 columns = (total_letters/rows)+1;
+  u8 leftovers = total_letters%rows;
+
+  u8 height = lower_a_sprite.height;
+  u8 width = lower_a_sprite.width;
+
+  u8 vertical_spacing = (128-NAME_SPACE_HEIGHT-(rows*height)-2*LETTER_Y_OFFSET)/(rows-1);
+  u8 horizontal_spacing = (160-(columns*width)-2*LETTER_X_OFFSET)/(columns-1);
+
+  u8 vertical_offset = vertical_spacing+height;
+  u8 horizontal_offset = horizontal_spacing+width;
+
+  u8 counter = 0;
+
+  for(j = 0; j < rows; j++){
+    for(i = 0; i < columns; i++){
+        if(counter < 28){
+          if(i == choice_x && j == choice_y){
+            // the chosen letter
+            // print box with a certain size
+            draw_rectangle_p(LETTER_X_OFFSET+horizontal_offset*i-5,LETTER_Y_OFFSET+NAME_SPACE_HEIGHT+(vertical_offset*j)-2,width+10,height+2,T_THREE,OLIVE_GREEN_INDEX);
+            draw_texture(LETTER_X_OFFSET+horizontal_offset*i,LETTER_Y_OFFSET+NAME_SPACE_HEIGHT+(vertical_offset*j),lc_letters[j][i]);
+          } else {
+            // the unchosen letters
+            draw_texture(LETTER_X_OFFSET+horizontal_offset*i,LETTER_Y_OFFSET+NAME_SPACE_HEIGHT+(vertical_offset*j),lc_letters[j][i]);
+            //draw_rectangle(LETTER_X_OFFSET+horizontal_offset*i,LETTER_Y_OFFSET+vertical_offset,width,height,T_TWO);
+          }
+        }
+        counter++;
+      }
+  }
+};
+
+void draw_text_h_centers(u8 x,u8 y,u8 extra_spacing,TextBuilder* builder){
+		u8 offset_x = 5 * builder->len;
+		u8 offset_y = 10;
+		draw_text_h(x-offset_x,y-offset_y,extra_spacing,builder);
+};
+
+char* keyboard(){
 	display_init_lcd();
   f32 proximity;
+  set_palette(RETRO_RBY_INDEX);
+
+  char name[13] = {0};
+  u8 name_ptr = 0;
 
   TextureHandle lower_a = load_texture_from_sprite(lower_a_sprite.height, lower_a_sprite.width, lower_a_sprite.data);
   TextureHandle lower_b = load_texture_from_sprite(lower_b_sprite.height, lower_b_sprite.width, lower_b_sprite.data);
@@ -39,48 +93,24 @@ int main(){
   TextureHandle lower_y = load_texture_from_sprite(lower_y_sprite.height, lower_y_sprite.width, lower_y_sprite.data);
   TextureHandle lower_z = load_texture_from_sprite(lower_z_sprite.height, lower_z_sprite.width, lower_z_sprite.data);
 
-  TextureHandle upper_A = load_texture_from_sprite(upper_A_sprite.height, upper_A_sprite.width, upper_A_sprite.data);
-  TextureHandle upper_B = load_texture_from_sprite(upper_B_sprite.height, upper_B_sprite.width, upper_B_sprite.data);
-  TextureHandle upper_C = load_texture_from_sprite(upper_C_sprite.height, upper_C_sprite.width, upper_C_sprite.data);
-  TextureHandle upper_D = load_texture_from_sprite(upper_D_sprite.height, upper_D_sprite.width, upper_D_sprite.data);
-  TextureHandle upper_E = load_texture_from_sprite(upper_E_sprite.height, upper_E_sprite.width, upper_E_sprite.data);
-  TextureHandle upper_F = load_texture_from_sprite(upper_F_sprite.height, upper_F_sprite.width, upper_F_sprite.data);
-  TextureHandle upper_G = load_texture_from_sprite(upper_G_sprite.height, upper_G_sprite.width, upper_G_sprite.data);
-  TextureHandle upper_H = load_texture_from_sprite(upper_H_sprite.height, upper_H_sprite.width, upper_H_sprite.data);
-  TextureHandle upper_I = load_texture_from_sprite(upper_I_sprite.height, upper_I_sprite.width, upper_I_sprite.data);
-  TextureHandle upper_J = load_texture_from_sprite(upper_J_sprite.height, upper_J_sprite.width, upper_J_sprite.data);
-  TextureHandle upper_K = load_texture_from_sprite(upper_K_sprite.height, upper_K_sprite.width, upper_K_sprite.data);
-  TextureHandle upper_L = load_texture_from_sprite(upper_L_sprite.height, upper_L_sprite.width, upper_L_sprite.data);
-  TextureHandle upper_M = load_texture_from_sprite(upper_M_sprite.height, upper_M_sprite.width, upper_M_sprite.data);
-  TextureHandle upper_N = load_texture_from_sprite(upper_N_sprite.height, upper_N_sprite.width, upper_N_sprite.data);
-  TextureHandle upper_O = load_texture_from_sprite(upper_O_sprite.height, upper_O_sprite.width, upper_O_sprite.data);
-  TextureHandle upper_P = load_texture_from_sprite(upper_P_sprite.height, upper_P_sprite.width, upper_P_sprite.data);
-  TextureHandle upper_Q = load_texture_from_sprite(upper_Q_sprite.height, upper_Q_sprite.width, upper_Q_sprite.data);
-  TextureHandle upper_R = load_texture_from_sprite(upper_R_sprite.height, upper_R_sprite.width, upper_R_sprite.data);
-  TextureHandle upper_S = load_texture_from_sprite(upper_S_sprite.height, upper_S_sprite.width, upper_S_sprite.data);
-  TextureHandle upper_T = load_texture_from_sprite(upper_T_sprite.height, upper_T_sprite.width, upper_T_sprite.data);
-  TextureHandle upper_U = load_texture_from_sprite(upper_U_sprite.height, upper_U_sprite.width, upper_U_sprite.data);
-  TextureHandle upper_V = load_texture_from_sprite(upper_V_sprite.height, upper_V_sprite.width, upper_V_sprite.data);
-  TextureHandle upper_W = load_texture_from_sprite(upper_W_sprite.height, upper_W_sprite.width, upper_W_sprite.data);
-  TextureHandle upper_X = load_texture_from_sprite(upper_X_sprite.height, upper_X_sprite.width, upper_X_sprite.data);
-  TextureHandle upper_Y = load_texture_from_sprite(upper_Y_sprite.height, upper_Y_sprite.width, upper_Y_sprite.data);
-  TextureHandle upper_Z = load_texture_from_sprite(upper_Z_sprite.height, upper_Z_sprite.width, upper_Z_sprite.data);
+  TextureHandle tick = load_texture_from_sprite(tick_sprite.height, tick_sprite.width, tick_sprite.data);
+  TextureHandle canc = load_texture_from_sprite(canc_sprite.height, canc_sprite.width, canc_sprite.data);
 
-  TextureHandle lowercase_letters[26] = {
-      lower_a, lower_b, lower_c, lower_d, lower_e, lower_f,
-      lower_g, lower_h, lower_i, lower_j, lower_k, lower_l,
-      lower_m, lower_n, lower_o, lower_p, lower_q, lower_r,
-      lower_s, lower_t, lower_u, lower_v, lower_w, lower_x,
-      lower_y, lower_z
+  TextureHandle lowercase_letters[5][6] = {
+      {lower_a, lower_b, lower_c, lower_d, lower_e, lower_f},
+      {lower_g, lower_h, lower_i, lower_j, lower_k, lower_l},
+      {lower_m, lower_n, lower_o, lower_p, lower_q, lower_r},
+      {lower_s, lower_t, lower_u, lower_v, lower_w, lower_x},
+      {lower_y, lower_z, canc, tick }
   };
 
-  TextureHandle uppercase_letters[26] = {
-      upper_A, upper_B, upper_C, upper_D, upper_E, upper_F,
-      upper_G, upper_H, upper_I, upper_J, upper_K, upper_L,
-      upper_M, upper_N, upper_O, upper_P, upper_Q, upper_R,
-      upper_S, upper_T, upper_U, upper_V, upper_W, upper_X,
-      upper_Y, upper_Z
+  char letter_as_char[52] = {
+    'a','b','c','d','e','f','g','h','i','j','k','l','m',
+    'n','o','p','q','r','s','t','u','v','w','x','y','z',
+    'A','B','C','D','E','F','G','H','I','J','K','L','M',
+    'N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
   };
+
 
   int i;
   int j;
@@ -90,9 +120,20 @@ int main(){
 
   int letter_spacing = 10;
   int letter_spacing_v = 5;
+  int rows = 5;
+  int leftovers = 28%5;
 
-  Case c = LOWER;
-  TextureHandle* symbols[2] = {lowercase_letters,uppercase_letters};
+  int columns = (28/5)+1;
+
+  int choice_x = 0;
+  int choice_y = 0;
+
+
+  TextBuilder name_builder = { .handles = (BuilderElement[12]){}, .len = 4};
+  load_text("name",&name_builder);
+
+  set_palette(BW_INDEX);
+  joystick_t old_input;
 
   while(!window_should_close()){
     display_begin();
@@ -101,25 +142,61 @@ int main(){
 		proximity = get_proximity();
 		joystick_t input = get_joystick();
 
-		switch(input){
+    if(input != old_input){
+      switch(input){
+      case JS_LEFT:
+        if(choice_x > 0){
+          choice_x--;
+        }
+        break;
+      case JS_RIGHT:
+        if(choice_x < columns){
+          if(!(choice_y == rows-1 && choice_x > leftovers-1)){
+            choice_x++;
+          }
+        }
+        break;
+      case JS_DOWN:
+        if(choice_y < rows-1){
+          if(choice_y == rows - 2 && choice_x > leftovers){
+            choice_x = leftovers;
+          }
+          choice_y++;
+        }
+        break;
+      case JS_UP:
+        if(choice_y > 0){
+          choice_y--;
+        }
+        break;
+      case JS_BUTTON:
+        if(choice_y == rows-1 && choice_x == 2){
+          name_ptr--;
+          name[name_ptr] = '\0';
+          name_builder.len = name_ptr;
+          load_text_p(name,&name_builder,RETRO_RBY_INDEX);
+        } else if(choice_y == rows-1 && choice_x == 3){
+          return name;
+        } else if(name_ptr < 12){
+          u8 index = choice_x + choice_y*6;
+          name[name_ptr] = letter_as_char[index];
+          printf("Name: %s\n",name);
+          fflush(stdout);
+          name_ptr += 1;
+          name_builder.len = name_ptr;
+          load_text_p(name,&name_builder,RETRO_RBY_INDEX);
+        }
+    
+        break;
+      };
+    }
 
-		};
+    old_input = input;
 
+	  clear_screen();
 
-		// Physics and state changes go here
-
-
-
-
-		// Drawing goes after this line
-	clear_screen();
-
-
-	for(i = 0; i < 6; i++){
-	    for(j = 0; j < 4; j++){
-			draw_texture(i*(letter_width+letter_spacing),j*(letter_height+letter_spacing_v),symbols[c][i*6+j]);
-		}
-	}
+    draw_text_h_centers(160/2,lower_a_sprite.height-4,1,&name_builder);
+    draw_letters(choice_x,choice_y,rows,lowercase_letters);
 
     display_end();
   }

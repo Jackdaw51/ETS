@@ -449,11 +449,11 @@ int space_invaders_game(void) {
         // ---------- INPUT (joystick) ----------
         joystick_t action = joystick_action();
 
-        if (action == JS_LEFT)  ship_x -= SHIP_STEP_PX;
-        if (action == JS_RIGHT) ship_x += SHIP_STEP_PX;
+        if (action == JS_LEFT) ship_x = clampi32(ship_x - SHIP_STEP_PX, 0, (LCD_W - SHIP_W));
+;
+        if (action == JS_RIGHT) ship_x = clampi32(ship_x + SHIP_STEP_PX, 0, (LCD_W - SHIP_W)) ;
 
         // clamp ship
-        ship_x = clampi32(ship_x, 0, (LCD_W - SHIP_W));
 
 
         // ---------- UPDATE ----------

@@ -3,7 +3,7 @@
 
 #define FRAME_WIDTH 160
 #define FRAME_HEIGHT 128
-#define MAX_TEXTURES 100
+#define MAX_TEXTURES 1000
 
 
 #define BIT_PER_PIXEL 2
@@ -351,7 +351,6 @@ void draw_texture(u8 x, u8 y, TextureHandle texture_index){
 	int i;
 
 	for(i = 0; i < s->height; i++){
-		u8 batch = 0;
 		int j;
         int n_y = y+i;
 		for(j = 0; j < cols; j++){
@@ -405,18 +404,19 @@ void draw_texture(u8 x, u8 y, TextureHandle texture_index){
            };
 		}
 
-		if(padding){
-		    u8 k;
-			for(k = 0; k < padding; k++){
-                u8 p = ((3 << ((3-k)*2)) & batch) >> ((3-k)*2);
-                int n_x = x+cols*4+k;
-
-                if(p != T_TRANSPARENT){
-                    SET_FRAME_ELEMENT(n_x,n_y,p);
-                    SET_PALETTE_ELEMENT(n_x,n_y,base_palette_index);
-                }
-			}
-		}
+		// if(padding){
+		//     u8 k;
+        //     u8 batch = s->data[i*cols+(cols-1)];
+		// 	for(k = 0; k < padding; k++){
+        //         u8 p = ((3 << ((3-k)*2)) & batch) >> ((3-k)*2);
+        //         int n_x = x+cols*4+k;
+        
+        //         if(p != T_TRANSPARENT){
+        //             SET_FRAME_ELEMENT(n_x,n_y,p);
+        //             SET_PALETTE_ELEMENT(n_x,n_y,base_palette_index);
+        //         }
+		// 	}
+		// }
 	}
 
     base_palette_index = old_base_palette_index;

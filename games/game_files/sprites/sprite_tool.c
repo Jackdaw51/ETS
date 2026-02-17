@@ -135,6 +135,7 @@ int main(int argc, char** argv){
           printf("g:%d\n",g);
           printf("b:%d\n",b);
           printf("a:%d\n\n",a);
+          fflush(stdout);
           unfound_counter++;
 
           if(unfound_counter == MAX_PALETTES){
@@ -169,6 +170,7 @@ int main(int argc, char** argv){
     for(int ssp = 0; ssp < scratch_space_len; ssp++){
       sprintf(impl_output[impl_out_len++],"%s",scratch_space[ssp]);
     }
+    break;
 
     next_palette:
 

@@ -192,8 +192,6 @@ int start_snake(int *max_length){
         draw_food(food_x, food_y, food_texture);
       }
     }
-
-    sleep(1); // Control game speed !!REMOVE
     display_end();
   }
 }

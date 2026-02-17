@@ -3,7 +3,11 @@
 #include "incl/screen.h"
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 #include "incl/timers.h"
-#include "games/game_files/example.h"
+#include "games/game_files/main_screen.h"
+#include "games/game_files/dino_runner.h"
+#include "games/game_files/pong_wall_game.h"
+#include "games/game_files/space_invaders.h"
+#include "games/game_files/keyboard.h"
 #include "incl/esp32.h"
 
 void init_red(void);
@@ -47,32 +51,7 @@ int main(void)
     
     joystick_t a;
 
-    while (1)
-    {
-        // a = read_joystick();
-        // switch (a)
-        // {
-        // case JS_DOWN:
-        //     P1->OUT ^= BIT0;
-        //     break;
-        // case JS_RIGHT:
-        //     P2->OUT ^= BIT1;
-        //     break;
-        // case JS_BUTTON:
-        //     P1->OUT ^= BIT0;
-        //     P2->OUT ^= BIT1;
-        //     break;
-        // default:
-        //     break;
-        // }
-        // LCD_FillColor(0xF800);
-        // LCD_FillColor(0xF800);
-        //pong_wall_game();
-        //space_invaders_game();
-        //m_example();
-        transmitString("{game: tetris, player: Alice, score: 1234}");
-        sleep_ms(1000);
-    }
+    game_loop();
 }
 void init_red(void)
 {
