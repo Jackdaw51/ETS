@@ -188,7 +188,7 @@ static u8 aabb_i32(i32 ax, i32 ay, i32 aw, i32 ah,
 
 static inline u8 rect_on_screen(i32 x, i32 y, i32 w, i32 h) {
     if (w <= 0 || h <= 0) return 0;
-    if (x >= LCD_W || y >= LCD_H) return 0;
+    if (x >= LCD_W-1 || y >= LCD_H-1) return 0;
     if (x + w <= 0 || y + h <= 0) return 0;
     return 1;
 }
@@ -887,7 +887,7 @@ int space_invaders_game(void) {
             i32 bx = fp_to_i32(pb[i].x_fp);
             i32 by = fp_to_i32(pb[i].y_fp);
 
-            if (!rect_on_screen(bx, by, PB_W, PB_H)) continue;
+            if (!rect_on_screen(bx, by, PB_W+1, PB_H+1)) continue;
 
             draw_rectangle(bx, by, PB_W, PB_H, T_THREE);
         }
@@ -902,7 +902,7 @@ int space_invaders_game(void) {
             i32 bx = fp_to_i32(ab[i].x_fp);
             i32 by = fp_to_i32(ab[i].y_fp);
 
-            if (!rect_on_screen(bx, by, AB_W, AB_H)) continue;
+            if (!rect_on_screen(bx, by, AB_W+1, AB_H+1)) continue;
             draw_rectangle(bx, by, AB_W, AB_H, T_THREE);
         }
 
